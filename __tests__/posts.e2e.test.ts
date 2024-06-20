@@ -47,7 +47,6 @@ describe('/posts', () => {
 
         const res = await req
             .post(SETTINGS.PATH.POSTS)
-            .set({'Authorization': 'Basic ' + codedAuth})
             .send(newPost) // отправка данных
             .expect(401)
 
@@ -207,7 +206,7 @@ describe('/posts', () => {
             .put(SETTINGS.PATH.POSTS + '/' + dataset2.posts[0].id)
             .set({'Authorization': 'Basic ' + codedAuth})
             .send(post)
-            .expect(404) // проверка на ошибку
+            .expect(400) // проверка на ошибку
 
         // console.log(res.body)
 

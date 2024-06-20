@@ -5,7 +5,7 @@ import {BlogInputModel} from '../src/input-output-types/blogs-types'
 import {codedAuth, createString, dataset1} from './helpers/datasets'
 
 describe('/blogs', () => {
-    beforeAll(async () => {
+    beforeAll(async () => { 
         setDB()
     })
 

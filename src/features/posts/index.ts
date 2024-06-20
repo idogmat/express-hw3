@@ -11,6 +11,7 @@ import { inputCheckErrorsMiddleware } from '../../global-middlewares/inputCheckE
 export const postsRouter = Router()
 
 postsRouter.post('/',
+  adminMiddleware,
   ...postCreateValidators,
   createPostController);
 
