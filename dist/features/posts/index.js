@@ -15,5 +15,5 @@ exports.postsRouter.post('/', admin_middleware_1.adminMiddleware, ...validators_
 exports.postsRouter.get('/', inputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, getPostsController_1.getPostsController);
 exports.postsRouter.get('/:id', validators_1.findPostValidator, inputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, findPostController_1.findPostController);
 exports.postsRouter.delete('/:id', admin_middleware_1.adminMiddleware, validators_1.findPostValidator, inputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, delPostController_1.delPostController);
-exports.postsRouter.put('/:id', admin_middleware_1.adminMiddleware, validators_1.findPostValidator, ...validators_1.postCreateValidators, inputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, putPostController_1.putPostController);
+exports.postsRouter.put('/:id', admin_middleware_1.adminMiddleware, validators_1.findPostValidator, ...validators_1.putUpdateValidators, inputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, putPostController_1.putPostController);
 // не забудьте добавить роут в апп

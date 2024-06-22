@@ -1,41 +1,48 @@
+import mongoose from 'mongoose'
+import { blogCollection } from '../../app'
 import {BlogDbType} from '../../db/blog-db-type'
-import {db} from '../../db/db'
 import {BlogInputModel, BlogViewModel} from '../../input-output-types/blogs-types'
 
 export const blogsRepository = {
-    create(blog: BlogInputModel) {
+    async create(blog: BlogInputModel) {
         const newBlog: BlogDbType = {
             id: new Date().toISOString() + Math.random(),
             name: blog.name,
             description: blog.description,
             websiteUrl: blog.websiteUrl,
-        }
-        db.blogs = [...db.blogs, newBlog]
-        return newBlog.id
+        };
+        const model = new blogCollection({
+          _id: new mongoose.Types.ObjectId(),
+          ...newBlog
+        });
+        const result = await model.save()
+        return result._id;
     },
-    find(id: string) {
-        return db.blogs.find(b => b.id === id)
+    async find(id: string) {
+      const blog = await blogCollection.findById(id)
+      return blog;
     },
-    findAndMap(id: string) {
-        const blog = this.find(id)! // ! используем этот метод если проверили существование
-        return this.map(blog)
+    async findAndMap(id: mongoose.Types.ObjectId) {
+        const blog = await blogCollection.findById(id);
+        return blog;
     },
-    getAll() {
-      return db.blogs.map(b => this.map(b))
+    async getAll() {
+      const blogs = await blogCollection.find();
+      return blogs;
     },
-    del(id: string) {
-      const index = db.blogs.findIndex(b => (b.id === id));
-      if (index < 0) return false
-      db.blogs.splice(index, 1);
-      return true
+    async del(id: string) {
+      const blog = await blogCollection.findById(id);
+      if (!blog?.name) return false
+      const result = await blogCollection.deleteOne({_id: id});
+      return true;
     },
-    put(blog: BlogInputModel, id: string) {
-      const foundBlog = db.blogs.find(b => (b.id === id));
-      if (!foundBlog) return false
-      db.blogs = db.blogs.map(b => {
-        return b.id === id ? {...b, ...blog} : b;
-      })
-      return true
+    async put(blog: BlogInputModel, id: string) {
+      try {
+        await blogCollection.findByIdAndUpdate(id, {...blog});
+        return true
+      } catch (error) {
+        return false
+      }
     },
     map(blog: BlogDbType) {
         const blogForOutput: BlogViewModel = {

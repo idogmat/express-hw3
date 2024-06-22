@@ -35,8 +35,8 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
     }
 
     const codedAuth = fromUTF8ToBase64(SETTINGS.ADMIN)
-    console.log(codedAuth)
-    console.log(token[1])
+    // console.log(codedAuth)
+    // console.log(token[1])
     // if (decodedAuth !== SETTINGS.ADMIN) {
     if (token[1] !== codedAuth) {
         res
