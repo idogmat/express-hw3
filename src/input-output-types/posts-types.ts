@@ -3,6 +3,7 @@ export type PostInputModel = {
     shortDescription: string // max 100
     content: string // max 1000
     blogId: string // valid
+    blogName?: string
 }
 
 export type PostViewModel = {
@@ -11,5 +12,5 @@ export type PostViewModel = {
     shortDescription: string // max 100
     content: string // max 1000
     blogId: string // valid
-    blogName: string
+    blogName?: string
 }

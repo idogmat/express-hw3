@@ -36,8 +36,8 @@ const adminMiddleware = (req, res, next) => {
         return;
     }
     const codedAuth = (0, exports.fromUTF8ToBase64)(settings_1.SETTINGS.ADMIN);
-    console.log(codedAuth);
-    console.log(token[1]);
+    // console.log(codedAuth)
+    // console.log(token[1])
     // if (decodedAuth !== SETTINGS.ADMIN) {
     if (token[1] !== codedAuth) {
         res

@@ -1,7 +1,8 @@
 import {body} from 'express-validator'
 import {inputCheckErrorsMiddleware} from '../../../global-middlewares/inputCheckErrorsMiddleware'
 import {NextFunction, Request, Response} from 'express'
-import {blogsRepository} from '../blogsRepository'
+import { blogCollection } from '../../../app'
+import mongoose from 'mongoose'
 
 // name: string // max 15
 // description: string // max 500
@@ -22,7 +23,13 @@ const regex = /^(http|https):\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_
 }).withMessage('not valid websiteUrl')
 
 export const findBlogValidator = (req: Request<{id: string}>, res: Response, next: NextFunction) => {
-  const blog = blogsRepository.find(req.params.id)
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res
+      .status(404)
+      .json({})
+    return;
+  }
+  const blog = blogCollection.findById(req.params.id)
   if (!blog) {
     res
       .status(404)

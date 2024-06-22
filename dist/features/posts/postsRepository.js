@@ -1,48 +1,75 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRepository = void 0;
-const db_1 = require("../../db/db");
-const blogsRepository_1 = require("../blogs/blogsRepository");
+const app_1 = require("../../app");
+const mongoose_1 = __importDefault(require("mongoose"));
 exports.postsRepository = {
     create(post) {
-        const newPost = {
-            id: new Date().toISOString() + Math.random(),
-            title: post.title,
-            content: post.content,
-            shortDescription: post.shortDescription,
-            blogId: post.blogId,
-            blogName: blogsRepository_1.blogsRepository.find(post.blogId).name,
-        };
-        console.log(newPost);
-        db_1.db.posts = [...db_1.db.posts, newPost];
-        return newPost.id;
+        return __awaiter(this, void 0, void 0, function* () {
+            const blog = yield app_1.blogCollection.findById(post.blogId);
+            if (!(blog === null || blog === void 0 ? void 0 : blog.name))
+                return false;
+            const newPost = {
+                title: post.title,
+                content: post.content,
+                shortDescription: post.shortDescription,
+                blogId: post.blogId,
+                blogName: blog.name,
+            };
+            const model = yield new app_1.postCollection(Object.assign({ _id: new mongoose_1.default.Types.ObjectId() }, newPost));
+            const result = yield model.save();
+            return result._id;
+        });
     },
     find(id) {
-        return db_1.db.posts.find(p => p.id === id);
+        return __awaiter(this, void 0, void 0, function* () {
+            const post = yield app_1.postCollection.findById(id);
+            return post;
+        });
     },
     findAndMap(id) {
-        const post = this.find(id); // ! используем этот метод если проверили существование
-        return this.map(post);
+        return __awaiter(this, void 0, void 0, function* () {
+            const post = yield app_1.postCollection.findById(id);
+            return post;
+        });
     },
     getAll() {
-        return db_1.db.posts.map(p => this.map(p));
+        return __awaiter(this, void 0, void 0, function* () {
+            const posts = yield app_1.postCollection.find();
+            return posts;
+        });
     },
     del(id) {
-        const index = db_1.db.posts.findIndex(p => (p.id === id));
-        if (index < 0)
-            return false;
-        db_1.db.posts.splice(index, 1);
-        return true;
+        return __awaiter(this, void 0, void 0, function* () {
+            const post = yield app_1.postCollection.findById(id);
+            if (!(post === null || post === void 0 ? void 0 : post.title))
+                return false;
+            const result = yield app_1.postCollection.deleteOne({ _id: id });
+            return true;
+        });
     },
     put(post, id) {
-        const blog = blogsRepository_1.blogsRepository.find(post.blogId);
-        if (blog) {
-            db_1.db.posts = db_1.db.posts.map(p => p.id === id ? Object.assign(Object.assign(Object.assign({}, p), post), { blogName: blog.name }) : p);
-            return true;
-        }
-        else {
-            return false;
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const res = yield app_1.postCollection.findByIdAndUpdate(id, Object.assign({}, post));
+                return true;
+            }
+            catch (error) {
+                return false;
+            }
+        });
     },
     map(post) {
         const postForOutput = {

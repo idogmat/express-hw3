@@ -10,10 +10,12 @@
     "jest:coverage": "jest -i --coverage"
   },
   "dependencies": {
+    "@types/mongoose": "^5.11.97",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "express-validator": "^7.1.0"
+    "express-validator": "^7.1.0",
+    "mongoose": "^8.4.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

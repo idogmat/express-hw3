@@ -1,9 +1,9 @@
 import {body} from 'express-validator'
 import {inputCheckErrorsMiddleware} from '../../../global-middlewares/inputCheckErrorsMiddleware'
-import {blogsRepository} from '../../blogs/blogsRepository'
 import {NextFunction, Request, Response} from 'express'
-import {postsRepository} from '../postsRepository'
-import {adminMiddleware} from '../../../global-middlewares/admin-middleware'
+import { blogCollection, postCollection } from '../../../app'
+import mongoose from 'mongoose'
+import { PostInputModel } from '../../../input-output-types/posts-types'
 
 // title: string // max 30
 // shortDescription: string // max 100
@@ -21,14 +21,35 @@ export const shortDescriptionValidator = body('shortDescription').isString().wit
 export const contentValidator = body('content').isString().withMessage('not string')
     .trim().isLength({min: 1, max: 1000}).withMessage('more then 1000 or 0')
 
-export const blogIdValidator = body('blogId').isString().withMessage('not string')
-.trim().custom(blogId => {
-    const blog = blogsRepository.find(blogId)
-    return !!blog
-}).withMessage('no blog')
+export const blogIdValidator = body('blogId').isString().trim().withMessage('not string').isLength({min: 1, max: 500}).withMessage('no blog')
 
-export const findPostValidator = (req: Request<{id: string}>, res: Response, next: NextFunction) => {
-    const post = postsRepository.find(req.params.id)
+export const blogIdCheckIncludes = async (req: Request<PostInputModel>, res: Response, next: NextFunction) => {
+  if (!mongoose.Types.ObjectId.isValid(req.body.blogId)) {
+    res
+      .status(404)
+      .json({})
+    return;
+  }  
+  const blog = await blogCollection.findById(req.body.blogId)
+    if (!blog) {
+
+        res
+            .status(404)
+            .json({})
+        return
+    }
+    
+    next()
+  }
+
+export const findPostValidator = async (req: Request<{id: string}>, res: Response, next: NextFunction) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res
+      .status(404)
+      .json({})
+    return;
+  }  
+  const post = await postCollection.findById(req.params.id)
     if (!post) {
 
         res
@@ -42,6 +63,15 @@ export const findPostValidator = (req: Request<{id: string}>, res: Response, nex
 
 
 export const postCreateValidators = [
+  titleValidator,
+  shortDescriptionValidator,
+  contentValidator,
+  blogIdValidator,
+  inputCheckErrorsMiddleware,
+  blogIdCheckIncludes,
+]
+
+export const putUpdateValidators = [
   titleValidator,
   shortDescriptionValidator,
   contentValidator,
