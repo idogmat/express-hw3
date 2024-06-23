@@ -11,6 +11,7 @@ export const postsRepository = {
       content: post.content,
       shortDescription: post.shortDescription,
       blogId: post.blogId,
+      createdAt: new Date(),
       blogName: blog.name,
     };
     const model = await new postCollection({
@@ -60,6 +61,7 @@ export const postsRepository = {
       content: post.content,
       blogId: post.blogId,
       blogName: post.blogName,
+      createdAt: post.createdAt
     }
     return postForOutput
   },

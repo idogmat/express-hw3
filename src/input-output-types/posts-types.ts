@@ -6,6 +6,7 @@ export type PostInputModel = {
     content: string // max 1000
     blogId: string // valid
     blogName?: string
+    createdAt: Date
 }
 
 export type PostViewModel = {
@@ -15,4 +16,5 @@ export type PostViewModel = {
     content: string // max 1000
     blogId: string // valid
     blogName: string
+    createdAt: Date
 }
