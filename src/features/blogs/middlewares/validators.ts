@@ -1,4 +1,4 @@
-import {body} from 'express-validator'
+import {body, param} from 'express-validator'
 import {inputCheckErrorsMiddleware} from '../../../global-middlewares/inputCheckErrorsMiddleware'
 import {NextFunction, Request, Response} from 'express'
 import mongoose from 'mongoose'
@@ -22,24 +22,17 @@ const regex = /^(http|https):\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_
   return regex.test(url);
 }).withMessage('not valid websiteUrl')
 
-export const findBlogValidator = (req: Request<{id: string}>, res: Response, next: NextFunction) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    res
-      .status(404)
-      .json({})
-    return;
+export const blogIdParamsValidator = param('id').isString().trim().withMessage('not string').isLength({ min: 1, max: 500 }).withMessage('not found').custom( async value => {
+  if (!mongoose.Types.ObjectId.isValid(value)) {
+    return Promise.reject('id not found');
   }
-  const blog = blogCollection.findById(req.params.id)
-  if (!blog) {
-    res
-      .status(404)
-      .json({})
-    return;
+  const id = new mongoose.Types.ObjectId(value)
+  const blog = await blogCollection.findById(id)
+  if (!blog?._id) {
+    return Promise.reject('id not found');
   }
-
-  next()
-}
-
+  return true
+})
 
 export const blogCreateValidators = [
     nameValidator,

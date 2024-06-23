@@ -6,10 +6,31 @@ export const inputCheckErrorsMiddleware = (req: Request, res: Response<OutputErr
   const e = validationResult(req)
   if (!e.isEmpty()) {
     const eArray = e.array({ onlyFirstError: true }) as { path: FieldNamesType, msg: string }[]
-    // console.log(eArray)
+    console.log(eArray)
+
+    if ((eArray as any).find((e: any) => e?.path === 'id')) {
+      res.sendStatus(404);
+      return;
+    }
 
     res
       .status(400)
+      .json({
+        errorsMessages: eArray.map(x => ({ field: x.path, message: x.msg }))
+      })
+    return
+  }
+
+  next()
+}
+
+export const inputCheckErrorsMiddlewareParms = (req: Request, res: Response<OutputErrorsType>, next: NextFunction) => {
+  const e = validationResult(req)
+  if (!e.isEmpty()) {
+    const eArray = e.array({ onlyFirstError: true }) as { path: FieldNamesType, msg: string }[]
+    console.log(eArray)
+    res
+      .status(404)
       .json({
         errorsMessages: eArray.map(x => ({ field: x.path, message: x.msg }))
       })

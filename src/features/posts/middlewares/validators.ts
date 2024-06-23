@@ -33,20 +33,20 @@ export const blogIdValidator = body('blogId').isString().trim().withMessage('not
   return true
 })
 
-export const findPostValidator = async (req: Request<{ id: string }, PostInputModel>, res: Response, next: NextFunction) => {
+export const findPostValidator = async (req: Request<{id: string}>, res: Response, next: NextFunction) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res
       .status(404)
       .json({})
     return;
   }
-  const post = await postCollection.findById(req.params.id)
-  if (!post?._id) {
-
+  const id = new mongoose.Types.ObjectId(req.params.id)
+  const post = await postCollection.findById(id)
+  if (!post) {
     res
       .status(404)
       .json({})
-    return
+    return;
   }
 
   next()
@@ -66,5 +66,6 @@ export const putUpdateValidators = [
   shortDescriptionValidator,
   contentValidator,
   blogIdValidator,
+  findPostValidator,
   inputCheckErrorsMiddleware,
 ]

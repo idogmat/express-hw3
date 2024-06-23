@@ -11,6 +11,7 @@ export const postsRepository = {
       content: post.content,
       shortDescription: post.shortDescription,
       blogId: post.blogId,
+      createdAt: new Date(),
       blogName: blog.name,
     };
     const model = await new postCollection({
@@ -22,10 +23,10 @@ export const postsRepository = {
   },
   async find(id: Types.ObjectId) {
     const post = await postCollection.findById(id)
-    if (post) {
+    if (post?.id) {
       return this.map(post);
     }
-    return {}
+    return false
   },
   async findAndMap(id: Types.ObjectId) {
     const post = await postCollection.findById(id);
@@ -46,8 +47,8 @@ export const postsRepository = {
   },
   async put(post: PostInputModel, id: Types.ObjectId) {
     try {
-      await postCollection.findByIdAndUpdate(id, { ...post });
-      return true
+      const res = await postCollection.findByIdAndUpdate(id, { ...post });
+      return !!res?._id
     } catch (error) {
       return false
     }
@@ -60,6 +61,7 @@ export const postsRepository = {
       content: post.content,
       blogId: post.blogId,
       blogName: post.blogName,
+      createdAt: post.createdAt
     }
     return postForOutput
   },
