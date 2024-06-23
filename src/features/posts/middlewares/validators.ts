@@ -33,25 +33,6 @@ export const blogIdValidator = body('blogId').isString().trim().withMessage('not
   return true
 })
 
-export const findPostValidator = async (req: Request<{ id: string }, PostInputModel>, res: Response, next: NextFunction) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    res
-      .status(404)
-      .json({})
-    return;
-  }
-  const post = await postCollection.findById(req.params.id)
-  if (!post?._id) {
-
-    res
-      .status(404)
-      .json({})
-    return
-  }
-
-  next()
-}
-
 
 export const postCreateValidators = [
   titleValidator,
