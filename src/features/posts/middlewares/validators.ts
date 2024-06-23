@@ -23,12 +23,15 @@ export const contentValidator = body('content').isString().withMessage('not stri
 
 export const blogIdValidator = body('blogId').isString().trim().withMessage('not string').isLength({ min: 1, max: 500 }).withMessage('no blog').custom( async value => {
   if (!mongoose.Types.ObjectId.isValid(value)) {
-    return Promise.reject('blog not found');
+    throw new Error('blog not found')
+    // return Promise.reject('blog not found');
   }
   const id = new mongoose.Types.ObjectId(value)
   const blog = await blogCollection.findById(id)
   if (!blog?._id) {
-    return Promise.reject('blog not found');
+    // return Promise.reject('blog not found');
+    throw new Error('blog not found')
+
   }
   return true
 })
