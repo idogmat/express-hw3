@@ -43,7 +43,7 @@ describe('/posts', () => {
         expect(res.body.blogName).toEqual(dataset1.blogs[0].name)
         expect(typeof res.body.id).toEqual('string')
 
-        expect(res.body).toEqual({...newPost, id: expect.any(String) })
+        expect(res.body).toEqual({...newPost, id: expect.any(String), createdAt: expect.any(String) })
     })
     it('shouldn\'t create 401', async () => {
         const blog = await addBlog(newBlog)
@@ -130,7 +130,7 @@ describe('/posts', () => {
 
         // console.log(res.body)
 
-        expect(res.body).toEqual(post.body)
+        expect(res.body).toEqual({...post.body, createdAt: expect.any(String)})
     })
     it('should del', async () => {
       const blog = await addBlog(newBlog)
@@ -187,7 +187,7 @@ describe('/posts', () => {
             .expect(200)
         // console.log(res.body)
 
-        expect(res.body).toEqual({...post.body, ...updatePost, id: expect.any(String)})
+        expect(res.body).toEqual({...post.body, ...updatePost, id: expect.any(String), createdAt: expect.any(String)})
     })
     it('shouldn\'t update 404', async () => {
         const post: PostInputModel = {

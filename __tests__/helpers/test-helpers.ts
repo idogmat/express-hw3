@@ -14,6 +14,7 @@ export const newPost: PostInputModel = {
   content: 'c1',
   blogId: '',
   blogName: '',
+  createdAt: new Date()
 }
 
 export const newBlog: BlogInputModel = {
