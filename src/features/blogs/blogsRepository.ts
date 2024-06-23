@@ -24,7 +24,7 @@ export const blogsRepository = {
       if (blog) {
         return this.map(blog);
       }
-      return {}
+      return false
     },
     async findAndMap(id: mongoose.Types.ObjectId) {
         const blog = await blogCollection.findById(id);

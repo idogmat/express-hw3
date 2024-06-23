@@ -23,10 +23,10 @@ export const postsRepository = {
   },
   async find(id: Types.ObjectId) {
     const post = await postCollection.findById(id)
-    if (post) {
+    if (post?.id) {
       return this.map(post);
     }
-    return {}
+    return false
   },
   async findAndMap(id: Types.ObjectId) {
     const post = await postCollection.findById(id);
