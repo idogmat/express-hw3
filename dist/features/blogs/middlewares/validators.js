@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogCreateValidators = exports.findBlogValidator = exports.websiteUrlValidator = exports.descriptionValidator = exports.nameValidator = void 0;
 const express_validator_1 = require("express-validator");
 const inputCheckErrorsMiddleware_1 = require("../../../global-middlewares/inputCheckErrorsMiddleware");
-const app_1 = require("../../../app");
 const mongoose_1 = __importDefault(require("mongoose"));
+const db_1 = require("../../../db/db");
 // name: string // max 15
 // description: string // max 500
 // websiteUrl: string // max 100 ^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$
@@ -28,7 +28,7 @@ const findBlogValidator = (req, res, next) => {
             .json({});
         return;
     }
-    const blog = app_1.blogCollection.findById(req.params.id);
+    const blog = db_1.blogCollection.findById(req.params.id);
     if (!blog) {
         res
             .status(404)

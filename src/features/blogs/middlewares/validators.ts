@@ -1,8 +1,8 @@
 import {body} from 'express-validator'
 import {inputCheckErrorsMiddleware} from '../../../global-middlewares/inputCheckErrorsMiddleware'
 import {NextFunction, Request, Response} from 'express'
-import { blogCollection } from '../../../app'
 import mongoose from 'mongoose'
+import { blogCollection } from '../../../db/db'
 
 // name: string // max 15
 // description: string // max 500

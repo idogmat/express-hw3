@@ -18,25 +18,6 @@ export const connectDb = async () => {
   }
 }
 
-export const BlogSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String, required: true },
-  websiteUrl: { type: String, required: true },
-})
-
-export const PostSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-  shortDescription: { type: String, required: true },
-  blogId: { type: String, required: true },
-  blogName: { type: String, required: false },
-})
-
-export const blogCollection = mongoose.model('Blog', BlogSchema)
-export const postCollection = mongoose.model('Post', PostSchema)
-
-
-
 export const app = express() // создать приложение
 app.use(express.json()) // создание свойств-объектов body и query во всех реквестах
 app.use(cors()) // разрешить любым фронтам делать запросы на наш бэк

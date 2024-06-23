@@ -4,5 +4,5 @@ import {blogsRepository} from '../blogsRepository'
 
 export const getBlogsController = async (req: Request, res: Response<BlogViewModel[]>) => {
   const data = await blogsRepository.getAll();
-  res.status(200).json(data as any)
+  res.status(200).json(data)
 }

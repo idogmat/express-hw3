@@ -24,7 +24,7 @@ describe('/posts', () => {
             title: 't1',
             shortDescription: 's1',
             content: 'c1',
-            blogId: blog.body._id,
+            blogId: blog.body.id,
             blogName: blog.body.name,
         }
 
@@ -41,9 +41,9 @@ describe('/posts', () => {
         expect(res.body.content).toEqual(newPost.content)
         expect(res.body.blogId).toEqual(newPost.blogId)
         expect(res.body.blogName).toEqual(dataset1.blogs[0].name)
-        expect(typeof res.body._id).toEqual('string')
+        expect(typeof res.body.id).toEqual('string')
 
-        expect(res.body).toEqual({...newPost, _id: expect.any(String), __v: 0 })
+        expect(res.body).toEqual({...newPost, id: expect.any(String) })
     })
     it('shouldn\'t create 401', async () => {
         const blog = await addBlog(newBlog)
@@ -51,7 +51,7 @@ describe('/posts', () => {
           title: 't1',
           shortDescription: 's1',
           content: 'c1',
-          blogId: blog.body._id,
+          blogId: blog.body.id,
           blogName: blog.body.name,
         }
 
@@ -101,8 +101,8 @@ describe('/posts', () => {
     })
     it('should get not empty array', async () => {
         const blog = await addBlog(newBlog)
-        const post = await addPost(blog.body._id, newPost);
-        const post2 = await addPost(blog.body._id, newPost);
+        const post = await addPost(blog.body.id, newPost);
+        const post2 = await addPost(blog.body.id, newPost);
         const res = await req
             .get(SETTINGS.PATH.POSTS)
             .set({'Authorization': 'Basic ' + codedAuth})
@@ -121,10 +121,10 @@ describe('/posts', () => {
     })
     it('should find', async () => {
       const blog = await addBlog(newBlog)
-      const post = await addPost(blog.body._id, newPost);
+      const post = await addPost(blog.body.id, newPost);
 
         const res = await req
-            .get(SETTINGS.PATH.POSTS + '/' + post.body._id)
+            .get(SETTINGS.PATH.POSTS + '/' + post.body.id)
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(200) // проверка на ошибку
 
@@ -134,10 +134,10 @@ describe('/posts', () => {
     })
     it('should del', async () => {
       const blog = await addBlog(newBlog)
-      const post = await addPost(blog.body._id, newPost);
+      const post = await addPost(blog.body.id, newPost);
 
         await req
-            .delete(SETTINGS.PATH.POSTS + '/' + post.body._id)
+            .delete(SETTINGS.PATH.POSTS + '/' + post.body.id)
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(204) // проверка на ошибку
 
@@ -150,7 +150,7 @@ describe('/posts', () => {
     })
     it('shouldn\'t del', async () => {
       const blog = await addBlog(newBlog)
-      const post = await addPost(blog.body._id, newPost);
+      const post = await addPost(blog.body.id, newPost);
 
         const res = await req
             .delete(SETTINGS.PATH.POSTS + '/1')
@@ -166,28 +166,28 @@ describe('/posts', () => {
     })
     it('should update', async () => {
       const blog = await addBlog(newBlog)
-      const post = await addPost(blog.body._id, newPost);
+      const post = await addPost(blog.body.id, newPost);
         const updatePost: PostInputModel = {
             title: 't2sdfdsf',
             shortDescription: 's2sdfdsf',
             content: 'c2sdfdsf',
-            blogId: blog.body._id,
+            blogId: blog.body.id,
         }
 
         await req
-            .put(SETTINGS.PATH.POSTS + '/' + post.body._id)
+            .put(SETTINGS.PATH.POSTS + '/' + post.body.id)
             .set({'Authorization': 'Basic ' + codedAuth})
             .send(updatePost)
             .expect(204) // проверка на ошибку
 
 
         const res = await req
-            .get(SETTINGS.PATH.POSTS + '/' + post.body._id)
+            .get(SETTINGS.PATH.POSTS + '/' + post.body.id)
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(200)
         // console.log(res.body)
 
-        expect(res.body).toEqual({...post.body, ...updatePost, _id: expect.any(String), __v: 0 })
+        expect(res.body).toEqual({...post.body, ...updatePost, id: expect.any(String)})
     })
     it('shouldn\'t update 404', async () => {
         const post: PostInputModel = {
@@ -214,11 +214,11 @@ describe('/posts', () => {
             blogId: '',
         }
 
-        const post = await addPost(blog.body._id, newPost);
+        const post = await addPost(blog.body.id, newPost);
 
 
         const res = await req
-            .put(SETTINGS.PATH.POSTS + '/' + post.body._id)
+            .put(SETTINGS.PATH.POSTS + '/' + post.body.id)
             .set({'Authorization': 'Basic ' + codedAuth})
             .send(newPPost)
             .expect(400) // проверка на ошибку
@@ -233,7 +233,7 @@ describe('/posts', () => {
     })
     it('shouldn\'t update 401', async () => {
       const blog = await addBlog(newBlog)
-      const post = await addPost(blog.body._id, newPost);
+      const post = await addPost(blog.body.id, newPost);
         const newPPost: PostInputModel = {
             title: createString(31),
             content: createString(1001),
@@ -242,13 +242,13 @@ describe('/posts', () => {
         }
 
         await req
-            .put(SETTINGS.PATH.POSTS + '/' + post.body._id)
+            .put(SETTINGS.PATH.POSTS + '/' + post.body.id)
             .send(newPPost)
             .expect(401) // проверка на ошибку
 
         // console.log(res.body)
         await req
-        .get(SETTINGS.PATH.POSTS + '/' + post.body._id)
+        .get(SETTINGS.PATH.POSTS + '/' + post.body.id)
         .set({'Authorization': 'Basic ' + codedAuth})
         .expect(200, post.body)
     })

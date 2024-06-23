@@ -1,24 +1,24 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setDB = exports.db = void 0;
-exports.db = {
-    blogs: [],
-    posts: [],
-    // some: []
-};
-// функция для быстрой очистки/заполнения базы данных для тестов
-const setDB = (dataset) => {
-    var _a, _b;
-    if (!dataset) { // если в функцию ничего не передано - то очищаем базу данных
-        exports.db.blogs = [];
-        exports.db.posts = [];
-        // db.some = []
-        return;
-    }
-    // если что-то передано - то заменяем старые значения новыми,
-    // не ссылки - а глубокое копирование, чтобы не изменять dataset
-    exports.db.blogs = ((_a = dataset.blogs) === null || _a === void 0 ? void 0 : _a.map(b => (Object.assign({}, b)))) || exports.db.blogs;
-    exports.db.posts = ((_b = dataset.posts) === null || _b === void 0 ? void 0 : _b.map(p => (Object.assign({}, p)))) || exports.db.posts;
-    // db.some = dataset.some?.map(s => ({...s})) || db.some
-};
-exports.setDB = setDB;
+exports.postCollection = exports.blogCollection = exports.PostSchema = exports.BlogSchema = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
+exports.BlogSchema = new mongoose_1.default.Schema({
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    websiteUrl: { type: String, required: true },
+    createdAt: { type: Date, required: false },
+    isMembership: { type: Boolean, required: false }
+});
+exports.PostSchema = new mongoose_1.default.Schema({
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    shortDescription: { type: String, required: true },
+    blogId: { type: String, required: true },
+    blogName: { type: String, required: false },
+    createdAt: { type: Date, required: false },
+});
+exports.blogCollection = mongoose_1.default.model('Blog', exports.BlogSchema);
+exports.postCollection = mongoose_1.default.model('Post', exports.PostSchema);

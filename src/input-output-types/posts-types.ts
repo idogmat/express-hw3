@@ -1,3 +1,5 @@
+import mongoose from "mongoose"
+
 export type PostInputModel = {
     title: string // max 30
     shortDescription: string // max 100
@@ -7,10 +9,10 @@ export type PostInputModel = {
 }
 
 export type PostViewModel = {
-    id: string
+    id: mongoose.Types.ObjectId
     title: string // max 30
     shortDescription: string // max 100
     content: string // max 1000
     blogId: string // valid
-    blogName?: string
+    blogName: string
 }

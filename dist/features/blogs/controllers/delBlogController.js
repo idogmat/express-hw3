@@ -8,11 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.delBlogController = void 0;
 const blogsRepository_1 = require("../blogsRepository");
+const mongoose_1 = __importDefault(require("mongoose"));
 const delBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield blogsRepository_1.blogsRepository.del(req.params.id);
+    const id = new mongoose_1.default.Types.ObjectId(req.params.id);
+    const result = yield blogsRepository_1.blogsRepository.del(id);
     if (result)
         res.sendStatus(204);
     else

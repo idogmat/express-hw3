@@ -20,6 +20,7 @@ export const newBlog: BlogInputModel = {
   name: 'n1',
   description: 'd1',
   websiteUrl: 'http://some.com',
+  createdAt: new Date()
 }
 
 type PostType = PostInputModel & {_id: string; __v: number}
