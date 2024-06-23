@@ -4,7 +4,7 @@ import { getPostsController } from './controllers/getPostsController'
 import { findPostController } from './controllers/findPostController'
 import { delPostController } from './controllers/delPostController'
 import { putPostController } from './controllers/putPostController'
-import { blogIdValidator, postCreateValidators, putUpdateValidators } from './middlewares/validators'
+import { blogIdValidator, findPostValidator, postCreateValidators, putUpdateValidators } from './middlewares/validators'
 import { adminMiddleware } from '../../global-middlewares/admin-middleware'
 import { inputCheckErrorsMiddleware, inputCheckErrorsMiddlewareParms } from '../../global-middlewares/inputCheckErrorsMiddleware'
 
@@ -16,8 +16,8 @@ postsRouter.post('/',
   createPostController);
 
 postsRouter.get('/', getPostsController)
-postsRouter.get('/:id', blogIdValidator, findPostController)
-postsRouter.delete('/:id', adminMiddleware, blogIdValidator, delPostController)
+postsRouter.get('/:id', blogIdValidator,findPostValidator, findPostController)
+postsRouter.delete('/:id', adminMiddleware, blogIdValidator,findPostValidator, delPostController)
 postsRouter.put('/:id', adminMiddleware, ...putUpdateValidators, putPostController)
 
 // не забудьте добавить роут в апп
