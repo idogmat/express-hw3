@@ -33,6 +33,25 @@ export const blogIdValidator = body('blogId').isString().trim().withMessage('not
   return true
 })
 
+export const findPostValidator = (req: Request<{id: string}>, res: Response, next: NextFunction) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res
+      .status(404)
+      .json({})
+    return;
+  }
+  const id = new mongoose.Types.ObjectId(req.params.id)
+  const post = postCollection.findById(id)
+  if (!post) {
+    res
+      .status(404)
+      .json({})
+    return;
+  }
+
+  next()
+}
+
 
 export const postCreateValidators = [
   titleValidator,
@@ -47,5 +66,6 @@ export const putUpdateValidators = [
   shortDescriptionValidator,
   contentValidator,
   blogIdValidator,
+  findPostValidator,
   inputCheckErrorsMiddleware,
 ]
