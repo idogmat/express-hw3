@@ -47,8 +47,8 @@ export const postsRepository = {
   },
   async put(post: PostInputModel, id: Types.ObjectId) {
     try {
-      await postCollection.findByIdAndUpdate(id, { ...post });
-      return true
+      const res = await postCollection.findByIdAndUpdate(id, { ...post });
+      return !!res?._id
     } catch (error) {
       return false
     }

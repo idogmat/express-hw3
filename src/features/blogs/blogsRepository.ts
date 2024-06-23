@@ -45,8 +45,8 @@ export const blogsRepository = {
     },
     async put(blog: BlogInputModel, id: mongoose.Types.ObjectId) {
       try {
-        await blogCollection.findByIdAndUpdate(id, {...blog});
-        return true
+        const res = await blogCollection.findByIdAndUpdate(id, {...blog});
+        return !!res?._id
       } catch (error) {
         return false
       }
