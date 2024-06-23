@@ -21,26 +21,17 @@ export const shortDescriptionValidator = body('shortDescription').isString().wit
 export const contentValidator = body('content').isString().withMessage('not string')
   .trim().isLength({ min: 1, max: 1000 }).withMessage('more then 1000 or 0')
 
-export const blogIdValidator = body('blogId').isString().trim().withMessage('not string').isLength({ min: 1, max: 500 }).withMessage('no blog')
-
-export const blogIdCheckIncludes = async (req: Request<{ id: string }, PostInputModel>, res: Response, next: NextFunction) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.blogId)) {
-    res
-      .status(404)
-      .json({})
-    return;
+export const blogIdValidator = body('blogId').isString().trim().withMessage('not string').isLength({ min: 1, max: 500 }).withMessage('no blog').custom( async value => {
+  if (!mongoose.Types.ObjectId.isValid(value)) {
+    return Promise.reject('blog not found');
   }
-  const blog = await blogCollection.findById(req.body.blogId)
+  const id = new mongoose.Types.ObjectId(value)
+  const blog = await blogCollection.findById(id)
   if (!blog?._id) {
-
-    res
-      .status(404)
-      .json({})
-    return
+    return Promise.reject('blog not found');
   }
-
-  next()
-}
+  return true
+})
 
 export const findPostValidator = async (req: Request<{ id: string }, PostInputModel>, res: Response, next: NextFunction) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
