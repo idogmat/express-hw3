@@ -8,11 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findPostController = void 0;
 const postsRepository_1 = require("../postsRepository");
+const mongoose_1 = __importDefault(require("mongoose"));
 const findPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = yield postsRepository_1.postsRepository.find(req.params.id);
+    const id = new mongoose_1.default.Types.ObjectId(req.params.id);
+    const data = yield postsRepository_1.postsRepository.find(id);
     res.status(200).json(data);
 });
 exports.findPostController = findPostController;

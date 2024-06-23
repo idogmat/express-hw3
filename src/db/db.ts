@@ -1,35 +1,39 @@
-import {BlogDbType} from './blog-db-type'
-import {PostDbType} from './post-db-type'
+import mongoose, { Model } from "mongoose";
 
-export type DBType = { // типизация базы данных (что мы будем в ней хранить)
-    blogs: BlogDbType[]
-    posts: PostDbType[]
-    // some: any[]
-}
-export type ReadonlyDBType = { // тип для dataset
-    blogs: Readonly<BlogDbType[]>
-    posts: Readonly<PostDbType[]>
-    // some: any[]
-}
+export type PostTypeBD = {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  content: string;
+  shortDescription: string;
+  blogId: string;
+  blogName: string;
+  createdAt: Date;
+};
 
-export const db: DBType = { // создаём базу данных (пока это просто переменная)
-    blogs: [],
-    posts: [],
-    // some: []
-}
+export type BlogTypeBD = {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  description: string;
+  websiteUrl: string;
+  createdAt: Date;
+  isMembership: boolean;
+};
+export const BlogSchema = new mongoose.Schema<BlogTypeBD, Model<BlogTypeBD>>({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  websiteUrl: { type: String, required: true },
+  createdAt: { type: Date, required: false },
+  isMembership: { type: Boolean, required: false }
+})
 
-// функция для быстрой очистки/заполнения базы данных для тестов
-export const setDB = (dataset?: Partial<ReadonlyDBType>) => {
-    if (!dataset) { // если в функцию ничего не передано - то очищаем базу данных
-        db.blogs = []
-        db.posts = []
-        // db.some = []
-        return
-    }
+export const PostSchema = new mongoose.Schema<PostTypeBD, Model<PostTypeBD>>({
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  shortDescription: { type: String, required: true },
+  blogId: { type: String, required: true },
+  blogName: { type: String, required: false },
+  createdAt: { type: Date, required: false },
+})
 
-    // если что-то передано - то заменяем старые значения новыми,
-    // не ссылки - а глубокое копирование, чтобы не изменять dataset
-    db.blogs = dataset.blogs?.map(b => ({...b})) || db.blogs
-    db.posts = dataset.posts?.map(p => ({...p})) || db.posts
-    // db.some = dataset.some?.map(s => ({...s})) || db.some
-}
+export const blogCollection = mongoose.model('Blog', BlogSchema)
+export const postCollection = mongoose.model('Post', PostSchema)

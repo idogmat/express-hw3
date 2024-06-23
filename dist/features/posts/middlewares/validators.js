@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.putUpdateValidators = exports.postCreateValidators = exports.findPostValidator = exports.blogIdCheckIncludes = exports.blogIdValidator = exports.contentValidator = exports.shortDescriptionValidator = exports.titleValidator = void 0;
 const express_validator_1 = require("express-validator");
 const inputCheckErrorsMiddleware_1 = require("../../../global-middlewares/inputCheckErrorsMiddleware");
-const app_1 = require("../../../app");
 const mongoose_1 = __importDefault(require("mongoose"));
+const db_1 = require("../../../db/db");
 // title: string // max 30
 // shortDescription: string // max 100
 // content: string // max 1000
@@ -36,8 +36,8 @@ const blogIdCheckIncludes = (req, res, next) => __awaiter(void 0, void 0, void 0
             .json({});
         return;
     }
-    const blog = yield app_1.blogCollection.findById(req.body.blogId);
-    if (!blog) {
+    const blog = yield db_1.blogCollection.findById(req.body.blogId);
+    if (!(blog === null || blog === void 0 ? void 0 : blog._id)) {
         res
             .status(404)
             .json({});
@@ -53,8 +53,8 @@ const findPostValidator = (req, res, next) => __awaiter(void 0, void 0, void 0, 
             .json({});
         return;
     }
-    const post = yield app_1.postCollection.findById(req.params.id);
-    if (!post) {
+    const post = yield db_1.postCollection.findById(req.params.id);
+    if (!(post === null || post === void 0 ? void 0 : post._id)) {
         res
             .status(404)
             .json({});
@@ -69,7 +69,6 @@ exports.postCreateValidators = [
     exports.contentValidator,
     exports.blogIdValidator,
     inputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware,
-    exports.blogIdCheckIncludes,
 ];
 exports.putUpdateValidators = [
     exports.titleValidator,
