@@ -15,9 +15,9 @@ postsRouter.post('/',
   ...postCreateValidators,
   createPostController);
 
-postsRouter.get('/', inputCheckErrorsMiddleware, getPostsController)
-postsRouter.get('/:id', blogIdValidator, findPostController)
-postsRouter.delete('/:id', adminMiddleware, blogIdValidator, delPostController)
-postsRouter.put('/:id', adminMiddleware, ...putUpdateValidators, blogIdValidator, putPostController)
+postsRouter.get('/', getPostsController)
+postsRouter.get('/:id', blogIdValidator, inputCheckErrorsMiddleware, findPostController)
+postsRouter.delete('/:id', adminMiddleware, blogIdValidator, inputCheckErrorsMiddleware, delPostController)
+postsRouter.put('/:id', adminMiddleware, ...putUpdateValidators, blogIdValidator, inputCheckErrorsMiddleware, putPostController)
 
 // не забудьте добавить роут в апп
