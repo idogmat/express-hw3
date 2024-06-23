@@ -23,3 +23,19 @@ export const inputCheckErrorsMiddleware = (req: Request, res: Response<OutputErr
 
   next()
 }
+
+export const inputCheckErrorsMiddlewareParms = (req: Request, res: Response<OutputErrorsType>, next: NextFunction) => {
+  const e = validationResult(req)
+  if (!e.isEmpty()) {
+    const eArray = e.array({ onlyFirstError: true }) as { path: FieldNamesType, msg: string }[]
+    console.log(eArray)
+    res
+      .status(404)
+      .json({
+        errorsMessages: eArray.map(x => ({ field: x.path, message: x.msg }))
+      })
+    return
+  }
+
+  next()
+}
