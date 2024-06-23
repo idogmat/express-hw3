@@ -8,7 +8,7 @@ export const inputCheckErrorsMiddleware = (req: Request, res: Response<OutputErr
     const eArray = e.array({ onlyFirstError: true }) as { path: FieldNamesType, msg: string }[]
     console.log(eArray)
 
-    if ((eArray as any).find((e: any) => e?.path === 'id')) {
+    if ((eArray as any).find((e: any) => e?.path === 'id' || e?.path === 'blogId')) {
       res.sendStatus(404);
       return;
     }
