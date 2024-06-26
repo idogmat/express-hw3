@@ -4,8 +4,8 @@ import {blogsRepository} from '../blogsRepository'
 
 export const createBlogController = async (req: Request<{}, {}, BlogInputModel>, res: Response<BlogViewModel>) => {
     const newBlogId = await blogsRepository.create(req.body)
-    const newBlog =  await blogsRepository.findAndMap(newBlogId)    
-    res
-        .status(201)
-        .json(newBlog as any)
+    const newBlog =  await blogsRepository.findAndMap(newBlogId)
+    newBlog 
+    ? res.status(201).json(newBlog) 
+    : res.sendStatus(400)
 }

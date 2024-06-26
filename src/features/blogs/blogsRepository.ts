@@ -1,7 +1,10 @@
 import mongoose from 'mongoose'
 import {BlogDbType} from '../../db/blog-db-type'
-import {BlogInputModel, BlogViewModel} from '../../input-output-types/blogs-types'
-import { BlogTypeBD, blogCollection } from '../../db/db';
+import {BlogInputModel, BlogViewModel, IBlogViewModelAfterQuery} from '../../input-output-types/blogs-types'
+import { BlogTypeBD, blogCollection, postCollection } from '../../db/db';
+import { INormolizedQuery, IQueryBlogsFilterTypeBD } from '../../utils/query-helper';
+import { postsRepository } from '../posts/postsRepository';
+import { PostInputModel } from '../../input-output-types/posts-types';
 
 export const blogsRepository = {
     async create(blog: BlogInputModel) {
@@ -31,11 +34,68 @@ export const blogsRepository = {
         if (blog) {
           return this.map(blog);
         }
-        return {}
+        return false
     },
-    async getAll() {
-      const blogs = await blogCollection.find();
-      return blogs.map(b => this.map(b));
+    async getPostsInBlog(blogId: mongoose.Types.ObjectId, query: INormolizedQuery) {
+      const blog = await blogCollection.findById(blogId)
+      if (!blog) {
+        return false;
+      }
+      const totalCount = await postCollection
+      .find({blogId: blogId})
+      .countDocuments()
+
+      const posts = await postCollection
+      .find({blogId: blogId})
+      .sort({[query.sortBy]: query.sortDirection})
+      .skip((query.pageNumber - 1) * query.pageSize)
+      .limit(query.pageSize)
+
+      const queryForMap = {
+        pagesCount: Math.ceil(totalCount / query.pageSize),
+        page: query.pageNumber,
+        pageSize: query.pageSize,
+        totalCount,
+        items: posts
+      }
+      return postsRepository.mapAfterQuery(queryForMap)
+    },
+    async postPostsInBlog(blogId: mongoose.Types.ObjectId, post: PostInputModel) {
+      const blog = await blogCollection.findById(blogId)
+      if (!blog?.name) return false;
+      const newPost: PostInputModel = {
+        title: post.title,
+        content: post.content,
+        shortDescription: post.shortDescription,
+        blogId: blogId.toString(),
+        createdAt: new Date(),
+        blogName: blog.name,
+      };
+      const model = await new postCollection({
+        _id: new mongoose.Types.ObjectId(),
+        ...newPost
+      });
+      const result = await model.save();
+      return postsRepository.map(result);
+    },
+    async getAll(query: INormolizedQuery) {
+      const totalCount = await blogCollection
+      .find({name: {$regex: query.searchNameTerm || '', $options: 'i'}})
+      .countDocuments()
+
+      const blogs = await blogCollection
+      .find({name: {$regex: query.searchNameTerm || '', $options: 'i'}})
+      .sort({[query.sortBy]: query.sortDirection})
+      .skip((query.pageNumber - 1) * query.pageSize)
+      .limit(query.pageSize)
+      const queryForMap = {
+        pagesCount: Math.ceil(totalCount / query.pageSize),
+        page: query.pageNumber,
+        pageSize: query.pageSize,
+        totalCount,
+        items: blogs
+      }
+      return this.mapAfterQuery(queryForMap);
     },
     async del(id: mongoose.Types.ObjectId) {
       const blog = await blogCollection.findById(id);
@@ -62,4 +122,11 @@ export const blogsRepository = {
         }
         return blogForOutput
     },
+    mapAfterQuery(blogs: IQueryBlogsFilterTypeBD) {
+      const blogForOutput: IBlogViewModelAfterQuery = {
+        ...blogs,
+        items: blogs.items.map(b => this.map(b)) 
+      }
+      return blogForOutput
+  },
 }

@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import { FieldNamesType, OutputErrorsType } from '../input-output-types/output-errors-type'
 
-export const inputCheckErrorsMiddleware = (req: Request, res: Response<OutputErrorsType>, next: NextFunction) => {
+export const inputCheckErrorsMiddleware = (req: Request<any,any,any,any>, res: Response<OutputErrorsType>, next: NextFunction) => {
   const e = validationResult(req)
   if (!e.isEmpty()) {
     const eArray = e.array({ onlyFirstError: true }) as { path: FieldNamesType, msg: string }[]
@@ -24,7 +24,7 @@ export const inputCheckErrorsMiddleware = (req: Request, res: Response<OutputErr
   next()
 }
 
-export const inputCheckErrorsMiddlewareParms = (req: Request, res: Response<OutputErrorsType>, next: NextFunction) => {
+export const inputCheckErrorsMiddlewareParms = (req: Request<any,any,any,any>, res: Response<OutputErrorsType>, next: NextFunction) => {
   const e = validationResult(req)
   if (!e.isEmpty()) {
     const eArray = e.array({ onlyFirstError: true }) as { path: FieldNamesType, msg: string }[]

@@ -2,7 +2,7 @@ import {Response, Request} from 'express'
 import {PostInputModel, PostViewModel} from '../../../input-output-types/posts-types'
 import {postsRepository} from '../postsRepository'
 
-export const createPostController =async (req: Request<any, any, PostInputModel>, res: Response<PostViewModel>) => {
+export const createPostController =async (req: Request<any, any, PostInputModel>, res: Response<PostViewModel | unknown>) => {
     const newPostId = await postsRepository.create(req.body)
     if (!newPostId) {
       res.sendStatus(400);
@@ -12,5 +12,5 @@ export const createPostController =async (req: Request<any, any, PostInputModel>
     
     res
         .status(201)
-        .json(newPost as any)
+        .json(newPost)
 }
