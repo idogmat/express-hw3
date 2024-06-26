@@ -26,8 +26,7 @@ export const blogIdParamsValidator = param('id').isString().trim().withMessage('
   if (!mongoose.Types.ObjectId.isValid(value)) {
     return Promise.reject('id not found');
   }
-  const id = new mongoose.Types.ObjectId(value)
-  const blog = await blogCollection.findById(id)
+  const blog = await blogCollection.findById(value)
   if (!blog?._id) {
     return Promise.reject('id not found');
   }

@@ -1,6 +1,8 @@
 import { PostInputModel, PostViewModel } from '../../input-output-types/posts-types'
 import mongoose, { Types } from 'mongoose'
 import { PostTypeBD, blogCollection, postCollection } from '../../db/db'
+import { IBlogWithPostsViewModelAfterQuery } from '../../input-output-types/blogs-types'
+import { INormolizedQuery, IQueryBlogWithPostsFilterTypeBD } from '../../utils/query-helper'
 
 export const postsRepository = {
   async create(post: PostInputModel) {
@@ -33,11 +35,26 @@ export const postsRepository = {
     if (post) {
       return this.map(post);
     }
-    return {}
+    return false
   },
-  async getAll() {
-    const posts = await postCollection.find();
-    return posts.map(p => this.map(p));
+  async getAll(query: INormolizedQuery) {
+    const totalCount = await postCollection
+    .find().countDocuments()
+
+    const posts = await postCollection
+    .find()
+    .sort({[query.sortBy]: query.sortDirection})
+    .skip((query.pageNumber - 1) * query.pageSize)
+    .limit(query.pageSize)
+
+    const queryForMap = {
+      pagesCount: Math.ceil(totalCount / query.pageSize),
+      page: query.pageNumber,
+      pageSize: query.pageSize,
+      totalCount,
+      items: posts
+    }
+    return postsRepository.mapAfterQuery(queryForMap)
   },
   async del(id: Types.ObjectId) {
     const post = await postCollection.findById(id);
@@ -65,4 +82,11 @@ export const postsRepository = {
     }
     return postForOutput
   },
+  mapAfterQuery(blogs: IQueryBlogWithPostsFilterTypeBD) {
+    const blogWithPostsForOutput: IBlogWithPostsViewModelAfterQuery = {
+      ...blogs,
+      items: blogs.items.map(b => this.map(b)) 
+    }
+    return blogWithPostsForOutput
+},
 }
