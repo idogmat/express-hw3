@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { BlogTypeBD, PostTypeBD } from "../db/db";
+import { ObjectId } from "mongodb";
 
 export interface IQuery {
   searchNameTerm?: string;
@@ -39,8 +40,8 @@ export interface IQueryBlogWithPostsFilterTypeBD {
   items: PostTypeBD[]
 }
 
-export const isValidObjectId = (id: any): false | mongoose.Types.ObjectId => {
-  return mongoose.Types.ObjectId.isValid(id) ? id : false;
+export const isValidObjectId = (id: any): false | ObjectId => {
+  return ObjectId.isValid(id) ? id : false;
 }
 
 export const normolizedQuery = (query: IQuery) => Object.keys(query).reduce<INormolizedQuery>((acc, queryKey) => {

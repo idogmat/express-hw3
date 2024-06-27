@@ -1,7 +1,11 @@
 import mongoose, { Model } from "mongoose";
+import { client } from "../app";
+import { ObjectId } from "mongodb";
+
+
 
 export type PostTypeBD = {
-  _id: mongoose.Types.ObjectId;
+  _id: ObjectId;
   title: string;
   content: string;
   shortDescription: string;
@@ -11,7 +15,7 @@ export type PostTypeBD = {
 };
 
 export type BlogTypeBD = {
-  _id: mongoose.Types.ObjectId;
+  _id: ObjectId;
   name: string;
   description: string;
   websiteUrl: string;
@@ -35,5 +39,8 @@ export const PostSchema = new mongoose.Schema<PostTypeBD, Model<PostTypeBD>>({
   createdAt: { type: Date, required: false },
 })
 
-export const blogCollection = mongoose.model('Blog', BlogSchema)
-export const postCollection = mongoose.model('Post', PostSchema)
+// const db = client.db('blogs')
+// export const blogCollection = client.db('blogs').collection('Blog')
+// export const postCollection = client.db('blogs').collection('Post')
+
+

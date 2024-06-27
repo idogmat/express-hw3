@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'
-import { IBlogWithPostsViewModelAfterQuery } from '../../../input-output-types/blogs-types'
 import { blogsRepository } from '../blogsRepository'
 import { isValidObjectId } from '../../../utils/query-helper'
-import mongoose from 'mongoose'
 import { PostInputModel, PostViewModel } from '../../../input-output-types/posts-types'
+import { ObjectId } from 'mongodb'
 
 interface IBlogId {
-  id: mongoose.Types.ObjectId | string
+  id: ObjectId | string
 }
 
 export const postPostsInBlogController = async (req: Request<IBlogId, {}, PostInputModel>, res: Response<PostViewModel>) => {

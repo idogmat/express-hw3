@@ -1,49 +1,46 @@
 import mongoose from 'mongoose'
 import {BlogDbType} from '../../db/blog-db-type'
 import {BlogInputModel, BlogViewModel, IBlogViewModelAfterQuery} from '../../input-output-types/blogs-types'
-import { BlogTypeBD, blogCollection, postCollection } from '../../db/db';
-import { INormolizedQuery, IQueryBlogsFilterTypeBD } from '../../utils/query-helper';
+import { INormolizedQuery, IQueryBlogWithPostsFilterTypeBD, IQueryBlogsFilterTypeBD } from '../../utils/query-helper';
 import { postsRepository } from '../posts/postsRepository';
-import { PostInputModel } from '../../input-output-types/posts-types';
+import { PostInputModel, PostViewModel } from '../../input-output-types/posts-types';
+import { ObjectId } from 'mongodb';
+import { blogCollection, postCollection } from '../../app';
+import { PostTypeBD } from '../../db/db';
 
 export const blogsRepository = {
     async create(blog: BlogInputModel) {
-        const newBlog: BlogDbType = {
+        const newBlog: Partial<BlogDbType> = {
             name: blog.name,
             description: blog.description,
             websiteUrl: blog.websiteUrl,
             createdAt: new Date(),
             isMembership: false,
         };
-        const model = new blogCollection({
-          _id: new mongoose.Types.ObjectId(),
-          ...newBlog
-        });
-        const result = await model.save()
-        return result._id;
+        const result = await blogCollection.insertOne(newBlog);
+        return result.insertedId;
     },
-    async find(id: mongoose.Types.ObjectId) {
-      const blog = await blogCollection.findById(id)
+    async find(id: ObjectId) {
+      const blog = await blogCollection.findOne({_id: new ObjectId(id)})
       if (blog) {
-        return this.map(blog);
+        return this.map(blog as any);
       }
       return false
     },
-    async findAndMap(id: mongoose.Types.ObjectId) {
-        const blog = await blogCollection.findById(id);
+    async findAndMap(id: ObjectId) {
+        const blog = await blogCollection.findOne({_id: new ObjectId(id)});
         if (blog) {
-          return this.map(blog);
+          return this.map(blog as any);
         }
         return false
     },
-    async getPostsInBlog(blogId: mongoose.Types.ObjectId, query: INormolizedQuery) {
-      const blog = await blogCollection.findById(blogId)
+    async getPostsInBlog(blogId: ObjectId, query: INormolizedQuery) {
+      const blog = await blogCollection.findOne({blogId: new ObjectId(blogId)})
       if (!blog) {
         return false;
       }
       const totalCount = await postCollection
-      .find({blogId: blogId})
-      .countDocuments()
+      .find({blogId: blogId}).toArray()
 
       const posts = await postCollection
       .find({blogId: blogId})
@@ -52,16 +49,16 @@ export const blogsRepository = {
       .limit(query.pageSize)
 
       const queryForMap = {
-        pagesCount: Math.ceil(totalCount / query.pageSize),
+        pagesCount: Math.ceil(totalCount.length / query.pageSize),
         page: query.pageNumber,
         pageSize: query.pageSize,
-        totalCount,
-        items: posts
+        totalCount: totalCount.length,
+        items: posts.toArray()
       }
-      return postsRepository.mapAfterQuery(queryForMap)
+      return postsRepository.mapAfterQuery(queryForMap as any)
     },
-    async postPostsInBlog(blogId: mongoose.Types.ObjectId, post: PostInputModel) {
-      const blog = await blogCollection.findById(blogId)
+    async postPostsInBlog(blogId: ObjectId, post: PostInputModel) {
+      const blog = await blogCollection.findOne({blogId: new ObjectId(blogId)})
       if (!blog?.name) return false;
       const newPost: PostInputModel = {
         title: post.title,
@@ -71,47 +68,48 @@ export const blogsRepository = {
         createdAt: new Date(),
         blogName: blog.name,
       };
-      const model = await new postCollection({
-        _id: new mongoose.Types.ObjectId(),
-        ...newPost
-      });
-      const result = await model.save();
-      return postsRepository.map(result);
+      const result = await postCollection.insertOne(newPost);
+      result.insertedId
+      const newPostForMap = await postCollection.findOne({_id: new ObjectId(result.insertedId)})
+      if (newPostForMap?._id) {
+        return postsRepository.map(newPostForMap as any);
+      } else {
+        return false
+      }
     },
     async getAll(query: INormolizedQuery) {
       const totalCount = await blogCollection
-      .find({name: {$regex: query.searchNameTerm || '', $options: 'i'}})
-      .countDocuments()
+      .find({name: {$regex: query.searchNameTerm || '', $options: 'i'}}).toArray()
 
       const blogs = await blogCollection
       .find({name: {$regex: query.searchNameTerm || '', $options: 'i'}})
       .sort({[query.sortBy]: query.sortDirection})
       .skip((query.pageNumber - 1) * query.pageSize)
-      .limit(query.pageSize)
+      .limit(query.pageSize).toArray()
       const queryForMap = {
-        pagesCount: Math.ceil(totalCount / query.pageSize),
+        pagesCount: Math.ceil(totalCount.length / query.pageSize),
         page: query.pageNumber,
         pageSize: query.pageSize,
-        totalCount,
+        totalCount: totalCount.length,
         items: blogs
       }
       return this.mapAfterQuery(queryForMap);
     },
-    async del(id: mongoose.Types.ObjectId) {
-      const blog = await blogCollection.findById(id);
+    async del(id: ObjectId) {
+      const blog = await blogCollection.findOne({_id: new ObjectId(id)});
       if (!blog?.name) return false
       await blogCollection.deleteOne({_id: id});
       return true;
     },
-    async put(blog: BlogInputModel, id: mongoose.Types.ObjectId) {
+    async put(blog: BlogInputModel, id: ObjectId) {
       try {
-        const res = await blogCollection.findByIdAndUpdate(id, {...blog});
-        return !!res?._id
-      } catch (error) {
+        const result = await blogCollection.findOneAndUpdate({_id: new ObjectId(id)}, { $set: blog }, {returnDocument: 'after'});
+        return result
+      } catch {
         return false
       }
     },
-    map(blog: BlogTypeBD) {
+    map(blog: BlogDbType) {
         const blogForOutput: BlogViewModel = {
             id: blog._id,
             description: blog.description,
@@ -122,10 +120,10 @@ export const blogsRepository = {
         }
         return blogForOutput
     },
-    mapAfterQuery(blogs: IQueryBlogsFilterTypeBD) {
-      const blogForOutput: IBlogViewModelAfterQuery = {
+    mapAfterQuery(blogs: any) {
+      const blogForOutput: any = {
         ...blogs,
-        items: blogs.items.map(b => this.map(b)) 
+        items: blogs.items.map((b: any) => this.map(b)) 
       }
       return blogForOutput
   },

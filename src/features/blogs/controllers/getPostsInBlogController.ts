@@ -1,14 +1,13 @@
 import { Request, Response } from 'express'
-import { BlogViewModel, IBlogViewModelAfterQuery, IBlogWithPostsViewModelAfterQuery } from '../../../input-output-types/blogs-types'
 import { blogsRepository } from '../blogsRepository'
 import { IQuery, isValidObjectId, normolizedQuery } from '../../../utils/query-helper'
-import mongoose from 'mongoose'
+import { ObjectId } from 'mongodb'
 
 interface IBlogId {
-  id: mongoose.Types.ObjectId | string
+  id: ObjectId | string
 }
 
-export const getPostsInBlogController = async (req: Request<IBlogId, {}, {}, IQuery>, res: Response<IBlogWithPostsViewModelAfterQuery>) => {
+export const getPostsInBlogController = async (req: Request<IBlogId, {}, {}, IQuery>, res: Response<any>) => {
   const id = isValidObjectId(req.params.id)
   if (!id) {
     res.sendStatus(404)

@@ -8,7 +8,7 @@ export const createPostController =async (req: Request<any, any, PostInputModel>
       res.sendStatus(400);
       return;
     }
-    const newPost = await postsRepository.findAndMap(newPostId)
+    const newPost = await postsRepository.findAndMap(newPostId as any)
     
     res
         .status(201)

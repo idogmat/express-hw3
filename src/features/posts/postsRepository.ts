@@ -1,70 +1,69 @@
 import { PostInputModel, PostViewModel } from '../../input-output-types/posts-types'
-import mongoose, { Types } from 'mongoose'
-import { PostTypeBD, blogCollection, postCollection } from '../../db/db'
-import { IBlogWithPostsViewModelAfterQuery } from '../../input-output-types/blogs-types'
+import { Types } from 'mongoose'
 import { INormolizedQuery, IQueryBlogWithPostsFilterTypeBD } from '../../utils/query-helper'
+import { ObjectId } from 'mongodb'
+import { blogCollection, postCollection } from '../../app'
+import { IBlogViewModelAfterQuery, IBlogWithPostsViewModelAfterQuery } from '../../input-output-types/blogs-types'
+import { PostTypeBD } from '../../db/db'
 
 export const postsRepository = {
   async create(post: PostInputModel) {
-    const blog = await blogCollection.findById(post.blogId)
+    const blog = await blogCollection.findOne({_id: new ObjectId(post.blogId)})
     if (!blog?.name) return false;
     const newPost: PostInputModel = {
       title: post.title,
       content: post.content,
       shortDescription: post.shortDescription,
-      blogId: post.blogId,
+      blogId: new ObjectId(post.blogId) as any,
       createdAt: new Date(),
       blogName: blog.name,
     };
-    const model = await new postCollection({
-      _id: new mongoose.Types.ObjectId(),
-      ...newPost
-    });
-    const result = await model.save();
-    return result._id;
+    const result = await postCollection.insertOne(newPost);
+    console.log(result)
+    return result.insertedId
   },
-  async find(id: Types.ObjectId) {
-    const post = await postCollection.findById(id)
+  async find(id: ObjectId) {
+    const post = await postCollection.findOne({_id: new ObjectId(id)})
     if (post?.id) {
-      return this.map(post);
+      return this.map(post as any);
     }
     return false
   },
-  async findAndMap(id: Types.ObjectId) {
-    const post = await postCollection.findById(id);
-    if (post) {
-      return this.map(post);
+  async findAndMap(id: ObjectId) {
+    const post = (await postCollection.findOne({_id: new ObjectId(id)}));
+    if (post?._id) {
+      return this.map(post as any);
     }
     return false
   },
   async getAll(query: INormolizedQuery) {
     const totalCount = await postCollection
-    .find().countDocuments()
+    .find().toArray()
 
     const posts = await postCollection
-    .find()
+    .find({})
     .sort({[query.sortBy]: query.sortDirection})
     .skip((query.pageNumber - 1) * query.pageSize)
-    .limit(query.pageSize)
+    .limit(query.pageSize).toArray()
 
-    const queryForMap = {
-      pagesCount: Math.ceil(totalCount / query.pageSize),
+    const queryForMap: IQueryBlogWithPostsFilterTypeBD = {
+      pagesCount: Math.ceil(totalCount.length / query.pageSize),
       page: query.pageNumber,
       pageSize: query.pageSize,
-      totalCount,
-      items: posts
+      totalCount: totalCount.length,
+      items: posts as any
     }
     return postsRepository.mapAfterQuery(queryForMap)
   },
-  async del(id: Types.ObjectId) {
-    const post = await postCollection.findById(id);
+  async del(id: ObjectId) {
+    const post = await postCollection.findOne({_id: new ObjectId(id)});
     if (!post?.title) return false
     await postCollection.deleteOne({ _id: id });
     return true;
   },
   async put(post: PostInputModel, id: Types.ObjectId) {
     try {
-      const res = await postCollection.findByIdAndUpdate(id, { ...post });
+      const res = await postCollection.findOneAndUpdate({_id: new ObjectId(id)}, { $set:post });
       return !!res?._id
     } catch (error) {
       return false

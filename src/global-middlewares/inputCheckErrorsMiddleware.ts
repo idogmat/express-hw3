@@ -20,7 +20,6 @@ export const inputCheckErrorsMiddleware = (req: Request<any,any,any,any>, res: R
       })
     return
   }
-
   next()
 }
 
