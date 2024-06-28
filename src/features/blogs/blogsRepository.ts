@@ -46,30 +46,31 @@ export const blogsRepository = {
       .find({blogId: blogId})
       .sort({[query.sortBy]: query.sortDirection})
       .skip((query.pageNumber - 1) * query.pageSize)
-      .limit(query.pageSize)
+      .limit(query.pageSize).toArray()
 
       const queryForMap = {
         pagesCount: Math.ceil(totalCount.length / query.pageSize),
         page: query.pageNumber,
         pageSize: query.pageSize,
         totalCount: totalCount.length,
-        items: posts.toArray()
+        items: posts
       }
       return postsRepository.mapAfterQuery(queryForMap as any)
     },
     async postPostsInBlog(blogId: ObjectId, post: PostInputModel) {
-      const blog = await blogCollection.findOne({blogId: new ObjectId(blogId)})
+      const blog = await blogCollection.findOne({_id: new ObjectId(blogId)})
       if (!blog?.name) return false;
+      console.log(blogId)
       const newPost: PostInputModel = {
         title: post.title,
         content: post.content,
         shortDescription: post.shortDescription,
-        blogId: blogId.toString(),
+        blogId: blogId as any,
         createdAt: new Date(),
         blogName: blog.name,
       };
       const result = await postCollection.insertOne(newPost);
-      result.insertedId
+      console.log(result)
       const newPostForMap = await postCollection.findOne({_id: new ObjectId(result.insertedId)})
       if (newPostForMap?._id) {
         return postsRepository.map(newPostForMap as any);
@@ -98,7 +99,10 @@ export const blogsRepository = {
     async del(id: ObjectId) {
       const blog = await blogCollection.findOne({_id: new ObjectId(id)});
       if (!blog?.name) return false
-      await blogCollection.deleteOne({_id: id});
+      const deletedBlog = await blogCollection.deleteOne({_id: new ObjectId(id)});
+      console.log(deletedBlog)
+      const deletedPosts =await postCollection.deleteMany({ blogId: id })
+      console.log(deletedPosts)
       return true;
     },
     async put(blog: BlogInputModel, id: ObjectId) {

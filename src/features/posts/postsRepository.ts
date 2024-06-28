@@ -14,7 +14,7 @@ export const postsRepository = {
       title: post.title,
       content: post.content,
       shortDescription: post.shortDescription,
-      blogId: new ObjectId(post.blogId) as any,
+      blogId: post.blogId,
       createdAt: new Date(),
       blogName: blog.name,
     };
@@ -58,7 +58,8 @@ export const postsRepository = {
   async del(id: ObjectId) {
     const post = await postCollection.findOne({_id: new ObjectId(id)});
     if (!post?.title) return false
-    await postCollection.deleteOne({ _id: id });
+    const result = await postCollection.deleteOne({ _id: new ObjectId(id) });
+    console.log(result)
     return true;
   },
   async put(post: PostInputModel, id: Types.ObjectId) {
