@@ -23,26 +23,26 @@ export const shortDescriptionValidator = body('shortDescription').isString().wit
 export const contentValidator = body('content').isString().withMessage('not string')
   .trim().isLength({ min: 1, max: 1000 }).withMessage('more then 1000 or 0')
 
-export const blogIdValidator = body('blogId').isString().trim().withMessage('not string').isLength({ min: 1, max: 500 }).withMessage('no blog').custom( async value => {
+export const blogIdValidator = body('blogId').isString().trim().withMessage('not string').isLength({ min: 1, max: 500 }).withMessage('no blog').custom(async value => {
   if (!ObjectId.isValid(value)) {
     return Promise.reject('blog not found');
 
   }
-  const blog = await blogCollection.findOne({_id: new ObjectId(value)})
+  const blog = await blogCollection.findOne({ _id: new ObjectId(value) })
   if (!blog?._id) {
     return Promise.reject('blog not found');
   }
   return true
 })
 
-export const findPostValidator = async (req: Request<{id: string}>, res: Response, next: NextFunction) => {
+export const findPostValidator = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
   if (!ObjectId.isValid(req.params.id)) {
     res
       .status(404)
       .json({})
     return;
   }
-  const post = await postCollection.findOne({_id: new ObjectId(req.params.id)})
+  const post = await postCollection.findOne({ _id: new ObjectId(req.params.id) })
   if (!post) {
     res
       .status(404)

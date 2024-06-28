@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import { BlogViewModel, IBlogViewModelAfterQuery } from '../../../input-output-types/blogs-types'
 import { blogsRepository } from '../blogsRepository'
 import { IQuery, normolizedQuery } from '../../../utils/query-helper'
 

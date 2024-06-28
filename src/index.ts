@@ -1,7 +1,7 @@
-import {app, connectDb} from './app'
-import {SETTINGS} from './settings'
+import { app, connectDb } from './app'
+import { SETTINGS } from './settings'
 
-app.listen(SETTINGS.PORT, async() => {
+app.listen(SETTINGS.PORT, async () => {
   await connectDb()
   console.log('...server started in port ' + SETTINGS.PORT)
 })

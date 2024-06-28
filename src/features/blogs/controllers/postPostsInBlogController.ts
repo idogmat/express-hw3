@@ -15,9 +15,9 @@ export const postPostsInBlogController = async (req: Request<IBlogId, {}, PostIn
     return
   }
   const data = await blogsRepository.postPostsInBlog(id, req.body);
-  data 
-  ? res.status(201).json(data) 
-  : res.sendStatus(400)
-  
+  data
+    ? res.status(201).json(data)
+    : res.sendStatus(400)
+
 
 }

@@ -2,11 +2,10 @@ import { Response, Request, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import { FieldNamesType, OutputErrorsType } from '../input-output-types/output-errors-type'
 
-export const inputCheckErrorsMiddleware = (req: Request<any,any,any,any>, res: Response<OutputErrorsType>, next: NextFunction) => {
+export const inputCheckErrorsMiddleware = (req: Request<any, any, any, any>, res: Response<OutputErrorsType>, next: NextFunction) => {
   const e = validationResult(req)
   if (!e.isEmpty()) {
     const eArray = e.array({ onlyFirstError: true }) as { path: FieldNamesType, msg: string }[]
-    console.log(eArray)
 
     if ((eArray as any).find((e: any) => e?.path === 'id')) {
       res.sendStatus(404);
@@ -23,11 +22,10 @@ export const inputCheckErrorsMiddleware = (req: Request<any,any,any,any>, res: R
   next()
 }
 
-export const inputCheckErrorsMiddlewareParms = (req: Request<any,any,any,any>, res: Response<OutputErrorsType>, next: NextFunction) => {
+export const inputCheckErrorsMiddlewareParms = (req: Request<any, any, any, any>, res: Response<OutputErrorsType>, next: NextFunction) => {
   const e = validationResult(req)
   if (!e.isEmpty()) {
     const eArray = e.array({ onlyFirstError: true }) as { path: FieldNamesType, msg: string }[]
-    console.log(eArray)
     res
       .status(404)
       .json({

@@ -4,9 +4,8 @@ import { getPostsController } from './controllers/getPostsController'
 import { findPostController } from './controllers/findPostController'
 import { delPostController } from './controllers/delPostController'
 import { putPostController } from './controllers/putPostController'
-import { blogIdValidator, findPostValidator, postCreateValidators, putUpdateValidators } from './middlewares/validators'
+import { findPostValidator, postCreateValidators, putUpdateValidators } from './middlewares/validators'
 import { adminMiddleware } from '../../global-middlewares/admin-middleware'
-import { inputCheckErrorsMiddleware, inputCheckErrorsMiddlewareParms } from '../../global-middlewares/inputCheckErrorsMiddleware'
 
 export const postsRouter = Router()
 

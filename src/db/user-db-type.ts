@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import mongoose from "mongoose"
 
-export type PostDbType = {
+export type UserDbType = {
     _id: ObjectId
     title: string // max 30
     shortDescription: string // max 100

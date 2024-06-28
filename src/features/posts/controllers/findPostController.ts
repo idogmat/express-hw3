@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { PostViewModel } from '../../../input-output-types/posts-types'
 import { postsRepository } from '../postsRepository'
-import mongoose from 'mongoose'
 import { isValidObjectId } from '../../../utils/query-helper'
 
 export const findPostController = async (req: Request<{ id: string }>, res: Response<PostViewModel | {}>) => {

@@ -14,9 +14,8 @@ export const getPostsInBlogController = async (req: Request<IBlogId, {}, {}, IQu
     return
   }
   const query = normolizedQuery(req.query)
-  console.log(query)
   const data = await blogsRepository.getPostsInBlog(id, query);
-  data 
-  ? res.status(200).json(data) 
-  : res.sendStatus(404)
+  data
+    ? res.status(200).json(data)
+    : res.sendStatus(404)
 }

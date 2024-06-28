@@ -34,8 +34,6 @@ describe('/posts', () => {
             .send(newPost) // отправка данных
             .expect(201)
 
-        // console.log(res.body)
-
         expect(res.body.title).toEqual(newPost.title)
         expect(res.body.shortDescription).toEqual(newPost.shortDescription)
         expect(res.body.content).toEqual(newPost.content)
@@ -60,8 +58,6 @@ describe('/posts', () => {
             .send(newPost) // отправка данных
             .expect(401)
 
-        // console.log(res.body)
-
         // expect(db.posts.length).toEqual(0)
     })
     it('shouldn\'t create', async () => {
@@ -79,8 +75,6 @@ describe('/posts', () => {
             .send(newPost) // отправка данных
             .expect(400)
 
-        // console.log(res.body)
-
         expect(res.body.errorsMessages.length).toEqual(4)
         expect(res.body.errorsMessages[0].field).toEqual('title')
         expect(res.body.errorsMessages[1].field).toEqual('shortDescription')
@@ -95,8 +89,6 @@ describe('/posts', () => {
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(200) // проверяем наличие эндпоинта
 
-        // console.log(res.body) // можно посмотреть ответ эндпоинта
-
         expect(res.body.items.length).toEqual(0) // проверяем ответ эндпоинта
     })
     it('should get not empty array', async () => {
@@ -108,16 +100,12 @@ describe('/posts', () => {
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(200)
 
-        console.log(res.body)
-
         expect(res.body.items.length).not.toEqual(0)
     })
     it('shouldn\'t find', async () => {
         const res = await req
             .get(SETTINGS.PATH.POSTS + '/1')
             .expect(404) // проверка на ошибку
-
-        // console.log(res.body)
     })
     it('should find', async () => {
       const blog = await addBlog(newBlog)
@@ -127,8 +115,6 @@ describe('/posts', () => {
             .get(SETTINGS.PATH.POSTS + '/' + post.body.id)
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(200) // проверка на ошибку
-
-        // console.log(res.body)
 
         expect(res.body).toEqual({...post.body, createdAt: expect.any(String)})
     })
@@ -157,7 +143,6 @@ describe('/posts', () => {
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(404) // проверка на ошибку
 
-        // console.log(res.body)
     })
     it('shouldn\'t del 401', async () => {
         const res = await req
@@ -185,7 +170,6 @@ describe('/posts', () => {
             .get(SETTINGS.PATH.POSTS + '/' + post.body.id)
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(200)
-        // console.log(res.body)
 
         expect(res.body).toEqual({...post.body, ...updatePost, id: expect.any(String), createdAt: expect.any(String)})
     })
@@ -203,7 +187,6 @@ describe('/posts', () => {
             .send(post)
             .expect(404) // проверка на ошибку
 
-        // console.log(res.body)
     })
     it('shouldn\'t update2', async () => {
       const blog = await addBlog(newBlog)
@@ -222,8 +205,6 @@ describe('/posts', () => {
             .set({'Authorization': 'Basic ' + codedAuth})
             .send(newPPost)
             .expect(400) // проверка на ошибку
-
-        // console.log(res.body)
 
         expect(res.body.errorsMessages.length).toEqual(4)
         expect(res.body.errorsMessages[0].field).toEqual('title')
@@ -246,7 +227,6 @@ describe('/posts', () => {
             .send(newPPost)
             .expect(401) // проверка на ошибку
 
-        // console.log(res.body)
         await req
         .get(SETTINGS.PATH.POSTS + '/' + post.body.id)
         .set({'Authorization': 'Basic ' + codedAuth})

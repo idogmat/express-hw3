@@ -48,16 +48,16 @@ export const normolizedQuery = (query: IQuery) => Object.keys(query).reduce<INor
   const key = queryKey as keyof INormolizedQuery
   const value = query[key as keyof INormolizedQuery]
   if (key === 'pageNumber') {
-    Number(value) <= 0 ? Object.assign(acc, {[key]: 1}) : Object.assign(acc, {[key]: Number(value)});
+    Number(value) <= 0 ? Object.assign(acc, { [key]: 1 }) : Object.assign(acc, { [key]: Number(value) });
     return acc;
   } else if (key === 'pageSize') {
-    Number(value) <= 0 ? Object.assign(acc, {[key]: 10}) : Object.assign(acc, {[key]: Number(value)});
+    Number(value) <= 0 ? Object.assign(acc, { [key]: 10 }) : Object.assign(acc, { [key]: Number(value) });
     return acc;
   } else if (key === 'sortDirection') {
-    Object.assign(acc, {[key]: value !== 'asc' ? -1 : 1});
+    Object.assign(acc, { [key]: value !== 'asc' ? -1 : 1 });
     return acc;
   }
-  value ? Object.assign(acc, {[key]: value}) : undefined
+  value ? Object.assign(acc, { [key]: value }) : undefined
 
   return acc
-}, {...defaultQuery})
+}, { ...defaultQuery })
