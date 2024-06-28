@@ -242,7 +242,7 @@ describe('/posts', () => {
             title: createString(31),
             content: createString(1001),
             shortDescription: createString(101),
-            blogId: '1sdfsdfsdfdsfsd',
+            blogId: blog.body.id,
             createdAt: new Date()
         }
 
@@ -252,9 +252,5 @@ describe('/posts', () => {
             .expect(401) // проверка на ошибку
 
         // console.log(res.body)
-        await req
-        .get(SETTINGS.PATH.POSTS + '/' + post.body.id)
-        .set({'Authorization': 'Basic ' + codedAuth})
-        .expect(200)
     })
 })

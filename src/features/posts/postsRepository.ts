@@ -24,7 +24,7 @@ export const postsRepository = {
   },
   async find(id: ObjectId) {
     const post = await postCollection.findOne({_id: new ObjectId(id)})
-    if (post?.id) {
+    if (post?._id) {
       return this.map(post as any);
     }
     return false
@@ -57,10 +57,10 @@ export const postsRepository = {
   },
   async del(id: ObjectId) {
     const post = await postCollection.findOne({_id: new ObjectId(id)});
-    if (!post?.title) return false
+    if (!post?._id) return false
     const result = await postCollection.deleteOne({ _id: new ObjectId(id) });
-    console.log(result)
-    return true;
+    if (result.deletedCount) return true;
+    return false
   },
   async put(post: PostInputModel, id: Types.ObjectId) {
     try {
