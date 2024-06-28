@@ -36,7 +36,7 @@ export const blogsRepository = {
     return false
   },
   async getPostsInBlog(blogId: ObjectId, query: INormolizedQuery) {
-    const blog = await blogCollection.findOne<BlogDbType>({ blogId: new ObjectId(blogId) })
+    const blog = await blogCollection.findOne<BlogDbType>({ _id: new ObjectId(blogId) })
     if (!blog) {
       return false;
     }
