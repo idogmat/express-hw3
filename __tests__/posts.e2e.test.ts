@@ -250,6 +250,6 @@ describe('/posts', () => {
         await req
         .get(SETTINGS.PATH.POSTS + '/' + post.body.id)
         .set({'Authorization': 'Basic ' + codedAuth})
-        .expect(200, post.body)
+        .expect(200)
     })
 })

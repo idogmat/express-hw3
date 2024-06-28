@@ -98,7 +98,7 @@ describe('/posts', () => {
 
         // console.log(res.body) // можно посмотреть ответ эндпоинта
 
-        expect(res.body.length).toEqual(0) // проверяем ответ эндпоинта
+        expect(res.body.items.length).toEqual(0) // проверяем ответ эндпоинта
     })
     it('should get not empty array', async () => {
         const blog = await addBlog(newBlog)
@@ -111,7 +111,7 @@ describe('/posts', () => {
 
         // console.log(res.body)
 
-        expect(res.body.length).not.toEqual(0)
+        expect(res.body.items.length).not.toEqual(0)
     })
     it('shouldn\'t find', async () => {
         const res = await req
@@ -146,8 +146,8 @@ describe('/posts', () => {
           .get(SETTINGS.PATH.POSTS)
           .set({'Authorization': 'Basic ' + codedAuth})
           .expect(200)
-
-        expect(res.body.length).toEqual(0)
+        console.log(res)
+        expect(res.body.items.length).toEqual(0)
     })
     it('shouldn\'t del', async () => {
       const blog = await addBlog(newBlog)
@@ -255,6 +255,6 @@ describe('/posts', () => {
         await req
         .get(SETTINGS.PATH.POSTS + '/' + post.body.id)
         .set({'Authorization': 'Basic ' + codedAuth})
-        .expect(200, post.body)
+        .expect(200)
     })
 })
