@@ -1,42 +1,39 @@
-import mongoose from 'mongoose'
-import { BlogDbType } from '../../db/blog-db-type'
-import { BlogInputModel, BlogViewModel, IBlogViewModelAfterQuery } from '../../input-output-types/blogs-types'
-import { INormolizedQuery, IQueryBlogWithPostsFilterTypeBD, IQueryBlogsFilterTypeBD } from '../../utils/query-helper';
+import { BlogInputModel, BlogViewModel } from '../../input-output-types/blogs-types'
+import { INormolizedQuery } from '../../utils/query-helper';
 import { postsRepository } from '../posts/postsRepository';
-import { PostInputModel, PostViewModel } from '../../input-output-types/posts-types';
+import { PostInputModel } from '../../input-output-types/posts-types';
 import { ObjectId } from 'mongodb';
 import { blogCollection, postCollection } from '../../app';
-import { PostTypeBD } from '../../db/db';
-import { PostDbType } from '../../db/post-db-type';
+import { BlogTypeBD, PostTypeBD } from '../../db/db';
 
 export const blogsRepository = {
   async create(blog: BlogInputModel) {
-    const newBlog: Partial<BlogDbType> = {
+    const newBlog = {
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
       createdAt: new Date(),
       isMembership: false,
-    };
+    } as BlogTypeBD;
     const result = await blogCollection.insertOne(newBlog);
     return result.insertedId;
   },
   async find(id: ObjectId) {
-    const blog = await blogCollection.findOne<BlogDbType>({ _id: new ObjectId(id) })
+    const blog = await blogCollection.findOne({ _id: new ObjectId(id) })
     if (blog) {
       return this.map(blog);
     }
     return false
   },
   async findAndMap(id: ObjectId) {
-    const blog = await blogCollection.findOne<BlogDbType>({ _id: new ObjectId(id) });
+    const blog = await blogCollection.findOne({ _id: new ObjectId(id) });
     if (blog?._id) {
       return this.map(blog);
     }
     return false
   },
   async getPostsInBlog(blogId: ObjectId, query: INormolizedQuery) {
-    const blog = await blogCollection.findOne<BlogDbType>({ _id: new ObjectId(blogId) })
+    const blog = await blogCollection.findOne({ _id: new ObjectId(blogId) })
     if (!blog) {
       return false;
     }
@@ -61,14 +58,14 @@ export const blogsRepository = {
   async postPostsInBlog(blogId: ObjectId, post: PostInputModel) {
     const blog = await blogCollection.findOne({ _id: new ObjectId(blogId) })
     if (!blog?.name) return false;
-    const newPost: PostInputModel = {
+    const newPost = {
       title: post.title,
       content: post.content,
       shortDescription: post.shortDescription,
       blogId: blogId as any,
       createdAt: new Date(),
       blogName: blog.name,
-    };
+    } as PostTypeBD;
     const result = await postCollection.insertOne(newPost);
     const newPostForMap = await postCollection.findOne({ _id: new ObjectId(result.insertedId) })
     if (newPostForMap?._id) {
@@ -110,7 +107,7 @@ export const blogsRepository = {
       return false
     }
   },
-  map(blog: BlogDbType) {
+  map(blog: BlogTypeBD) {
     const blogForOutput: BlogViewModel = {
       id: blog._id,
       description: blog.description,

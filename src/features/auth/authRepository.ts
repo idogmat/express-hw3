@@ -12,7 +12,7 @@ type UserDBType = {
 }
 
 export const authRepository = {
-  async create(user: UserDBType): Promise<any> {
+  async create(user: any): Promise<any> {
     const result = await userCollection.insertOne(user)
     if (result.insertedId) {
       const userInfo = await this.find(result.insertedId)

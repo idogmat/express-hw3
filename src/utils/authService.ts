@@ -1,21 +1,21 @@
 import { ObjectId } from "mongodb";
-import { IAuthFields } from "./controllers/createController";
+import { IAuthFields } from "../features/auth/controllers/createController";
 import bcrypt from 'bcrypt'
-import { authRepository } from "./authRepository";
+import { authRepository } from "../features/auth/authRepository";
+import { UserTypeDB } from "../db/db";
 
 export const authService = {
   async createUser({ login, email, password }: IAuthFields) {
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHas(password, passwordSalt)
     const newUser = {
-      _id: new ObjectId(),
-      userName: login,
+      login: login,
       email,
       passwordHash,
       passwordSalt,
       createdAt: new Date()
     }
-    return authRepository.create(newUser)
+    return newUser as UserTypeDB
   },
   async checkCredentiald(loginOrEmail: string, password: string) {
     const user = await authRepository.findByLoginOrEmail(loginOrEmail)

@@ -1,5 +1,5 @@
 import { Response, Request } from 'express'
-import { authService } from '../auth-service';
+import { authService } from '../../../utils/authService';
 export interface ILoginFields {
   loginOrEmail: string;
   password: string

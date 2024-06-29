@@ -3,6 +3,8 @@ import { BlogTypeBD, PostTypeBD } from "../db/db";
 import { ObjectId } from "mongodb";
 
 export interface IQuery {
+  searchLoginTerm?: string;
+  searchEmailTerm?: string;
   searchNameTerm?: string;
   sortBy?: string;
   sortDirection?: string;
@@ -10,6 +12,8 @@ export interface IQuery {
   pageSize?: string;
 }
 export interface INormolizedQuery {
+  searchLoginTerm?: string;
+  searchEmailTerm?: string;
   searchNameTerm?: string;
   sortBy: string;
   sortDirection: 1 | -1;
