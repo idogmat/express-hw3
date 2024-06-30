@@ -21,6 +21,10 @@ export const usersRepository = {
     const result = await userCollection.findOne({ _id: new ObjectId(id) })
     return result
   },
+  async delete(id: ObjectId) {
+    const result = await userCollection.deleteOne({ _id: new ObjectId(id) })
+    return result.deletedCount
+  },
   async getAll(query: INormolizedQuery) {
     const totalCount = await userCollection
       .find({
@@ -29,7 +33,6 @@ export const usersRepository = {
           { email: { $regex: query.searchEmailTerm || '', $options: 'i' } }
         ]
       }).toArray()
-    console.log(totalCount.length)
     const users = await userCollection
       .find({
         $or: [

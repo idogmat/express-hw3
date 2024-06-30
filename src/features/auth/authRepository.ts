@@ -31,9 +31,10 @@ export const authRepository = {
     const user = await userCollection.findOne<UserDBType | null>({
       $or: [
         { email: loginOrEmail },
-        { userName: loginOrEmail }
+        { login: loginOrEmail }
       ]
     })
+    console.log(user)
     return user
   }
 }

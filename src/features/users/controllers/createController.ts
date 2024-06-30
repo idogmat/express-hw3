@@ -11,6 +11,7 @@ export const createController = async (req: Request<{}, {}, ICreateUserFields>, 
   const { login, email, password } = req.body
   const user = await authService.createUser({ login, email, password })
   const result = await usersRepository.create(user)
-  if (result) res.sendStatus(200)
+  console.log(result)
+  if (result) res.status(201).json(usersRepository.map(result))
   else res.sendStatus(400)
 }

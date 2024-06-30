@@ -1,8 +1,12 @@
-import { ObjectId } from "mongodb";
-import { IAuthFields } from "../features/auth/controllers/createController";
 import bcrypt from 'bcrypt'
 import { authRepository } from "../features/auth/authRepository";
 import { UserTypeDB } from "../db/db";
+
+export interface IAuthFields {
+  login: string;
+  email: string;
+  password: string
+}
 
 export const authService = {
   async createUser({ login, email, password }: IAuthFields) {
