@@ -14,6 +14,8 @@ export type PostTypeBD = {
   createdAt: Date;
 };
 
+export type PostTypeBDWithoutId = Omit<PostTypeBD, '_id'>
+
 export type BlogTypeBD = {
   _id: ObjectId;
   name: string;
@@ -23,6 +25,8 @@ export type BlogTypeBD = {
   isMembership: boolean;
 };
 
+export type BlogTypeBDWithoutId = Omit<BlogTypeBD, '_id'>
+
 export type UserTypeDB = {
   _id: ObjectId;
   login: string;
@@ -30,7 +34,16 @@ export type UserTypeDB = {
   passwordHash: string;
   passwordSalt: string;
   createdAt: Date;
+  emailConfirmation: EmailConfirmation
 }
+
+export type EmailConfirmation = { 
+  confirmationCode: `${string}-${string}-${string}-${string}-${string}`,
+  expirationDate: Date,
+  isConfirmed: boolean
+}
+
+export type UserTypeDBWithoutId = Omit<UserTypeDB, '_id'>
 
 // export const BlogSchema = new mongoose.Schema<BlogTypeBD, Model<BlogTypeBD>>({
 //   name: { type: String, required: true },

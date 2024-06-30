@@ -3,13 +3,13 @@ import { ObjectId } from 'mongodb';
 import { userCollection } from '../../app';
 import { ICreateUserFields } from './controllers/createController';
 import { INormolizedQuery } from '../../utils/query-helper';
-import { UserTypeDB } from '../../db/db';
+import { UserTypeDB, UserTypeDBWithoutId } from '../../db/db';
 
 
 
 export const usersRepository = {
-  async create(user: UserTypeDB): Promise<any> {
-    const result = await userCollection.insertOne(user)
+  async create(user: UserTypeDBWithoutId): Promise<any> {
+    const result = await userCollection.insertOne(user as UserTypeDB)
     if (result.insertedId) {
       const userInfo = await this.find(result.insertedId)
       return userInfo

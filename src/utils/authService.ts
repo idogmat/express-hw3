@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt'
 import { authRepository } from "../features/auth/authRepository";
 import { UserTypeDB } from "../db/db";
+import { randomUUID } from 'crypto';
+import { dateSetter } from './date-methods';
 
 export interface IAuthFields {
   login: string;
@@ -8,29 +10,41 @@ export interface IAuthFields {
   password: string
 }
 
+interface ICheckCredential { 
+  result: boolean;
+  id: string
+}
+
 export const authService = {
   async createUser({ login, email, password }: IAuthFields) {
     const passwordSalt = await bcrypt.genSalt(10)
-    const passwordHash = await this._generateHas(password, passwordSalt)
+    const passwordHash = await this._generateHash(password, passwordSalt)
     const newUser = {
       login: login,
       email,
       passwordHash,
       passwordSalt,
-      createdAt: new Date()
+      createdAt: new Date(),
+      emailConfirmation: {
+        confirmationCode: randomUUID(),
+        expirationDate: dateSetter(new Date(), {
+            hours: 1,
+            minutes: 30,
+        }),
+        isConfirmed: false
+      }
     }
-    return newUser as UserTypeDB
+    return newUser
   },
-  async checkCredentiald(loginOrEmail: string, password: string) {
+  async checkCredentiald(loginOrEmail: string, password: string): Promise<ICheckCredential> {
     const user = await authRepository.findByLoginOrEmail(loginOrEmail)
-    if (!user) return false
-    const passwordHash = await this._generateHas(password, user.passwordSalt)
-    if (user.passwordHash !== passwordHash) {
-      return false
-    }
-    return true
+    if (!user?._id) return { result: false, id: '' }
+    const passwordHash = await this._generateHash(password, user.passwordSalt)
+    // or bcrypt.compare(password, user.passwordHash): return boolean
+    return { result: user.passwordHash === passwordHash, id: user._id.toString() }
+
   },
-  async _generateHas(password: string, salt: string) {
+  async _generateHash(password: string, salt: string) {
     return await bcrypt.hash(password, salt)
   }
 }
