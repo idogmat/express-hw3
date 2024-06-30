@@ -4,17 +4,19 @@ import { SETTINGS } from './settings'
 import { blogsRouter } from './features/blogs'
 import { testingRouter } from './features/testing'
 import { postsRouter } from './features/posts'
-import { MongoClient } from 'mongodb'
+import { Collection, MongoClient } from 'mongodb'
 import dotenv from 'dotenv'
 import { authRouter } from './features/auth'
+import { usersRouter } from './features/users'
+import { BlogTypeBD, PostTypeBD, UserTypeDB } from './db/db'
 dotenv.config()
 const tokenDB = process.env.CONNECTION || ''
 
 export const client = new MongoClient(tokenDB);
 export const db = client.db('blogs');
-export const blogCollection = client.db('blogs').collection('Blog')
-export const postCollection = client.db('blogs').collection('Post')
-export const userCollection = client.db('users').collection('User')
+export const blogCollection: Collection<BlogTypeBD> = client.db('blogs').collection<BlogTypeBD>('Blog')
+export const postCollection: Collection<PostTypeBD> = client.db('blogs').collection<PostTypeBD>('Post')
+export const userCollection: Collection<UserTypeDB> = client.db('users').collection<UserTypeDB>('User')
 export const connectDb = async () => {
     // Use connect method to connect to the server
     await client.connect();
@@ -39,4 +41,5 @@ app.get('/', (req, res) => {
 app.use(SETTINGS.PATH.BLOGS, blogsRouter)
 app.use(SETTINGS.PATH.POSTS, postsRouter)
 app.use(SETTINGS.PATH.AUTH, authRouter)
+app.use(SETTINGS.PATH.USERS, usersRouter)
 app.use(SETTINGS.PATH.TESTING, testingRouter)

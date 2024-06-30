@@ -10,14 +10,14 @@ export const postsRepository = {
   async create(post: PostInputModel) {
     const blog = await blogCollection.findOne({ _id: new ObjectId(post.blogId) })
     if (!blog?.name) return false;
-    const newPost: PostInputModel = {
+    const newPost = {
       title: post.title,
       content: post.content,
       shortDescription: post.shortDescription,
-      blogId: post.blogId,
+      blogId: new ObjectId(post.blogId),
       createdAt: new Date(),
       blogName: blog.name,
-    };
+    } as PostTypeBD;
     const result = await postCollection.insertOne(newPost);
     return result.insertedId
   },
@@ -75,7 +75,7 @@ export const postsRepository = {
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
-      blogId: post.blogId,
+      blogId: post.blogId.toString(),
       blogName: post.blogName,
       createdAt: post.createdAt
     }
@@ -84,7 +84,7 @@ export const postsRepository = {
   mapAfterQuery(blogs: IQueryBlogWithPostsFilterTypeBD) {
     const blogWithPostsForOutput: IBlogWithPostsViewModelAfterQuery = {
       ...blogs,
-      items: blogs.items.map(b => this.map(b)) as PostViewModel[]
+      items: blogs.items.map(b => this.map(b))
     }
     return blogWithPostsForOutput
   },

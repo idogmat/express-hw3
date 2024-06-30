@@ -7,7 +7,8 @@ export const SETTINGS = {
         BLOGS: '/blogs',
         POSTS: '/posts',
         TESTING: '/testing',
-        AUTH: '/auth'
+        AUTH: '/auth',
+        USERS: '/users'
 
     },
     ADMIN: process.env.ADMIN || 'admin:qwerty',
