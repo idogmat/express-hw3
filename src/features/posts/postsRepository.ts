@@ -3,8 +3,8 @@ import { Types } from 'mongoose'
 import { INormolizedQuery, IQueryBlogWithPostsFilterTypeBD } from '../../utils/query-helper'
 import { ObjectId } from 'mongodb'
 import { blogCollection, postCollection } from '../../app'
-import { IBlogWithPostsViewModelAfterQuery } from '../../input-output-types/blogs-types'
 import { PostTypeBD } from '../../db/db'
+import { IBlogWithPostsViewModelAfterQuery } from '../../input-output-types/query-types-output'
 
 export const postsRepository = {
   async create(post: PostInputModel) {

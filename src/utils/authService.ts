@@ -36,7 +36,7 @@ export const authService = {
     }
     return newUser
   },
-  async checkCredentiald(loginOrEmail: string, password: string): Promise<ICheckCredential> {
+  async checkCredential(loginOrEmail: string, password: string): Promise<ICheckCredential> {
     const user = await authRepository.findByLoginOrEmail(loginOrEmail)
     if (!user?._id) return { result: false, id: '' }
     const passwordHash = await this._generateHash(password, user.passwordSalt)

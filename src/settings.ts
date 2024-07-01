@@ -8,8 +8,8 @@ export const SETTINGS = {
         POSTS: '/posts',
         TESTING: '/testing',
         AUTH: '/auth',
-        USERS: '/users'
-
+        USERS: '/users',
+        COMMENTS: '/comments',
     },
     ADMIN: process.env.ADMIN || 'admin:qwerty',
 }

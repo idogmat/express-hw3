@@ -8,7 +8,7 @@ export interface ILoginFields {
 
 export const loginController = async (req: Request<{}, {}, ILoginFields>, res: Response<any>) => {
   const { loginOrEmail, password } = req.body
-  const { result, id } = await authService.checkCredentiald(loginOrEmail, password)
+  const { result, id } = await authService.checkCredential(loginOrEmail, password)
   if (!result) {
     res.sendStatus(401)
     return
@@ -21,6 +21,6 @@ export const loginController = async (req: Request<{}, {}, ILoginFields>, res: R
   // const refreshTokenDecod = await jwtService.decodeToken(refreshToken)
   // console.log(acccessTokenDecod)
   // console.log(refreshTokenDecod)
-  if (result) res.sendStatus(204)
+  if (result) res.status(200).json({acccessToken})
     else res.sendStatus(401)
 }

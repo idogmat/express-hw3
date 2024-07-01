@@ -4,8 +4,12 @@ import { getPostsController } from './controllers/getPostsController'
 import { findPostController } from './controllers/findPostController'
 import { delPostController } from './controllers/delPostController'
 import { putPostController } from './controllers/putPostController'
-import { findPostValidator, postCreateValidators, putUpdateValidators } from './middlewares/validators'
+import { commentContentValidator, findPostValidator, postCreateValidators, putUpdateValidators } from './middlewares/validators'
 import { adminMiddleware } from '../../global-middlewares/admin-middleware'
+import { createCommentInPostController } from './controllers/createCommentInPostController'
+import { getCommentsInPostController } from './controllers/getCommentsInPostController'
+import { inputCheckErrorsMiddleware } from '../../global-middlewares/inputCheckErrorsMiddleware'
+import { tokenAuthorizationMiddleware } from '../../global-middlewares/tokenAuthorizationMiddleware '
 
 export const postsRouter = Router()
 
@@ -18,5 +22,11 @@ postsRouter.get('/', getPostsController)
 postsRouter.get('/:id', findPostValidator, findPostController)
 postsRouter.delete('/:id', adminMiddleware, findPostValidator, delPostController)
 postsRouter.put('/:id', adminMiddleware, ...putUpdateValidators, putPostController)
-
+postsRouter.get('/:id/comments', findPostValidator, getCommentsInPostController)
+postsRouter.post('/:id/comments',
+  tokenAuthorizationMiddleware,
+  commentContentValidator,
+  inputCheckErrorsMiddleware,
+  findPostValidator,
+  createCommentInPostController)
 // не забудьте добавить роут в апп

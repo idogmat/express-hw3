@@ -45,6 +45,19 @@ export type EmailConfirmation = {
 
 export type UserTypeDBWithoutId = Omit<UserTypeDB, '_id'>
 
+export type CommentTypeDB = {
+  _id: ObjectId;
+  postId: ObjectId | string;
+  content: string;
+  commentatorInfo: CommentatorInfoType;
+  createdAt: Date;
+}
+
+export type CommentatorInfoType = {
+  userId: string;
+  userLogin: string;
+}
+
 // export const BlogSchema = new mongoose.Schema<BlogTypeBD, Model<BlogTypeBD>>({
 //   name: { type: String, required: true },
 //   description: { type: String, required: true },

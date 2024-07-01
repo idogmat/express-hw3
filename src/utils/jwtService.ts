@@ -38,7 +38,7 @@ export const jwtService = {
   },
   async verifyToken(token: string, type: 'refresh' | 'accsess') {
     try {
-      return jwt.verify(token, type !== 'accsess' ? REFRESH_SECRET : ACCESS_SECRET)
+      return await jwt.verify(token, type !== 'accsess' ? REFRESH_SECRET : ACCESS_SECRET)
     } catch (error) {
       console.error(`Can't verify token`)
       return null

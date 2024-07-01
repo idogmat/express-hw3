@@ -8,15 +8,17 @@ import { Collection, MongoClient } from 'mongodb'
 import dotenv from 'dotenv'
 import { authRouter } from './features/auth'
 import { usersRouter } from './features/users'
-import { BlogTypeBD, PostTypeBD, UserTypeDB } from './db/db'
+import { BlogTypeBD, CommentTypeDB, PostTypeBD, UserTypeDB } from './db/db'
+import { commentsRouter } from './features/comments'
 dotenv.config()
 const tokenDB = process.env.CONNECTION || ''
 
 export const client = new MongoClient(tokenDB);
 export const db = client.db('blogs');
 export const blogCollection: Collection<BlogTypeBD> = client.db('blogs').collection<BlogTypeBD>('Blog')
-export const postCollection: Collection<PostTypeBD> = client.db('blogs').collection<PostTypeBD>('Post')
+export const postCollection: Collection<PostTypeBD> = client.db('posts').collection<PostTypeBD>('Post')
 export const userCollection: Collection<UserTypeDB> = client.db('users').collection<UserTypeDB>('User')
+export const commentCollection: Collection<CommentTypeDB> = client.db('comments').collection<CommentTypeDB>('Comment')
 export const connectDb = async () => {
     // Use connect method to connect to the server
     await client.connect();
@@ -31,7 +33,7 @@ export const connectDb = async () => {
 
 export const app = express() // создать приложение
 app.use(express.json()) // создание свойств-объектов body и query во всех реквестах
-app.use(cors()) // разрешить любым фронтам делать запросы на наш бэк
+app.use(cors({origin: true, credentials: true})) //
 
 app.get('/', (req, res) => {
   // эндпоинт, который будет показывать на верселе какая версия бэкэнда сейчас залита
@@ -40,6 +42,8 @@ app.get('/', (req, res) => {
 
 app.use(SETTINGS.PATH.BLOGS, blogsRouter)
 app.use(SETTINGS.PATH.POSTS, postsRouter)
+app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
 app.use(SETTINGS.PATH.AUTH, authRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
 app.use(SETTINGS.PATH.TESTING, testingRouter)
+

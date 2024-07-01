@@ -26,20 +26,16 @@ export const usersRepository = {
     return result.deletedCount
   },
   async getAll(query: INormolizedQuery) {
+    const filter = {
+        $or: [
+          { login: { $regex: query.searchLoginTerm || '', $options: 'i' } },
+          { email: { $regex: query.searchEmailTerm || '', $options: 'i' } }
+        ]
+      }
     const totalCount = await userCollection
-      .find({
-        $or: [
-          { login: { $regex: query.searchLoginTerm || '', $options: 'i' } },
-          { email: { $regex: query.searchEmailTerm || '', $options: 'i' } }
-        ]
-      }).toArray()
+      .find(filter).toArray()
     const users = await userCollection
-      .find({
-        $or: [
-          { login: { $regex: query.searchLoginTerm || '', $options: 'i' } },
-          { email: { $regex: query.searchEmailTerm || '', $options: 'i' } }
-        ]
-      })
+      .find(filter)
       .sort({ [query.sortBy]: query.sortDirection })
       .skip((query.pageNumber - 1) * query.pageSize)
       .limit(query.pageSize).toArray()
