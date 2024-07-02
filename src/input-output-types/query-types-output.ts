@@ -1,5 +1,6 @@
 import { BlogViewModel } from "./blogs-types"
 import { PostViewModel } from "./posts-types"
+import { UserViewModel } from "./user-types copy"
 
 export interface IReturnQueryList<T> {
   pagesCount: number,
@@ -12,3 +13,5 @@ export interface IReturnQueryList<T> {
 export type IBlogViewModelAfterQuery = IReturnQueryList<BlogViewModel>
 
 export type IBlogWithPostsViewModelAfterQuery = IReturnQueryList<PostViewModel>
+
+export type IUserViewModelAfterQuery = IReturnQueryList<UserViewModel>

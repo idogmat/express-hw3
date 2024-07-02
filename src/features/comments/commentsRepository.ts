@@ -7,7 +7,9 @@ import { IReturnQueryList } from '../../input-output-types/query-types-output'
 
 export const commentsRepository = {
   async create(content: string, postId: string, userId: string) {
+    console.log(content, postId, userId)
     const user = await userCollection.findOne<UserTypeDB>({ _id: new ObjectId(userId) })
+    console.log(user, 'user')
     if (!user?.login) return false
     const newComment: Omit<CommentTypeDB, '_id'> = {
       content,
@@ -19,6 +21,7 @@ export const commentsRepository = {
       createdAt: new Date(),
     };
     const result = await commentCollection.insertOne(newComment as Required<CommentTypeDB>);
+    
     return result.insertedId
   },
   async getAll(postId: string, query: INormolizedQuery) {

@@ -4,7 +4,7 @@ import { userCollection } from '../../app';
 
 type UserDBType = {
   _id: ObjectId;
-  userName: string;
+  login: string;
   email: string;
   passwordHash: string;
   passwordSalt: string;

@@ -20,7 +20,7 @@ export const authService = {
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
     const newUser = {
-      login: login,
+      login,
       email,
       passwordHash,
       passwordSalt,
