@@ -24,6 +24,6 @@ export const loginController = async (req: Request<{}, {}, ILoginFields>, res: R
   // const refreshTokenDecod = await jwtService.decodeToken(refreshToken)
   // console.log(acccessTokenDecod)
   // console.log(refreshTokenDecod)
-  if (result) res.status(200).json({acccessToken})
+  if (result) res.status(200).json(acccessToken)
     else res.sendStatus(401)
 }
