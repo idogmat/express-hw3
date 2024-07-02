@@ -3,13 +3,13 @@ import { ObjectId } from 'mongodb';
 import { userCollection } from '../../app';
 import { ICreateUserFields } from './controllers/createController';
 import { INormolizedQuery } from '../../utils/query-helper';
-import { UserTypeDB } from '../../db/db';
+import { UserTypeDB, UserTypeDBWithoutId } from '../../db/db';
 
 
 
 export const usersRepository = {
-  async create(user: UserTypeDB): Promise<any> {
-    const result = await userCollection.insertOne(user)
+  async create(user: UserTypeDBWithoutId): Promise<any> {
+    const result = await userCollection.insertOne(user as UserTypeDB)
     if (result.insertedId) {
       const userInfo = await this.find(result.insertedId)
       return userInfo
@@ -26,20 +26,16 @@ export const usersRepository = {
     return result.deletedCount
   },
   async getAll(query: INormolizedQuery) {
+    const filter = {
+        $or: [
+          { login: { $regex: query.searchLoginTerm || '', $options: 'i' } },
+          { email: { $regex: query.searchEmailTerm || '', $options: 'i' } }
+        ]
+      }
     const totalCount = await userCollection
-      .find({
-        $or: [
-          { login: { $regex: query.searchLoginTerm || '', $options: 'i' } },
-          { email: { $regex: query.searchEmailTerm || '', $options: 'i' } }
-        ]
-      }).toArray()
+      .find(filter).toArray()
     const users = await userCollection
-      .find({
-        $or: [
-          { login: { $regex: query.searchLoginTerm || '', $options: 'i' } },
-          { email: { $regex: query.searchEmailTerm || '', $options: 'i' } }
-        ]
-      })
+      .find(filter)
       .sort({ [query.sortBy]: query.sortDirection })
       .skip((query.pageNumber - 1) * query.pageSize)
       .limit(query.pageSize).toArray()

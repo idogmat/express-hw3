@@ -18,18 +18,3 @@ export interface BlogViewModel {
   isMembership: boolean
 }
 
-export interface IBlogViewModelAfterQuery {
-  pagesCount: number,
-  page: number,
-  pageSize: number,
-  totalCount: number,
-  items: BlogViewModel[]
-}
-
-export interface IBlogWithPostsViewModelAfterQuery {
-  pagesCount: number,
-  page: number,
-  pageSize: number,
-  totalCount: number,
-  items: PostViewModel[]
-}
