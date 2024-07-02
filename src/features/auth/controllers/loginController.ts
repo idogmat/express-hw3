@@ -1,13 +1,16 @@
 import { Response, Request } from 'express'
 import { authService } from '../../../utils/authService';
 import { jwtService } from '../../../utils/jwtService';
+
 export interface ILoginFields {
   loginOrEmail: string;
   password: string
 }
 
-export const loginController = async (req: Request<{}, {}, ILoginFields>, res: Response<any>) => {
-  const { loginOrEmail, password } = req.body
+export const loginController = async (req: Request<{}, {}, ILoginFields>, res: Response<any>): Promise<any> => {
+  if (!req.body.password || !req.body.loginOrEmail) return res.sendStatus(400);
+  const loginOrEmail = req.body.loginOrEmail;
+  const password = req.body.password;
   const { result, id } = await authService.checkCredential(loginOrEmail, password)
   if (!result) {
     res.sendStatus(401)

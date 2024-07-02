@@ -1,9 +1,10 @@
 
 import { ObjectId } from 'mongodb';
 import { userCollection } from '../../app';
-import { ICreateUserFields } from './controllers/createController';
 import { INormolizedQuery } from '../../utils/query-helper';
 import { UserTypeDB, UserTypeDBWithoutId } from '../../db/db';
+import { UserViewModel } from '../../input-output-types/user-types copy';
+import { IReturnQueryList, IUserViewModelAfterQuery } from '../../input-output-types/query-types-output';
 
 
 
@@ -48,26 +49,26 @@ export const usersRepository = {
     }
     return this.mapAfterQuery(queryForMap);
   },
-  async findByLoginOrEmail(loginOrEmail: string): Promise<UserTypeDB | null> {
+  async findByLoginOrEmail(login: string, email: string): Promise<UserTypeDB | null> {
     const user = await userCollection.findOne<UserTypeDB | null>({
       $or: [
-        { email: loginOrEmail },
-        { userName: loginOrEmail }
+        { email: email },
+        { login: login }
       ]
     })
     return user
   },
   map(user: UserTypeDB) {
-    const blogForOutput: any = {
-      id: user._id,
+    const blogForOutput: UserViewModel = {
+      id: user._id.toString(),
       login: user.login,
       email: user.email,
       createdAt: user.createdAt,
     }
     return blogForOutput
   },
-  mapAfterQuery(users: any) {
-    const blogForOutput: any = {
+  mapAfterQuery(users: IReturnQueryList<UserTypeDB>) {
+    const blogForOutput: IUserViewModelAfterQuery = {
       ...users,
       items: users.items.map((b: any) => this.map(b))
     }
