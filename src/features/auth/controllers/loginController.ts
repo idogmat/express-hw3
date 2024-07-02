@@ -16,14 +16,14 @@ export const loginController = async (req: Request<{}, {}, ILoginFields>, res: R
     res.sendStatus(401)
     return
   }
-  const acccessToken = await jwtService.createAccessToken(id)
+  const accessToken = await jwtService.createAccessToken(id)
   const refreshToken = await jwtService.createRefreshToken(id)
-  console.log(acccessToken)
+  console.log(accessToken)
   console.log(refreshToken)
   // const acccessTokenDecod = await jwtService.decodeToken(acccessToken)
   // const refreshTokenDecod = await jwtService.decodeToken(refreshToken)
   // console.log(acccessTokenDecod)
   // console.log(refreshTokenDecod)
-  if (result) res.status(200).json(acccessToken)
+  if (result) res.status(200).json(accessToken)
     else res.sendStatus(401)
 }
