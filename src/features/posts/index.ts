@@ -29,4 +29,3 @@ postsRouter.post('/:id/comments',
   inputCheckErrorsMiddleware,
   findPostValidator,
   createCommentInPostController)
-// не забудьте добавить роут в апп
