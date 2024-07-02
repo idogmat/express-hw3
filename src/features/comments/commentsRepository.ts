@@ -7,7 +7,7 @@ import { IReturnQueryList } from '../../input-output-types/query-types-output'
 
 export const commentsRepository = {
   async create(content: string, postId: string, userId: string) {
-    const user = await userCollection.findOne<UserTypeDB>({_id: new ObjectId(userId)})
+    const user = await userCollection.findOne<UserTypeDB>({ _id: new ObjectId(userId) })
     if (!user?.login) return false
     const newComment: Omit<CommentTypeDB, '_id'> = {
       content,
@@ -23,10 +23,10 @@ export const commentsRepository = {
   },
   async getAll(postId: string, query: INormolizedQuery) {
     const totalCount = await commentCollection
-      .find({postId}).toArray()
+      .find({ postId }).toArray()
 
     const comments = await commentCollection
-      .find({postId})
+      .find({ postId })
       .sort({ [query.sortBy]: query.sortDirection })
       .skip((query.pageNumber - 1) * query.pageSize)
       .limit(query.pageSize).toArray()
@@ -36,17 +36,41 @@ export const commentsRepository = {
       page: query.pageNumber,
       pageSize: query.pageSize,
       totalCount: totalCount.length,
-      items: comments.map(comment => this.map(comment)) 
+      items: comments.map(comment => this.map(comment))
     }
     return queryForMap
   },
-  async find(id: ObjectId) {
+  async delete(id: string | ObjectId, userId: string | ObjectId) {
+    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id), 'commentatorInfo.userId': userId })
+    if (permition?._id) {
+      const deleted = await commentCollection.deleteOne({ _id: new ObjectId(id) })
+      if (deleted.deletedCount) {
+        return true
+      } else {
+        return 'Forbidden'
+      }
+    }
+    return false
+  },
+  async put(id: string | ObjectId, userId: string | ObjectId, content: string,) {
+    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id), 'commentatorInfo.userId': userId })
+    if (permition?._id) {
+      const updated = await commentCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: {content: content} }, {returnDocument: 'after'});
+      if (updated?.content === content) {
+        return true
+      } else {
+        return 'Forbidden'
+      }
+    }
+    return false
+  },
+  async find(id: string | ObjectId) {
     const comment = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id) })
-    if(comment?._id) {
+    if (comment?._id) {
       return this.map(comment)
     } else {
       return false
-    } 
+    }
   },
   map(comment: CommentTypeDB): CommentViewModel {
     return {

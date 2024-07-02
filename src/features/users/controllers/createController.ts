@@ -11,8 +11,10 @@ export interface ICreateUserFields {
   password: string
 }
 
-export const createController = async (req: Request<{}, {}, ICreateUserFields>, res: Response<any>) => {
+export const createController = async (req: Request<{}, {}, ICreateUserFields>, res: Response<any>): Promise<any> => {
   const { login, email, password } = req.body
+  const userFound = await usersRepository.findByLoginOrEmail(email)
+  if(userFound?._id) return res.sendStatus(400)
   const user = await authService.createUser({ login, email, password })
   console.log(user)
   const result = await usersRepository.create(user)

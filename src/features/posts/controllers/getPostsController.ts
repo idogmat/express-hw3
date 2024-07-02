@@ -4,7 +4,7 @@ import { normolizedQuery } from '../../../utils/query-helper'
 import { IBlogWithPostsViewModelAfterQuery } from '../../../input-output-types/query-types-output'
 
 export const getPostsController = async (req: Request, res: Response<IBlogWithPostsViewModelAfterQuery>) => {
-  const query = normolizedQuery(req.query)
-  const data = await postsRepository.getAll(query)
-  res.status(200).json(data)
+  const query = normolizedQuery(req.query);
+  const data = await postsRepository.getAll(query);
+  res.status(200).json(data);
 }

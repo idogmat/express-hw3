@@ -1,8 +1,16 @@
 import { Response, Request, NextFunction } from 'express'
-import { SETTINGS } from '../settings'
 import { jwtService } from '../utils/jwtService'
 import 'dotenv/config'
-import { JwtPayload } from 'jsonwebtoken'
+
+// FIXME *
+export enum StatusEnum {
+  SUCCESS = 'success',
+  FORBIDDEN = 'forbidden',
+  NOT_FOUND = 'not_found',
+  UNAUTHORIZED = 'unauthorized'
+}
+
+
 
 export const tokenAuthorizationMiddleware = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
   
