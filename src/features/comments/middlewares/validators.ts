@@ -18,7 +18,7 @@ export const findCommentValidator = async (req: Request<{ id: string }>, res: Re
       .json({})
     return;
   }
-  const post = await commentCollection.findOne({ _id: new ObjectId(req.params.id), 'commentatorInfo.userId': req.userId })
+  const post = await commentCollection.findOne({ _id: new ObjectId(req.params.id) })
   if (!post) {
     res
       .status(404)

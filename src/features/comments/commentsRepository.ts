@@ -45,7 +45,7 @@ export const commentsRepository = {
     return queryForMap
   },
   async delete(id: string | ObjectId, userId: string | ObjectId) {
-    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id), 'commentatorInfo.userId': userId })
+    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id)})
     if (permition?._id) {
       if(userId.toString() === permition.commentatorInfo.userId.toString()) {
         const deleted = await commentCollection.deleteOne({ _id: new ObjectId(id) })
