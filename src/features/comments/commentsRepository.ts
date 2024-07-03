@@ -65,7 +65,7 @@ export const commentsRepository = {
         return 'Forbidden'
       }
     } else {
-      return false
+      return 'Forbidden'
     }
   },
   async find(id: string | ObjectId) {
