@@ -53,7 +53,7 @@ export const commentsRepository = {
         return 'Forbidden'
       }
     }
-    return false
+    return 'Forbidden'
   },
   async put(id: string | ObjectId, userId: string | ObjectId, content: string,) {
     const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id), 'commentatorInfo.userId': userId })
@@ -62,7 +62,7 @@ export const commentsRepository = {
       if (updated?.content === content) {
         return true
       } else {
-        return false
+        return 'Forbidden'
       }
     } else {
       return 'Forbidden'
