@@ -50,10 +50,10 @@ export const commentsRepository = {
       if (deleted.deletedCount) {
         return true
       } else {
-        return false
+        return 'Forbidden'
       }
     }
-    return 'Forbidden'
+    return false
   },
   async put(id: string | ObjectId, userId: string | ObjectId, content: string,) {
     const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id), 'commentatorInfo.userId': userId })
