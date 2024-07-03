@@ -50,7 +50,7 @@ export const commentsRepository = {
       if (deleted.deletedCount) {
         return true
       } else {
-        return 'Forbidden'
+        return false
       }
     }
     return 'Forbidden'
