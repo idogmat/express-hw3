@@ -16,6 +16,6 @@ export const commentsRouter = Router()
 // postsRouter.get('/', getPostsController)
 commentsRouter.get('/:id', getCommentController)
 commentsRouter.delete('/:id', tokenAuthorizationMiddleware, findCommentValidator, deleteCommentController)
-commentsRouter.put('/:id', tokenAuthorizationMiddleware, findCommentValidator, commentValidators, putCommentController)
+commentsRouter.put('/:id', tokenAuthorizationMiddleware, commentValidators, putCommentController)
 
 // не забудьте добавить роут в апп
