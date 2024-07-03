@@ -17,4 +17,4 @@ export const putCommentController = async (req: Request<{id: string}, any, Comme
       res.sendStatus(404)
     }
   }
-}
+ }
