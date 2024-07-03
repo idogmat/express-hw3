@@ -5,7 +5,7 @@ import { commentsRepository } from '../commentsRepository'
 
 export const deleteCommentController = async (req: Request<{id: string}>, res: Response) => {
   if(!ObjectId.isValid(req.params.id)) {
-    res.sendStatus(404)
+    res.sendStatus(403)
   } else {
     const comment = await commentsRepository.delete(req.params.id, req.userId)
     if (comment === "Forbidden") {
