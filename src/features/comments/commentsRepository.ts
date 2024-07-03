@@ -62,7 +62,7 @@ export const commentsRepository = {
       if (updated?.content === content) {
         return true
       } else {
-        return true
+        return false
       }
     } else {
       return 'Forbidden'
