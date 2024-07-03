@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb'
 
 export const putCommentController = async (req: Request<{id: string}, any, CommentInputModel>, res: Response) => {
   if(!ObjectId.isValid(req.params.id)) {
-    res.sendStatus(403)
+    res.sendStatus(404)
   } else {
     const comment = await commentsRepository.put(req.params.id, req.userId, req.body.content)
     if (comment === "Forbidden") {
