@@ -46,9 +46,11 @@ export const commentsRepository = {
   async delete(id: string | ObjectId, userId: string | ObjectId) {
     const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id), 'commentatorInfo.userId': userId })
     if (permition?._id) {
-      const deleted = await commentCollection.deleteOne({ _id: new ObjectId(id) })
-      if (deleted.deletedCount) {
-        return true
+      if(userId.toString() === permition.commentatorInfo.userId.toString()) {
+        const deleted = await commentCollection.deleteOne({ _id: new ObjectId(id) })
+        if (deleted.deletedCount) {
+          return true
+        } 
       } else {
         return 'Forbidden'
       }
@@ -56,11 +58,13 @@ export const commentsRepository = {
     return false
   },
   async put(id: string | ObjectId, userId: string | ObjectId, content: string,) {
-    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id), 'commentatorInfo.userId': userId })
+    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id)})
     if (permition?._id) {
-      const updated = await commentCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: {content: content} }, {returnDocument: 'after'});
-      if (updated?.content === content) {
-        return true
+      if(userId.toString() === permition.commentatorInfo.userId.toString()) {
+        const updated = await commentCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: {content: content} }, {returnDocument: 'after'});
+        if (updated?.content === content) {
+          return true
+        }
       } else {
         return 'Forbidden'
       }
