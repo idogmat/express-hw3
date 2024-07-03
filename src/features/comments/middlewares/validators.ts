@@ -10,7 +10,7 @@ export const contentValidator = body('content').isString().withMessage('not stri
   .trim().isLength({ min: 20, max: 300 }).withMessage('more then 300 or less then 20')
 
 
-export const blogCreateValidators = [
+export const commentValidators = [
   contentValidator,
   inputCheckErrorsMiddleware,
 ]
