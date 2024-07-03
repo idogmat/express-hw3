@@ -4,6 +4,7 @@ import { CommentTypeDB, PostTypeBD, UserTypeDB } from '../../db/db'
 import { CommentInputModel, CommentViewModel } from '../../input-output-types/comment-types'
 import { INormolizedQuery } from '../../utils/query-helper'
 import { IReturnQueryList } from '../../input-output-types/query-types-output'
+import { log } from 'console'
 
 export const commentsRepository = {
   async create(content: string, postId: string, userId: string) {
@@ -62,9 +63,8 @@ export const commentsRepository = {
     if (permition?._id) {
       if(userId.toString() === permition.commentatorInfo.userId.toString()) {
         const updated = await commentCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: {content: content} }, {returnDocument: 'after'});
-        if (updated?.content === content) {
-          return true
-        }
+        console.log(updated, " updated")
+        return true
       } else {
         return 'Forbidden'
       }
