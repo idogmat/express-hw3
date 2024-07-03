@@ -62,10 +62,10 @@ export const commentsRepository = {
       if (updated?.content === content) {
         return true
       } else {
-        return 'Forbidden'
+        return true
       }
     } else {
-      return false
+      return 'Forbidden'
     }
   },
   async find(id: string | ObjectId) {
