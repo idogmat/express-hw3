@@ -22,6 +22,6 @@ export const registrationController = async (req: Request<{}, {}, ICreateUserFie
   } catch (error) {
     console.error('Send email error', error);
   }
-  if (result) res.status(201).json(usersRepository.map(result));
+  if (result) res.status(204).json(usersRepository.map(result));
   else res.sendStatus(400);
 }
