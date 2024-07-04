@@ -21,12 +21,11 @@ export const emailService = {
       to: mail, // list of receivers
       subject: "Authorization", // Subject line
       html: `
-          <div>
-            <h1>Thank for your registration</h1>
-            <h2>Hello :${name}</h2><br>
-            <b>Mail:${mail}</b><br>
-            <b>To confirm your email, you need to follow the link.:<a href=${url}>link</a></b><br>
-          </div>
+      <h1>Thank for your registration</h1>
+      <p>To finish registration please follow the link below:
+        <a href=${url}>complete registration</a>
+      </p>
+    
       `});
   }
 }
