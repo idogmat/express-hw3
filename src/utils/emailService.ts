@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import 'dotenv/config'
 
 export const emailService = {
   async transporter() {
@@ -12,8 +13,9 @@ export const emailService = {
       },
     })
   },
-  async sendMail(name: string, mail: string, link: string) {
+  async sendMail(name: string, mail: string, code: string) {
     let transporter = await this.transporter()
+    const url = process.env.CONFIRM_EMAIL+code
     transporter.sendMail({
       from: 'Jack', // sender address
       to: mail, // list of receivers
@@ -23,7 +25,7 @@ export const emailService = {
             <h1>Thank for your registration</h1>
             <h2>Hello :${name}</h2><br>
             <b>Mail:${mail}</b><br>
-            <b>To confirm your email, you need to follow the link.:${link}</b><br>
+            <b>To confirm your email, you need to follow the link.:<a href=${url}>link</a></b><br>
           </div>
       `});
   }

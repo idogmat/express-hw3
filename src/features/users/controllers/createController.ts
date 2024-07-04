@@ -18,12 +18,12 @@ export const createController = async (req: Request<{}, {}, ICreateUserFields>, 
   const user = await authService.createUser({ login, email, password })
   console.log(user)
   const result = await usersRepository.create(user)
-  // const link = `http://localhost:8080/confirm-email?code${user.emailConfirmation.confirmationCode}`
-  // try {
-  //   await emailService.sendMail(result.login, result.email, link)
-  // } catch (error) {
-  //   console.error('Send email error', error);
-  // }
+  const code = user.emailConfirmation.confirmationCode
+  try {
+    await emailService.sendMail(result.login, result.email, code)
+  } catch (error) {
+    console.error('Send email error', error);
+  }
   if (result) res.status(201).json(usersRepository.map(result))
   else res.sendStatus(400)
 }
