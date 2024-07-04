@@ -59,19 +59,27 @@ export const usersRepository = {
     return user
   },
   map(user: UserTypeDB) {
-    const blogForOutput: UserViewModel = {
+    const userForOutput: UserViewModel = {
       id: user._id.toString(),
       login: user.login,
       email: user.email,
       createdAt: user.createdAt,
     }
-    return blogForOutput
+    return userForOutput
+  },
+  authMap(user: UserTypeDB) {
+    const userForOutput = {
+      userId: user._id.toString(),
+      login: user.login,
+      email: user.email,
+    }
+    return userForOutput
   },
   mapAfterQuery(users: IReturnQueryList<UserTypeDB>) {
-    const blogForOutput: IUserViewModelAfterQuery = {
+    const userForOutput: IUserViewModelAfterQuery = {
       ...users,
       items: users.items.map((b: any) => this.map(b))
     }
-    return blogForOutput
+    return userForOutput
   },
 }

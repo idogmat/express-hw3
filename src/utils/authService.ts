@@ -25,14 +25,7 @@ export const authService = {
       passwordHash,
       passwordSalt,
       createdAt: new Date(),
-      emailConfirmation: {
-        confirmationCode: randomUUID(),
-        expirationDate: dateSetter(new Date(), {
-            hours: 1,
-            minutes: 30,
-        }),
-        isConfirmed: false
-      }
+      emailConfirmation: this.createConfirmCodeObject(),
     }
     return newUser
   },
@@ -43,6 +36,16 @@ export const authService = {
     // or bcrypt.compare(password, user.passwordHash): return boolean
     return { result: user.passwordHash === passwordHash, id: user._id.toString() }
 
+  },
+  createConfirmCodeObject() {
+    return {
+      confirmationCode: randomUUID(),
+      expirationDate: dateSetter(new Date(), {
+          hours: 1,
+          minutes: 30,
+      }),
+      isConfirmed: false
+    }
   },
   async _generateHash(password: string, salt: string) {
     return await bcrypt.hash(password, salt)

@@ -4,6 +4,7 @@ import { SETTINGS } from '../../src/settings';
 import { codedAuth } from './datasets';
 import { BlogInputModel } from '../../src/input-output-types/blogs-types';
 import { PostInputModel } from '../../src/input-output-types/posts-types';
+import { authService } from '../../src/utils/authService';
 
 export const req = agent(app);
 
@@ -45,3 +46,5 @@ export async function addPost(id: string, newBlog: PostInputModel): Promise<Resp
     .send({...newPost, blogId: id}) // отправка данных
     .expect(201)
 }
+
+export const authServiceSeed = authService
