@@ -16,13 +16,16 @@ export const createController = async (req: Request<{}, {}, ICreateUserFields>, 
   const userFound = await usersRepository.findByLoginOrEmail(login, email)
   if(userFound?._id) return res.sendStatus(404)
   const user = await authService.createUser({ login, email, password })
-  const result = await usersRepository.create(user)
+  const result = await usersRepository.create({
+    ...user,emailConfirmation:
+    { ...user.emailConfirmation, isConfirmed: true}
+  })
   const code = user.emailConfirmation.confirmationCode
-  try {
-    await emailService.sendMail(result.login, result.email, code)
-  } catch (error) {
-    console.error('Send email error', error);
-  }
+  // try {
+  //   await emailService.sendMail(result.login, result.email, code)
+  // } catch (error) {
+  //   console.error('Send email error', error);
+  // }
   if (result) res.status(201).json(usersRepository.map(result))
   else res.sendStatus(400)
 }
