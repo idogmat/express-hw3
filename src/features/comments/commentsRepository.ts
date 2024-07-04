@@ -8,9 +8,7 @@ import { log } from 'console'
 
 export const commentsRepository = {
   async create(content: string, postId: string, userId: string) {
-    console.log(content, postId, userId)
     const user = await userCollection.findOne<UserTypeDB>({ _id: new ObjectId(userId) })
-    console.log(user, 'user')
     if (!user?.login) return false
     const newComment: Omit<CommentTypeDB, '_id'> = {
       content,
@@ -63,7 +61,6 @@ export const commentsRepository = {
     if (permition?._id) {
       if(userId.toString() === permition.commentatorInfo.userId.toString()) {
         const updated = await commentCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: {content: content} }, {returnDocument: 'after'});
-        console.log(updated, " updated")
         return true
       } else {
         return 'Forbidden'

@@ -6,7 +6,7 @@ export interface ICode {
 
 export const confirmRegistrationController = async (req: Request<{}, {}, {}, ICode>, res: Response<any>) => {
   const user = await userCollection.findOne({'emailConfirmation.confirmationCode': req.query.code})
-  console.log(user)
+  // console.log(user)
   if (!user?.emailConfirmation?.isConfirmed) {
     const updated = await userCollection.findOneAndUpdate(
       {'emailConfirmation.confirmationCode': req.query.code},

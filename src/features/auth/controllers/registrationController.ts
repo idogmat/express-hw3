@@ -14,7 +14,7 @@ export const registrationController = async (req: Request<{}, {}, ICreateUserFie
   const userFound = await usersRepository.findByLoginOrEmail(login, email);
   if(userFound?._id) return res.sendStatus(400);
   const user = await authService.createUser({ login, email, password });
-  console.log(user)
+  // console.log(user)
   const result = await usersRepository.create(user);
   const code = user.emailConfirmation.confirmationCode;
   try {

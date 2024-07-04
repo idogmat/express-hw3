@@ -18,8 +18,8 @@ export const loginController = async (req: Request<{}, {}, ILoginFields>, res: R
   }
   const accessToken = await jwtService.createAccessToken(id)
   const refreshToken = await jwtService.createRefreshToken(id)
-  console.log(accessToken)
-  console.log(refreshToken)
+  // console.log(accessToken)
+  // console.log(refreshToken)
   // const acccessTokenDecod = await jwtService.decodeToken(acccessToken)
   // const refreshTokenDecod = await jwtService.decodeToken(refreshToken)
   // console.log(acccessTokenDecod)
