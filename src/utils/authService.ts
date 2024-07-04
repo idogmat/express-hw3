@@ -41,9 +41,8 @@ export const authService = {
     return {
       confirmationCode: randomUUID(),
       expirationDate: dateSetter(new Date(), {
-          // hours: 1,
-          // minutes: 30,
-          seconds:5
+          hours: 1,
+          minutes: 30,
       }),
       isConfirmed: false
     }
