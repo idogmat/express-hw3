@@ -10,7 +10,7 @@ export const putBlogController = async (req: Request<{ id: string }, {}, BlogInp
     return
   }
   const result = await blogsRepository.put({ ...req.body }, id);
-  console.log(result, 'final')
+  // console.log(result, 'final')
   if (result) res.sendStatus(204)
   else res.sendStatus(404)
 }

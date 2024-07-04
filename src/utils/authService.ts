@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt'
 import { authRepository } from "../features/auth/authRepository";
-import { UserTypeDB } from "../db/db";
 import { randomUUID } from 'crypto';
 import { dateSetter } from './date-methods';
 

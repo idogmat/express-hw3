@@ -13,9 +13,7 @@ export enum StatusEnum {
 
 
 export const tokenAuthorizationMiddleware = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
-  
   const auth = req?.headers?.['authorization'] as string
-  console.log(auth)
   if (!auth) {
     res
       .status(401)

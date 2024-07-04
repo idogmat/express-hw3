@@ -9,7 +9,6 @@ export const hashHelper = {
   },
   async checkCredentiald(passwordFromDB: string, password: string) {
     const result = await bcrypt.compare(password, passwordFromDB)
-    console.log(result)
     return result
   },
   async _generateHash(password: string, salt: string) {

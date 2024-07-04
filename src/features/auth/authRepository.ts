@@ -16,7 +16,7 @@ export const authRepository = {
     const result = await userCollection.insertOne(user)
     if (result.insertedId) {
       const userInfo = await this.find(result.insertedId)
-      console.log(userInfo)
+      // console.log(userInfo)
 
       return userInfo
     } else {
@@ -34,7 +34,7 @@ export const authRepository = {
         { login: loginOrEmail }
       ]
     })
-    console.log(user)
+    // console.log(user)
     return user
   }
 }
