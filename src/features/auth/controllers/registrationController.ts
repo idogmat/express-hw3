@@ -17,8 +17,9 @@ export const registrationController = async (req: Request<{}, {}, ICreateUserFie
   // console.log(user)
   const result = await usersRepository.create(user);
   const code = user.emailConfirmation.confirmationCode;
+  console.log(result)
   try {
-    await emailService.sendMail(result.login, result.email, code);
+    emailService.sendMail(result.login, result.email, code);
   } catch (error) {
     console.error('Send email error', error);
   }

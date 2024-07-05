@@ -1,6 +1,6 @@
 import { body, param, query } from 'express-validator'
 import { inputCheckErrorsMiddleware } from '../../../global-middlewares/inputCheckErrorsMiddleware'
-import { blogCollection } from '../../../app'
+import { blogCollection, userCollection } from '../../../app'
 import { ObjectId } from 'mongodb'
 import { authRepository } from '../authRepository'
 
@@ -26,7 +26,9 @@ export const passwordValidator = body('password').isString().withMessage('not st
   .trim().isLength({ min: 6, max: 20 }).withMessage('more then 100 or 0')
 
 export const emailValidator = body('email').isString().withMessage('not string')
-  .trim().isEmail().withMessage('not valid email').custom(async email =>{
+  .trim().withMessage('not valid email').custom(async email =>{
+    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    if (!emailRegex.test(email)) return Promise.reject()
     const user = await authRepository.findByLoginOrEmail(email);
     if(!user)  {
       return Promise.resolve()
@@ -35,6 +37,32 @@ export const emailValidator = body('email').isString().withMessage('not string')
     }
   })
 
+export const codelValidator = body('code').isString().withMessage('not string')
+.trim().withMessage('not valid email').custom(async code =>{
+  console.log(code)
+  const user = await userCollection.findOne(    { $and:[
+    {'emailConfirmation.confirmationCode': code},
+    {'emailConfirmation.isConfirmed': false}
+  ]});
+  console.log(user)
+  if(user)  {
+    return Promise.resolve()
+  }else {
+    return Promise.reject()
+  }
+})
+
+export const resendEmailValidator = body('email').isString().withMessage('not string')
+.trim().withMessage('not valid email').custom(async email =>{
+  const user = await userCollection.findOne({$and: [{ email }, {'emailConfirmation.isConfirmed': false }]});
+  console.log(user)
+  if(user)  {
+    return Promise.resolve()
+  }else {
+    return Promise.reject()
+  }
+})
+
 export const userCreateValidators = [
   loginValidator,
   passwordValidator,
@@ -42,7 +70,7 @@ export const userCreateValidators = [
   inputCheckErrorsMiddleware,
 ]
 
-export const resendEmailValidator = [
-  emailValidator,
+export const resendEmailValidators = [
+  resendEmailValidator,
   inputCheckErrorsMiddleware,
 ]
