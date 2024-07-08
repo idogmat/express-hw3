@@ -27,6 +27,10 @@ export const authRepository = {
     const result = await userCollection.findOne({ _id: new ObjectId(id) })
     return result
   },
+  async findRefreshTokenUserId(refreshToken: string) {
+    const result = await userCollection.findOne({refreshToken})
+    return result
+  },
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDBType | null> {
     const user = await userCollection.findOne({
       $or: [

@@ -12,23 +12,15 @@ export enum StatusEnum {
 
 
 
-export const tokenAuthorizationMiddleware = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
-  const auth = req?.headers?.['authorization'] as string
-  if (!auth) {
+export const tokenRefreshMiddleware = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
+  const refreshToken = req?.cookies?.refreshToken
+  if (!refreshToken) {
     res
       .status(401)
       .json({})
     return
   }
-  const token = auth.split(' ')
-
-  if (token?.length !== 2 || token[0] !== 'Bearer') {
-    res
-      .status(401)
-      .json({})
-    return
-  }
-  const info = await jwtService.verifyToken(token[1], 'accsess')
+  const info = await jwtService.verifyToken(refreshToken, 'refresh')
   console.log(info)
   if (!info) {
     res

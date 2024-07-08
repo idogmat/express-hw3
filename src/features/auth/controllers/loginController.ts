@@ -1,6 +1,8 @@
 import { Response, Request } from 'express'
 import { authService } from '../../../utils/authService';
 import { jwtService } from '../../../utils/jwtService';
+import { userCollection } from '../../../app';
+import { ObjectId } from 'mongodb';
 
 export interface ILoginFields {
   loginOrEmail: string;
@@ -18,6 +20,8 @@ export const loginController = async (req: Request<{}, {}, ILoginFields>, res: R
   }
   const accessToken = await jwtService.createAccessToken(id)
   const refreshToken = await jwtService.createRefreshToken(id)
+  await userCollection.findOneAndUpdate({_id: new ObjectId(id)}, {$set: {refreshToken}})
+  res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
   // console.log(accessToken)
   // console.log(refreshToken)
   // const acccessTokenDecod = await jwtService.decodeToken(acccessToken)
