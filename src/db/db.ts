@@ -34,16 +34,17 @@ export type UserTypeDB = {
   passwordHash: string;
   passwordSalt: string;
   createdAt: Date;
-  emailConfirmation: EmailConfirmation
+  emailConfirmation: EmailConfirmation;
+  refreshToken?: string;
 }
 
 export type EmailConfirmation = { 
-  confirmationCode: `${string}-${string}-${string}-${string}-${string}`,
-  expirationDate: Date,
-  isConfirmed: boolean
+  confirmationCode: `${string}-${string}-${string}-${string}-${string}`;
+  expirationDate: Date;
+  isConfirmed: boolean;
 }
 
-export type UserTypeDBWithoutId = Omit<UserTypeDB, '_id'>
+export type UserTypeDBWithoutId = Omit<UserTypeDB, '_id' | 'refreshToken'>;
 
 export type CommentTypeDB = {
   _id: ObjectId;

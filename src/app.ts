@@ -10,6 +10,7 @@ import { authRouter } from './features/auth'
 import { usersRouter } from './features/users'
 import { BlogTypeBD, CommentTypeDB, PostTypeBD, UserTypeDB } from './db/db'
 import { commentsRouter } from './features/comments'
+import cookieParser from 'cookie-parser'
 dotenv.config()
 const tokenDB = process.env.CONNECTION || ''
 
@@ -31,13 +32,12 @@ export const connectDb = async () => {
     return 'done.';
 }
 
-export const app = express() // создать приложение
-app.use(express.json()) // создание свойств-объектов body и query во всех реквестах
-app.use(cors({origin: true, credentials: true})) //
-
+export const app = express();
+app.use(express.json()); // создание свойств-объектов body и query во всех реквестах
+app.use(cors({origin: true, credentials: true})); //
+app.use(cookieParser());
 app.get('/', (req, res) => {
-  // эндпоинт, который будет показывать на верселе какая версия бэкэнда сейчас залита
-  res.status(200).json({ version: '1.0' })
+  res.status(200).json({ version: '1.8' })
 })
 
 app.use(SETTINGS.PATH.BLOGS, blogsRouter)
