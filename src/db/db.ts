@@ -59,6 +59,13 @@ export type CommentatorInfoType = {
   userLogin: string;
 }
 
+export type LogTypeDB = {
+  IP: string;
+  URL: string;
+  date: Date;
+  count: number;
+}
+
 // export const BlogSchema = new mongoose.Schema<BlogTypeBD, Model<BlogTypeBD>>({
 //   name: { type: String, required: true },
 //   description: { type: String, required: true },
