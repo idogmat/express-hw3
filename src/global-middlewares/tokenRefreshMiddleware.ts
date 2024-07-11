@@ -32,7 +32,7 @@ export const tokenRefreshMiddleware = async (req: Request<any, any, any, any>, r
 
   if (info instanceof Object) {
     if (info?.exp && info?.exp*1000 >= Date.now()) {
-      req.userId = info!.userId
+      req.userId = info.userId
     } else {
       res
       .status(401)

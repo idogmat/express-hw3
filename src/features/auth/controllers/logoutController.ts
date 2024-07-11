@@ -1,5 +1,5 @@
 import { Response, Request } from 'express'
-import { userCollection } from '../../../app';
+import { deviceCollection, userCollection } from '../../../app';
 import { ObjectId } from 'mongodb';
 
 export interface ILoginFields {
@@ -11,13 +11,9 @@ export const logoutController = async (req: Request<{}, {}, ILoginFields>, res: 
   const id = req.userId
   const oldRefreshToken = req.cookies.refreshToken
   if (ObjectId.isValid(id)) {
-    const foundToken = await userCollection.findOne({_id: new ObjectId(id), refreshToken: oldRefreshToken})
+    const foundToken = await deviceCollection.findOne({refreshToken: oldRefreshToken})
   if (!foundToken) return res.sendStatus(401)
-    const result = await userCollection.findOneAndUpdate(
-      {_id: new ObjectId(id)},
-      {$set: { refreshToken: '' }},
-      {returnDocument: 'after'}
-    )
+    const result = await userCollection.deleteOne({_id: foundToken._id})
     res.clearCookie('refreshToken', {httpOnly: true, secure: true})
     res.status(204).json({})
   } else {

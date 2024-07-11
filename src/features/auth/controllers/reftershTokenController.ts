@@ -1,7 +1,8 @@
 import { Response, Request } from 'express'
 import { jwtService } from '../../../utils/jwtService';
-import { userCollection } from '../../../app';
+import { deviceCollection, userCollection } from '../../../app';
 import { ObjectId } from 'mongodb';
+import { devicesRepository } from '../../devices/devicesRepository';
 
 export interface ILoginFields {
   loginOrEmail: string;
@@ -11,16 +12,15 @@ export interface ILoginFields {
 export const reftershTokenController = async (req: Request<{}, {}, {}>, res: Response<any>): Promise<any> => {
   const id = req.userId
   const oldRefreshToken = req.cookies.refreshToken
+  const browser = req.get('user-agent');
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
   if (ObjectId.isValid(id)) {
-    const foundToken = await userCollection.findOne({_id: new ObjectId(id), refreshToken: oldRefreshToken})
-  if (!foundToken) return res.sendStatus(401)
-  const accessToken = await jwtService.createAccessToken(id)
-  const refreshToken = await jwtService.createRefreshToken(id)
-  const result = await userCollection.findOneAndUpdate(
-    {_id: new ObjectId(id)},
-    {$set: { refreshToken }},
-    {returnDocument: 'after'}
-  )
+    const session = await deviceCollection.findOne({refreshToken: oldRefreshToken})
+    console.log(session)
+    if (!session) return res.sendStatus(401)
+    const accessToken = await jwtService.createAccessToken(id)
+    const refreshToken = await jwtService.createRefreshToken(id)
+    await devicesRepository.update(session._id, refreshToken)
     res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
     res.status(200).json({accessToken})
   } else {
