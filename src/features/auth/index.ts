@@ -10,13 +10,14 @@ import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckE
 import { reftershTokenController } from "./controllers/reftershTokenController";
 import { tokenRefreshMiddleware } from "../../global-middlewares/tokenRefreshMiddleware";
 import { logoutController } from "./controllers/logoutController";
+import { requestLimitGuard } from "../../global-middlewares/requestLimitGuard";
 
 export const authRouter = Router()
 
-authRouter.post('/login', loginController)
+authRouter.post('/login', requestLimitGuard, loginController)
 authRouter.post('/logout', tokenRefreshMiddleware, logoutController)
 authRouter.post('/refresh-token', tokenRefreshMiddleware, reftershTokenController)
-authRouter.post('/registration', ...userCreateValidators, registrationController)
-authRouter.post('/registration-confirmation', codelValidator, inputCheckErrorsMiddleware, confirmRegistrationController)
-authRouter.post('/registration-email-resending', ...resendEmailValidators, resendEmailController)
+authRouter.post('/registration', requestLimitGuard, ...userCreateValidators, registrationController)
+authRouter.post('/registration-confirmation',requestLimitGuard, codelValidator, inputCheckErrorsMiddleware, confirmRegistrationController)
+authRouter.post('/registration-email-resending', requestLimitGuard, ...resendEmailValidators, resendEmailController)
 authRouter.get('/me', tokenAuthorizationMiddleware, authMeController)

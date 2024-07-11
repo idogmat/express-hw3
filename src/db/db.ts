@@ -35,7 +35,6 @@ export type UserTypeDB = {
   passwordSalt: string;
   createdAt: Date;
   emailConfirmation: EmailConfirmation;
-  refreshToken?: string;
 }
 
 export type EmailConfirmation = { 
@@ -58,6 +57,26 @@ export type CommentatorInfoType = {
   userId: string;
   userLogin: string;
 }
+
+export type LogTypeDB = {
+  IP: string;
+  URL: string;
+  date: Date;
+  count: number;
+}
+
+export type DeviceTypeDB = {
+  _id: ObjectId;
+  userId: string;
+  ip: string;
+  title: string;
+  lastActiveDate: Date;
+  deviceId: ObjectId;
+  refreshToken: string;
+}
+
+export type DeviceTypeDBWithoutId = Omit<DeviceTypeDB, '_id'>;
+
 
 // export const BlogSchema = new mongoose.Schema<BlogTypeBD, Model<BlogTypeBD>>({
 //   name: { type: String, required: true },
