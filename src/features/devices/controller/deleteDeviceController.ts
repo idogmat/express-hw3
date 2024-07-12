@@ -1,9 +1,21 @@
 import { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import { deviceCollection } from '../../../app'
+import { devicesQueryRepository } from '../devicesQueryRepository';
+import { devicesRepository } from '../devicesRepository';
 
-export const deleteDeviceController = async (req: Request, res: Response) => {
-  const userSessions = await deviceCollection.find({userId: req.userId}).toArray();
-  console.log(userSessions)
-  res.status(200).json(userSessions)
+interface IDevice {
+  id: string;
+}
+
+export const deleteDeviceController = async (req: Request<IDevice>, res: Response): Promise<Response | void> => {
+  console.log(req.params.id)
+  if (!ObjectId.isValid(req.params.id)) return res.sendStatus(404)
+  const userSessions = await devicesRepository.findSession(req.params.id);
+  console.log(userSessions, 'userSessions')
+  if (!userSessions) return res.sendStatus(404)
+  if (userSessions.userId.toString() !== req.userId) return res.sendStatus(403)
+  const deleted = await devicesRepository.deleteSession(userSessions._id)
+  console.log(deleted, 'deleted')
+  res.status(204).json({})
 }

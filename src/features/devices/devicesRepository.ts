@@ -15,5 +15,17 @@ export const devicesRepository = {
       { returnDocument: "after"}
     )
     return result?.refreshToken === refreshToken;
-  } 
+  },
+  async findSession(deviceId: string | ObjectId) {
+    const device = await deviceCollection.findOne<DeviceTypeDB>({ deviceId: new ObjectId(deviceId) })
+    return device
+  },
+  async deleteSession(id: ObjectId) {
+    const device = await deviceCollection.deleteOne({ _id: id });
+    return device?.deletedCount
+  },
+  async deleteAllSessions(browser: string) {
+    const device = await deviceCollection.deleteMany({ title: {$ne: browser}});
+    return device?.deletedCount
+  },
 }

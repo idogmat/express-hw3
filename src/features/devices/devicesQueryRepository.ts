@@ -4,8 +4,8 @@ import { ObjectId } from 'mongodb';
 import { DeviceViewModel } from "../../input-output-types/device-types";
 
 export const devicesQueryRepository = {
-  async get(userId: string) {
-    const devices = await deviceCollection.find<DeviceTypeDB>({ _id: new ObjectId(userId) }).toArray()    
+  async get(userId: string): Promise<DeviceViewModel[]> {
+    const devices = await deviceCollection.find<DeviceTypeDB>({ userId }).toArray()    
     return devices.map(d => this.map(d));
   },
   async find(id: string | ObjectId) {

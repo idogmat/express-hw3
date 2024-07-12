@@ -10,7 +10,7 @@ export const SETTINGS = {
         AUTH: '/auth',
         USERS: '/users',
         COMMENTS: '/comments',
-        DEVICES: '/devices',
+        DEVICES: '/security/devices',
     },
     ADMIN: process.env.ADMIN || 'admin:qwerty',
 }
