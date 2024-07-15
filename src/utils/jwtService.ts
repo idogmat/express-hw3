@@ -21,9 +21,9 @@ export const jwtService = {
       {expiresIn: ACCESS_EXPIRATION}
     )
   },
-  async createRefreshToken(id: string, browser?: string): Promise<string> {
+  async createRefreshToken(id: string, browser?: string, deviceId?: string, ip?: string): Promise<string> {
     return jwt.sign(
-      {userId: id, browser},
+      {userId: id, browser, deviceId, ip},
       REFRESH_SECRET,
       {expiresIn: REFRESH_EXPIRATION}
     )

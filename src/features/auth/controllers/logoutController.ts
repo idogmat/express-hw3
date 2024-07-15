@@ -13,7 +13,7 @@ export const logoutController = async (req: Request<{}, {}, ILoginFields>, res: 
   if (ObjectId.isValid(id)) {
     const foundToken = await deviceCollection.findOne({refreshToken: oldRefreshToken})
   if (!foundToken) return res.sendStatus(401)
-    const result = await userCollection.deleteOne({_id: foundToken._id})
+    const result = await deviceCollection.deleteOne({_id: foundToken._id})
     res.clearCookie('refreshToken', {httpOnly: true, secure: true})
     res.status(204).json({})
   } else {

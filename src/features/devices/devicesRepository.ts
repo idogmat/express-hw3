@@ -11,7 +11,7 @@ export const devicesRepository = {
   async update(id: ObjectId, refreshToken: string) {
     const result = await deviceCollection.findOneAndUpdate(
       {_id: id},
-      {$set: {refreshToken, lastActiveDate: new Date()}},
+      {$set: {refreshToken, lastActiveDate: (new Date()).toISOString()}},
       { returnDocument: "after"}
     )
     return result?.refreshToken === refreshToken;
@@ -24,8 +24,8 @@ export const devicesRepository = {
     const device = await deviceCollection.deleteOne({ _id: id });
     return device?.deletedCount
   },
-  async deleteAllSessions(browser: string) {
-    const device = await deviceCollection.deleteMany({ title: {$ne: browser}});
+  async deleteAllSessions(id: string,) {
+    const device = await deviceCollection.deleteMany({ deviceId: {$ne: new ObjectId(id)} });
     return device?.deletedCount
   },
 }

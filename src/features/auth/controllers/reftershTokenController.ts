@@ -19,8 +19,9 @@ export const reftershTokenController = async (req: Request<{}, {}, {}>, res: Res
     console.log(session)
     if (!session) return res.sendStatus(401)
     const accessToken = await jwtService.createAccessToken(id)
-    const refreshToken = await jwtService.createRefreshToken(id)
-    await devicesRepository.update(session._id, refreshToken)
+    const refreshToken = await jwtService.createRefreshToken(id, browser, session.deviceId.toString())
+    const result = await devicesRepository.update(session._id, refreshToken)
+    console.log(result)
     res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
     res.status(200).json({accessToken})
   } else {

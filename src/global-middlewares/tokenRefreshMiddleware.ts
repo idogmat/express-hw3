@@ -25,7 +25,7 @@ export const tokenRefreshMiddleware = async (req: Request<any, any, any, any>, r
   if (!info) {
     res
     .status(401)
-    .json({})
+    .json({error: 'invalid token'})
   return
   }
 

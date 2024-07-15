@@ -17,5 +17,5 @@ export const deleteDeviceController = async (req: Request<IDevice>, res: Respons
   if (userSessions.userId.toString() !== req.userId) return res.sendStatus(403)
   const deleted = await devicesRepository.deleteSession(userSessions._id)
   console.log(deleted, 'deleted')
-  res.status(204).json({})
+  res.sendStatus(204)
 }

@@ -70,7 +70,7 @@ export type DeviceTypeDB = {
   userId: string;
   ip: string;
   title: string;
-  lastActiveDate: Date;
+  lastActiveDate: string;
   deviceId: ObjectId;
   refreshToken: string;
 }

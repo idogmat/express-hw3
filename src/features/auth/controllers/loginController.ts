@@ -23,23 +23,26 @@ export const loginController = async (req: Request<{}, {}, ILoginFields>, res: R
     return
   }
   const accessToken = await jwtService.createAccessToken(id)
-  const refreshToken = await jwtService.createRefreshToken(id, browser)
   const session = await deviceCollection.findOne({ userId: id, title: browser, ip: ip?.toString() })
   if (session) {
+    const refreshToken = await jwtService.createRefreshToken(id, browser, session.deviceId.toString())
     await devicesRepository.update(session._id, refreshToken)
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true });
   } else {
+    const deviceId = new ObjectId();
+    const refreshToken = await jwtService.createRefreshToken(id, browser, deviceId.toString())
     const device = {
       title: browser || '',
       userId: id,
       ip: ip?.toString() || '',
-      deviceId: new ObjectId(),
-      lastActiveDate: new Date(),
+      deviceId,
+      lastActiveDate: (new Date()).toISOString(),
       refreshToken,
     }
     const resi = await devicesRepository.create(device)
     console.log(resi)
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true });
   }
-  res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true });
   if (result) res.status(200).json({ accessToken })
   else res.sendStatus(401)
 }
