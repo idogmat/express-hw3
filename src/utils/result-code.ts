@@ -1,37 +1,36 @@
-
 export enum ResultCode {
   Success,
   NoContent,
   Unauthorize,
   Forbidden,
   BadRequest,
-  NotFound
+  NotFound,
 }
 
 export type Result<T> = {
-  data: T,
-  resultCode: ResultCode,
-  errorMessage?: string,
-}
+  data: T;
+  resultCode: ResultCode;
+  errorMessage?: string;
+};
 
 export const handleSuccessResult = <T>(data: T): Result<T> => {
   return {
     data,
     resultCode: ResultCode.Success,
-  }
-}
+  };
+};
 export const handleForbiddenResult = (message: string): Result<null> => {
   return {
     data: null,
     resultCode: ResultCode.Forbidden,
-  }
-}
+  };
+};
 export const handleNotFoundResult = (message: string): Result<null> => {
   return {
     data: null,
     resultCode: ResultCode.NotFound,
-  }
-}
+  };
+};
 
 export const resultCodeToHttpException = (resultCode: ResultCode): number => {
   switch (resultCode) {
@@ -48,4 +47,4 @@ export const resultCodeToHttpException = (resultCode: ResultCode): number => {
     default:
       return 500;
   }
-}
+};

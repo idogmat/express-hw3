@@ -1,35 +1,30 @@
-
 import { Types, ObjectId } from "mongoose";
-import { userCollection } from '../../app';
+import { userCollection } from "../../app";
 import { UserTypeDB } from "../../db/db";
-import { UserRepository } from "../users/usersRepository";
-
+import { UserRepository } from "../users/userRepository";
 
 export const authRepository = {
   async create(user: UserTypeDB): Promise<any> {
-    const result = await UserRepository.create(user)
+    const result = await UserRepository.create(user);
     if (result) {
-      return result
+      return result;
     } else {
-      false
+      false;
     }
   },
   async find(id: string) {
-    const result = await UserRepository.findById(id)
-    return result
+    const result = await UserRepository.findById(id);
+    return result;
   },
   async findRefreshTokenUserId(refreshToken: string) {
-    const result = await userCollection.findOne({refreshToken})
-    return result
+    const result = await userCollection.findOne({ refreshToken });
+    return result;
   },
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserTypeDB | null> {
     const user = await userCollection.findOne({
-      $or: [
-        { email: loginOrEmail },
-        { login: loginOrEmail }
-      ]
-    })
+      $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
+    });
     // console.log(user)
-    return user
-  }
-}
+    return user;
+  },
+};
