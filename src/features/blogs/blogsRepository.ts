@@ -2,7 +2,7 @@ import { BlogInputModel, BlogViewModel } from '../../input-output-types/blogs-ty
 import { INormolizedQuery } from '../../utils/query-helper';
 import { postsRepository } from '../posts/postsRepository';
 import { PostInputModel } from '../../input-output-types/posts-types';
-import { ObjectId } from 'mongodb';
+import { Types, ObjectId } from "mongoose";
 import { blogCollection, postCollection } from '../../app';
 import { BlogTypeBD, PostTypeBD } from '../../db/db';
 
@@ -18,30 +18,30 @@ export const blogsRepository = {
     const result = await blogCollection.insertOne(newBlog);
     return result.insertedId;
   },
-  async find(id: ObjectId) {
-    const blog = await blogCollection.findOne({ _id: new ObjectId(id) })
+  async find(id: string) {
+    const blog = await blogCollection.findOne({ _id: new Types.ObjectId(id) })
     if (blog) {
       return this.map(blog);
     }
     return false
   },
-  async findAndMap(id: ObjectId) {
-    const blog = await blogCollection.findOne({ _id: new ObjectId(id) });
+  async findAndMap(id: string) {
+    const blog = await blogCollection.findOne({ _id: new Types.ObjectId(id) });
     if (blog?._id) {
       return this.map(blog);
     }
     return false
   },
-  async getPostsInBlog(blogId: ObjectId, query: INormolizedQuery) {
-    const blog = await blogCollection.findOne({ _id: new ObjectId(blogId) })
+  async getPostsInBlog(blogId: string, query: INormolizedQuery) {
+    const blog = await blogCollection.findOne({ _id: new Types.ObjectId(blogId) })
     if (!blog) {
       return false;
     }
     const totalCount = await postCollection
-      .find({ blogId: blogId }).toArray()
+      .find({ blogId: blogId.toString() }).toArray()
 
     const posts = await postCollection
-      .find({ blogId: blogId })
+      .find({ blogId: blogId.toString() })
       .sort({ [query.sortBy]: query.sortDirection })
       .skip((query.pageNumber - 1) * query.pageSize)
       .limit(query.pageSize).toArray()
@@ -55,8 +55,8 @@ export const blogsRepository = {
     }
     return postsRepository.mapAfterQuery(queryForMap)
   },
-  async postPostsInBlog(blogId: ObjectId, post: PostInputModel) {
-    const blog = await blogCollection.findOne({ _id: new ObjectId(blogId) })
+  async postPostsInBlog(blogId: string, post: PostInputModel) {
+    const blog = await blogCollection.findOne({ _id: new Types.ObjectId(blogId) })
     if (!blog?.name) return false;
     const newPost = {
       title: post.title,
@@ -67,7 +67,7 @@ export const blogsRepository = {
       blogName: blog.name,
     } as PostTypeBD;
     const result = await postCollection.insertOne(newPost);
-    const newPostForMap = await postCollection.findOne({ _id: new ObjectId(result.insertedId) })
+    const newPostForMap = await postCollection.findOne({ _id: new Types.ObjectId(result.insertedId) })
     if (newPostForMap?._id) {
       return postsRepository.map(newPostForMap as any);
     } else {
@@ -92,16 +92,16 @@ export const blogsRepository = {
     }
     return this.mapAfterQuery(queryForMap);
   },
-  async del(id: ObjectId) {
-    const blog = await blogCollection.findOne({ _id: new ObjectId(id) });
+  async del(id: string) {
+    const blog = await blogCollection.findOne({ _id: new Types.ObjectId(id) });
     if (!blog?.name) return false
-    const deletedBlog = await blogCollection.deleteOne({ _id: new ObjectId(id) });
-    const deletedPosts = await postCollection.deleteMany({ blogId: id })
+    const deletedBlog = await blogCollection.deleteOne({ _id: new Types.ObjectId(id) });
+    const deletedPosts = await postCollection.deleteMany({ blogId: id.toString() })
     return true;
   },
-  async put(blog: BlogInputModel, id: ObjectId) {
+  async put(blog: BlogInputModel, id: string) {
     try {
-      const result = await blogCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: blog }, { returnDocument: 'after' });
+      const result = await blogCollection.findOneAndUpdate({ _id: new Types.ObjectId(id) }, { $set: blog }, { returnDocument: 'after' });
       return result
     } catch {
       return false
@@ -109,7 +109,7 @@ export const blogsRepository = {
   },
   map(blog: BlogTypeBD) {
     const blogForOutput: BlogViewModel = {
-      id: blog._id,
+      id: blog._id.toString(),
       description: blog.description,
       websiteUrl: blog.websiteUrl,
       name: blog.name,

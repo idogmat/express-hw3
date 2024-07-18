@@ -4,7 +4,7 @@ import { SETTINGS } from '../../src/settings';
 import { codedAuth } from './datasets';
 import { BlogInputModel } from '../../src/input-output-types/blogs-types';
 import { PostInputModel } from '../../src/input-output-types/posts-types';
-import { authService } from '../../src/utils/authService';
+import { AuthService } from '../../src/services/auth.service';
 
 export const req = agent(app);
 

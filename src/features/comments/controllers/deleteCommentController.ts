@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import { CommentViewModel } from '../../../input-output-types/comment-types'
-import { ObjectId } from 'mongodb'
+import { Types } from "mongoose";
 import { commentsRepository } from '../commentsRepository'
 
 export const deleteCommentController = async (req: Request<{id: string}>, res: Response) => {
-  if(!ObjectId.isValid(req.params.id)) {
+  if(!Types.ObjectId.isValid(req.params.id)) {
     res.sendStatus(404)
   } else {
     const comment = await commentsRepository.delete(req.params.id, req.userId)

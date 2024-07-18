@@ -1,10 +1,6 @@
 import { Response, Request } from 'express'
-import { usersRepository } from '../usersRepository';
-import { authService } from '../../../utils/authService';
-import { emailService } from '../../../utils/emailService';
-import {randomUUID} from "crypto";
-import { dateSetter } from '../../../utils/date-methods';
-import { UserTypeDB } from '../../../db/db';
+import { UserRepository } from '../usersRepository';
+import { AuthService } from '../../../services/auth.service';
 export interface ICreateUserFields {
   login: string;
   email: string;
@@ -13,10 +9,10 @@ export interface ICreateUserFields {
 
 export const createController = async (req: Request<{}, {}, ICreateUserFields>, res: Response<any>): Promise<any> => {
   const { login, email, password } = req.body
-  const userFound = await usersRepository.findByLoginOrEmail(login, email)
+  const userFound = await UserRepository.findByLoginOrEmail(login, email)
   if(userFound?._id) return res.sendStatus(404)
-  const user = await authService.createUser({ login, email, password })
-  const result = await usersRepository.create({
+  const user = await AuthService.createUser({ login, email, password })
+  const result = await UserRepository.create({
     ...user,emailConfirmation:
     { ...user.emailConfirmation, isConfirmed: true}
   })
@@ -26,6 +22,6 @@ export const createController = async (req: Request<{}, {}, ICreateUserFields>, 
   // } catch (error) {
   //   console.error('Send email error', error);
   // }
-  if (result) res.status(201).json(usersRepository.map(result))
+  if (result) res.status(201).json(UserRepository.map(result as any))
   else res.sendStatus(400)
 }

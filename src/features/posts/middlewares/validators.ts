@@ -1,11 +1,9 @@
 import { body } from 'express-validator'
 import { inputCheckErrorsMiddleware } from '../../../global-middlewares/inputCheckErrorsMiddleware'
 import { NextFunction, Request, Response } from 'express'
-import mongoose from 'mongoose'
-import { PostInputModel } from '../../../input-output-types/posts-types'
 import { blogIdParamsValidator } from '../../blogs/middlewares/validators'
 import { blogCollection, postCollection } from '../../../app'
-import { ObjectId } from 'mongodb'
+import { Types, ObjectId } from "mongoose";
 
 // title: string // max 30
 // shortDescription: string // max 100
@@ -27,11 +25,11 @@ export const commentContentValidator = body('content').isString().withMessage('n
   .trim().isLength({ min: 20, max: 300 }).withMessage('more then 300 or less then 20')
 
 export const blogIdValidator = body('blogId').isString().trim().withMessage('not string').isLength({ min: 1, max: 500 }).withMessage('no blog').custom(async value => {
-  if (!ObjectId.isValid(value)) {
+  if (!Types.ObjectId.isValid(value)) {
     return Promise.reject('blog not found');
 
   }
-  const blog = await blogCollection.findOne({ _id: new ObjectId(value) })
+  const blog = await blogCollection.findOne({ _id: new Types.ObjectId(value) })
   if (!blog?._id) {
     return Promise.reject('blog not found');
   }
@@ -39,13 +37,13 @@ export const blogIdValidator = body('blogId').isString().trim().withMessage('not
 })
 
 export const findPostValidator = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
-  if (!ObjectId.isValid(req.params.id)) {
+  if (!Types.ObjectId.isValid(req.params.id)) {
     res
       .status(404)
       .json({})
     return;
   }
-  const post = await postCollection.findOne({ _id: new ObjectId(req.params.id) })
+  const post = await postCollection.findOne({ _id: new Types.ObjectId(req.params.id) })
   if (!post) {
     res
       .status(404)

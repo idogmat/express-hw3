@@ -1,6 +1,6 @@
 import { deviceCollection } from "../../app";
 import { DeviceTypeDB } from "../../db/db";
-import { ObjectId } from 'mongodb';
+import { Types, ObjectId } from "mongoose";
 import { DeviceViewModel } from "../../input-output-types/device-types";
 
 export const devicesQueryRepository = {
@@ -8,8 +8,8 @@ export const devicesQueryRepository = {
     const devices = await deviceCollection.find<DeviceTypeDB>({ userId }).toArray()    
     return devices.map(d => this.map(d));
   },
-  async find(id: string | ObjectId) {
-    const device = await deviceCollection.findOne<DeviceTypeDB>({ _id: new ObjectId(id) })
+  async find(id: string) {
+    const device = await deviceCollection.findOne<DeviceTypeDB>({ _id: new Types.ObjectId(id) })
     if (device?._id) {
       return this.map(device)
     } else {

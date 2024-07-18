@@ -2,10 +2,9 @@ import { Request, Response } from 'express'
 import { blogsRepository } from '../blogsRepository'
 import { isValidObjectId } from '../../../utils/query-helper'
 import { PostInputModel, PostViewModel } from '../../../input-output-types/posts-types'
-import { ObjectId } from 'mongodb'
 
 interface IBlogId {
-  id: ObjectId | string
+  id: string
 }
 
 export const postPostsInBlogController = async (req: Request<IBlogId, {}, PostInputModel>, res: Response<PostViewModel>) => {

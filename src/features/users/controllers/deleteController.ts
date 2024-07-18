@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { IQuery, isValidObjectId } from '../../../utils/query-helper'
-import { usersRepository } from '../usersRepository';
+import { UserRepository } from '../usersRepository';
 
 
 export const deleteController = async (req: Request<{id: string}, {}, {}, IQuery>, res: Response<any>) => {
@@ -9,7 +9,7 @@ export const deleteController = async (req: Request<{id: string}, {}, {}, IQuery
     res.sendStatus(404)
     return
   }
-  const data = await usersRepository.delete(id);
+  const data = await UserRepository.delete(id);
   if (data) res.sendStatus(204)
     else res.sendStatus(404)
   

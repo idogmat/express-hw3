@@ -1,10 +1,9 @@
 import { Request, Response } from 'express'
 import { blogsRepository } from '../blogsRepository'
 import { IQuery, isValidObjectId, normolizedQuery } from '../../../utils/query-helper'
-import { ObjectId } from 'mongodb'
 
 interface IBlogId {
-  id: ObjectId | string
+  id: string
 }
 
 export const getPostsInBlogController = async (req: Request<IBlogId, {}, {}, IQuery>, res: Response<any>) => {

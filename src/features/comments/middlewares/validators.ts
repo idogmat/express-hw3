@@ -1,7 +1,7 @@
-import { body, param } from 'express-validator'
+import { body } from 'express-validator'
 import { inputCheckErrorsMiddleware } from '../../../global-middlewares/inputCheckErrorsMiddleware'
-import { blogCollection, commentCollection } from '../../../app'
-import { ObjectId } from 'mongodb'
+import { commentCollection } from '../../../app'
+import { Types } from "mongoose";
 import { NextFunction, Request, Response } from 'express'
 
 
@@ -12,13 +12,13 @@ export const contentValidator = body('content').isString().withMessage('not stri
 
 
 export const findCommentValidator = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
-  if (!ObjectId.isValid(req.params.id)) {
+  if (!Types.ObjectId.isValid(req.params.id)) {
     res
       .status(404)
       .json({})
     return;
   }
-  const post = await commentCollection.findOne({ _id: new ObjectId(req.params.id) })
+  const post = await commentCollection.findOne({ _id: new Types.ObjectId(req.params.id) })
   if (!post) {
     res
       .status(404)

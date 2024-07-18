@@ -2,10 +2,11 @@ import { Request, Response } from 'express'
 import { PostViewModel } from '../../../input-output-types/posts-types'
 import { postsRepository } from '../postsRepository'
 import { isValidObjectId } from '../../../utils/query-helper'
+import { Types } from 'mongoose'
 
 export const findPostController = async (req: Request<{ id: string }>, res: Response<PostViewModel | {}>) => {
-  const id = isValidObjectId(req.params.id)
-  if (!id) {
+  const id = req.params.id
+  if (!Types.ObjectId.isValid(id)) {
     res.sendStatus(404)
     return
   }

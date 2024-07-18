@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express'
-import { jwtService } from '../utils/jwtService'
+import { JwtService } from '../services/jwt.service'
 import 'dotenv/config'
 
 // FIXME *
@@ -20,7 +20,7 @@ export const tokenRefreshMiddleware = async (req: Request<any, any, any, any>, r
       .json({})
     return
   }
-  const info = await jwtService.verifyToken(refreshToken, 'refresh')
+  const info = await JwtService.verifyToken(refreshToken, 'refresh')
   console.log(info)
   if (!info) {
     res

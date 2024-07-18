@@ -14,7 +14,7 @@ export const emailService = {
     })
   },
   async sendMail(name: string, mail: string, code: string) {
-    let transporter = await this.transporter()
+    const transporter = await this.transporter()
     const url = process.env.CONFIRM_EMAIL+code
     transporter.sendMail({
       from: 'Jack', // sender address

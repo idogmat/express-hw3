@@ -11,7 +11,6 @@ export const loggerMiddleware = async (req: Request, res: Response, next: NextFu
     await logCollection.findOneAndUpdate({ _id: request._id },
       {
         $inc: { count: 1 },
-        // $set: { date: new Date(new Date()) }
       })
     logId = request._id.toString()
   } else if (request && new Date(request.date) < new Date(Date.now() - 10000)){

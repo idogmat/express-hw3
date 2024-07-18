@@ -1,6 +1,6 @@
 import { deviceCollection } from "../../app";
 import { DeviceTypeDB, DeviceTypeDBWithoutId } from "../../db/db";
-import { ObjectId } from 'mongodb';
+import { Types, ObjectId } from "mongoose";
 import { DeviceViewModel } from "../../input-output-types/device-types";
 
 export const devicesRepository = {
@@ -8,24 +8,24 @@ export const devicesRepository = {
     const result = await deviceCollection.insertOne(device as DeviceTypeDB);
     return result.insertedId;
   },
-  async update(id: ObjectId, refreshToken: string) {
+  async update(id: string, refreshToken: string) {
     const result = await deviceCollection.findOneAndUpdate(
-      {_id: id},
+      {_id: new Types.ObjectId(id)},
       {$set: {refreshToken, lastActiveDate: (new Date()).toISOString()}},
       { returnDocument: "after"}
     )
     return result?.refreshToken === refreshToken;
   },
-  async findSession(deviceId: string | ObjectId) {
-    const device = await deviceCollection.findOne<DeviceTypeDB>({ deviceId: new ObjectId(deviceId) })
+  async findSession(deviceId: string) {
+    const device = await deviceCollection.findOne<DeviceTypeDB>({ deviceId: deviceId })
     return device
   },
-  async deleteSession(id: ObjectId) {
-    const device = await deviceCollection.deleteOne({ _id: id });
+  async deleteSession(id: string) {
+    const device = await deviceCollection.deleteOne({ _id: new Types.ObjectId(id) });
     return device?.deletedCount
   },
   async deleteAllSessions(id: string,) {
-    const device = await deviceCollection.deleteMany({ deviceId: {$ne: new ObjectId(id)} });
+    const device = await deviceCollection.deleteMany({ deviceId: {$ne: id} });
     return device?.deletedCount
   },
 }

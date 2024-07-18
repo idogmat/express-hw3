@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 import { PostInputModel } from '../../../input-output-types/posts-types'
 import { blogIdParamsValidator } from '../../blogs/middlewares/validators'
 import { blogCollection, postCollection } from '../../../app'
-import { ObjectId } from 'mongodb'
+import { ObjectId } from "mongoose";
 
 // title: string // max 30
 // shortDescription: string // max 100

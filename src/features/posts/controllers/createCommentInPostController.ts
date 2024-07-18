@@ -1,6 +1,4 @@
 import { Response, Request } from 'express'
-import { PostInputModel, PostViewModel } from '../../../input-output-types/posts-types'
-import { postsRepository } from '../postsRepository'
 import { CommentInputModel, CommentViewModel } from '../../../input-output-types/comment-types'
 import { commentsRepository } from '../../comments/commentsRepository'
 
@@ -10,7 +8,7 @@ export const createCommentInPostController = async (req: Request<{id: string}, a
     res.sendStatus(400);
     return;
   }
-  const newComment = await commentsRepository.find(newCommentId)
+  const newComment = await commentsRepository.find(newCommentId as any)
 
   res
     .status(201)

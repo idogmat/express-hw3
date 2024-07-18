@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { ObjectId } from 'mongodb'
+import { ObjectId } from "mongoose";
 import { deviceCollection } from '../../../app'
 import { devicesQueryRepository } from '../devicesQueryRepository';
 

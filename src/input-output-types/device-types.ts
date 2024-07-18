@@ -1,5 +1,4 @@
 import { ObjectId } from "mongodb"
-import { CommentatorInfoType } from "../db/db";
 
 export type DeviceInputModel = {
   userId: ObjectId;

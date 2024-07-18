@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express'
-import { jwtService } from '../utils/jwtService'
+import { JwtService } from '../services/jwt.service'
 import 'dotenv/config'
 
 // FIXME *
@@ -28,7 +28,7 @@ export const tokenAuthorizationMiddleware = async (req: Request<any, any, any, a
       .json({})
     return
   }
-  const info = await jwtService.verifyToken(token[1], 'accsess')
+  const info = await JwtService.verifyToken(token[1], 'accsess')
   console.log(info)
   if (!info) {
     res

@@ -13,29 +13,28 @@ export const fromUTF8ToBase64 = (code: string) => {
 }
 
 export const adminMiddleware = (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
-  const auth = req?.headers?.['authorization'] as string // 'Basic xxxx'
+  const auth = req?.headers?.['authorization'] as string;
   if (!auth) {
     res
       .status(401)
-      .json({})
-    return
+      .json({});
+    return;
   }
-  const token = auth.split(' ')
+  const token = auth.split(' ');
 
   if (token?.length !== 2 || token[0] !== 'Basic') {
     res
       .status(401)
-      .json({})
-    return
+      .json({});
+    return;
   }
 
-  const codedAuth = fromUTF8ToBase64(SETTINGS.ADMIN)
+  const codedAuth = fromUTF8ToBase64(SETTINGS.ADMIN);
   if (token[1] !== codedAuth) {
     res
       .status(401)
-      .json({})
-    return
+      .json({});
+    return;
   }
-
-  next()
+  next();
 }

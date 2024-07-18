@@ -16,23 +16,22 @@ export const inputCheckErrorsMiddleware = (req: Request<any, any, any, any>, res
       .status(400)
       .json({
         errorsMessages: eArray.map(x => ({ field: x.path, message: x.msg }))
-      })
-    return
+      });
+    return;
   }
-  next()
+  next();
 }
 
 export const inputCheckErrorsMiddlewareParms = (req: Request<any, any, any, any>, res: Response<OutputErrorsType>, next: NextFunction) => {
-  const e = validationResult(req)
+  const e = validationResult(req);
   if (!e.isEmpty()) {
     const eArray = e.array({ onlyFirstError: true }) as { path: FieldNamesType, msg: string }[]
     res
       .status(404)
       .json({
         errorsMessages: eArray.map(x => ({ field: x.path, message: x.msg }))
-      })
-    return
+      });
+    return;
   }
-
-  next()
+  next();
 }

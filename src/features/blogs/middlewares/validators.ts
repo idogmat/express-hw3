@@ -1,7 +1,7 @@
 import { body, param } from 'express-validator'
 import { inputCheckErrorsMiddleware } from '../../../global-middlewares/inputCheckErrorsMiddleware'
 import { blogCollection } from '../../../app'
-import { ObjectId } from 'mongodb'
+import { Types, ObjectId } from "mongoose";
 
 // name: string // max 15
 // description: string // max 500
@@ -22,10 +22,10 @@ export const websiteUrlValidator = body('websiteUrl').isString().withMessage('no
   }).withMessage('not valid websiteUrl')
 
 export const blogIdParamsValidator = param('id').isString().trim().withMessage('not string').isLength({ min: 1, max: 500 }).withMessage('not found').custom(async value => {
-  if (!ObjectId.isValid(value)) {
+  if (!Types.ObjectId.isValid(value)) {
     return Promise.reject('id not found');
   }
-  const blog = await blogCollection.findOne({ _id: new ObjectId(value) })
+  const blog = await blogCollection.findOne({ _id: new Types.ObjectId(value) })
   if (!blog?._id) {
     return Promise.reject('id not found');
   }

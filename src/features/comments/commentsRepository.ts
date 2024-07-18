@@ -1,14 +1,13 @@
-import { ObjectId } from 'mongodb'
-import { commentCollection, postCollection, userCollection } from '../../app'
-import { CommentTypeDB, PostTypeBD, UserTypeDB } from '../../db/db'
-import { CommentInputModel, CommentViewModel } from '../../input-output-types/comment-types'
+import { Types, ObjectId } from "mongoose";
+import { commentCollection, userCollection } from '../../app'
+import { CommentTypeDB, UserTypeDB } from '../../db/db'
+import { CommentViewModel } from '../../input-output-types/comment-types'
 import { INormolizedQuery } from '../../utils/query-helper'
 import { IReturnQueryList } from '../../input-output-types/query-types-output'
-import { log } from 'console'
 
 export const commentsRepository = {
   async create(content: string, postId: string, userId: string) {
-    const user = await userCollection.findOne<UserTypeDB>({ _id: new ObjectId(userId) })
+    const user = await userCollection.findOne<UserTypeDB>({ _id: new Types.ObjectId(userId) })
     if (!user?.login) return false
     const newComment: Omit<CommentTypeDB, '_id'> = {
       content,
@@ -42,11 +41,11 @@ export const commentsRepository = {
     }
     return queryForMap
   },
-  async delete(id: string | ObjectId, userId: string | ObjectId) {
-    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id)})
+  async delete(id: string, userId: string | ObjectId) {
+    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new Types.ObjectId(id)})
     if (permition?._id) {
       if(userId.toString() === permition.commentatorInfo.userId.toString()) {
-        const deleted = await commentCollection.deleteOne({ _id: new ObjectId(id) })
+        const deleted = await commentCollection.deleteOne({ _id: new Types.ObjectId(id) })
         if (deleted.deletedCount) {
           return true
         } 
@@ -56,11 +55,11 @@ export const commentsRepository = {
     }
     return false
   },
-  async put(id: string | ObjectId, userId: string | ObjectId, content: string,) {
-    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id)})
+  async put(id: string, userId: string, content: string,) {
+    const permition = await commentCollection.findOne<CommentTypeDB>({ _id: new Types.ObjectId(id)})
     if (permition?._id) {
       if(userId.toString() === permition.commentatorInfo.userId.toString()) {
-        const updated = await commentCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: {content: content} }, {returnDocument: 'after'});
+        const updated = await commentCollection.findOneAndUpdate({ _id: new Types.ObjectId(id) }, { $set: {content: content} }, {returnDocument: 'after'});
         return true
       } else {
         return 'Forbidden'
@@ -69,8 +68,8 @@ export const commentsRepository = {
       return false
     }
   },
-  async find(id: string | ObjectId) {
-    const comment = await commentCollection.findOne<CommentTypeDB>({ _id: new ObjectId(id) })
+  async find(id: string) {
+    const comment = await commentCollection.findOne<CommentTypeDB>({ _id: new Types.ObjectId(id) })
     if (comment?._id) {
       return this.map(comment)
     } else {

@@ -1,7 +1,7 @@
 import { body, param, query } from 'express-validator'
 import { inputCheckErrorsMiddleware } from '../../../global-middlewares/inputCheckErrorsMiddleware'
 import { blogCollection, userCollection } from '../../../app'
-import { ObjectId } from 'mongodb'
+import { ObjectId } from "mongoose";
 import { authRepository } from '../authRepository'
 
 
