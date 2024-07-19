@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { userCollection } from "../../../app";
+import { userCollection } from "../../../db/db";
 export interface ICode {
   code: string;
 }

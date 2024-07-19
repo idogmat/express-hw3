@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import { authRepository } from "../features/auth/authRepository";
 import { randomUUID } from "crypto";
 import { dateSetter } from "../utils/date-methods";
 import { UserTypeDBWithoutId } from "../db/db";
+import { AuthRepository } from "../features/auth/authRepository";
 
 export interface IAuthFields {
   login: string;
@@ -38,7 +38,7 @@ export class AuthService {
     loginOrEmail: string,
     password: string,
   ): Promise<ICheckCredential> {
-    const user = await authRepository.findByLoginOrEmail(loginOrEmail);
+    const user = await AuthRepository.findByLoginOrEmail(loginOrEmail);
     if (!user?._id) return { result: false, id: "" };
     const passwordHash = await this._generateHash(password, user.passwordSalt);
     // or bcrypt.compare(password, user.passwordHash): return boolean
@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   static async checkRefreshToken(refreshToken: string): Promise<string | null> {
-    const user = await authRepository.findRefreshTokenUserId(refreshToken);
+    const user = await AuthRepository.findRefreshTokenUserId(refreshToken);
     if (!user?._id) return null;
     return user?._id.toString();
   }

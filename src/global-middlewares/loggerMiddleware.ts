@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { logCollection } from "../app";
+import { logCollection } from "../db/db";
 
 export const loggerMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void | Response> => {
-  // await logCollection.insertOne()
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   const browser = req.get("user-agent");
   const request = await logCollection.findOne({
@@ -31,13 +30,15 @@ export const loggerMiddleware = async (
     );
     logId = request._id.toString();
   } else {
-    const request = await logCollection.insertOne({
+    const model = await new logCollection({
       IP: (ip || "").toString(),
       URL: req.baseUrl || req.originalUrl,
       date: new Date(new Date()),
       count: 1,
     });
-    logId = request.insertedId.toString();
+    const result = await model.save();
+
+    logId = result._id.toString();
   }
   req.logId = logId;
   next();

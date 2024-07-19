@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { PostViewModel } from "../../../input-output-types/posts-types";
-import { postsRepository } from "../postsRepository";
-import { isValidObjectId } from "../../../utils/query-helper";
 import { Types } from "mongoose";
+import { PostRepository } from "../postRepository";
 
 export const findPostController = async (
   req: Request<{ id: string }>,
@@ -13,7 +12,7 @@ export const findPostController = async (
     res.sendStatus(404);
     return;
   }
-  const data = await postsRepository.find(id);
+  const data = await PostRepository.find(id);
   if (data) res.status(200).json(data);
   else res.sendStatus(404);
 };

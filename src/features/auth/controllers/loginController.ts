@@ -1,9 +1,9 @@
 import { Response, Request } from "express";
 import { AuthService } from "../../../services/auth.service";
 import { JwtService } from "../../../services/jwt.service";
-import { deviceCollection } from "../../../app";
-import mongoose, { ObjectId } from "mongoose";
-import { devicesRepository } from "../../devices/devicesRepository";
+import mongoose from "mongoose";
+import { DevicesRepository } from "../../devices/devicesRepository";
+import { deviceCollection } from "../../../db/db";
 
 export interface ILoginFields {
   loginOrEmail: string;
@@ -39,7 +39,7 @@ export const loginController = async (
       browser,
       session.deviceId.toString(),
     );
-    await devicesRepository.update(session._id.toHexString(), refreshToken);
+    await DevicesRepository.update(session._id.toHexString(), refreshToken);
     res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
   } else {
     const deviceId = new mongoose.Types.ObjectId().toString();
@@ -56,7 +56,7 @@ export const loginController = async (
       lastActiveDate: new Date().toISOString(),
       refreshToken,
     };
-    const resi = await devicesRepository.create(device);
+    const resi = await DevicesRepository.create(device);
     console.log(resi);
     res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
   }

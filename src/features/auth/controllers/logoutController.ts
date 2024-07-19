@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
-import { deviceCollection, userCollection } from "../../../app";
 import { Types } from "mongoose";
+import { deviceCollection } from "../../../db/db";
 
 export interface ILoginFields {
   loginOrEmail: string;

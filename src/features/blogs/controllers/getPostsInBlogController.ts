@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { blogsRepository } from "../blogsRepository";
+import { BlogRepository } from "../blogRepository";
 import {
   IQuery,
   isValidObjectId,
@@ -20,6 +20,6 @@ export const getPostsInBlogController = async (
     return;
   }
   const query = normolizedQuery(req.query);
-  const data = await blogsRepository.getPostsInBlog(id, query);
+  const data = await BlogRepository.getPostsInBlog(id, query);
   data ? res.status(200).json(data) : res.sendStatus(404);
 };

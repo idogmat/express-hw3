@@ -1,7 +1,7 @@
 import { body, param } from "express-validator";
 import { inputCheckErrorsMiddleware } from "../../../global-middlewares/inputCheckErrorsMiddleware";
-import { blogCollection } from "../../../app";
-import { Types, ObjectId } from "mongoose";
+import { Types } from "mongoose";
+import { blogCollection } from "../../../db/db";
 
 // name: string // max 15
 // description: string // max 500

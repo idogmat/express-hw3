@@ -3,13 +3,13 @@ import {
   BlogInputModel,
   BlogViewModel,
 } from "../../../input-output-types/blogs-types";
-import { blogsRepository } from "../blogsRepository";
+import { BlogRepository } from "../blogRepository";
 
 export const createBlogController = async (
   req: Request<{}, {}, BlogInputModel>,
   res: Response<BlogViewModel>,
 ) => {
-  const newBlogId = await blogsRepository.create(req.body);
-  const newBlog = await blogsRepository.findAndMap(newBlogId as any);
+  const newBlogId = await BlogRepository.create(req.body);
+  const newBlog = await BlogRepository.findAndMap(newBlogId.toString());
   newBlog ? res.status(201).json(newBlog) : res.sendStatus(400);
 };

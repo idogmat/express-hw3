@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { blogsRepository } from "../blogsRepository";
+import { BlogRepository } from "../blogRepository";
 import { isValidObjectId } from "../../../utils/query-helper";
 import {
   PostInputModel,
@@ -19,6 +19,6 @@ export const postPostsInBlogController = async (
     res.sendStatus(404);
     return;
   }
-  const data = await blogsRepository.postPostsInBlog(id, req.body);
+  const data = await BlogRepository.postPostsInBlog(id, req.body);
   data ? res.status(201).json(data) : res.sendStatus(400);
 };

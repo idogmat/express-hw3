@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { blogsRepository } from "../blogsRepository";
+import { BlogRepository } from "../blogRepository";
 import { isValidObjectId } from "../../../utils/query-helper";
 
 export const delBlogController = async (
@@ -11,7 +11,7 @@ export const delBlogController = async (
     res.sendStatus(404);
     return;
   }
-  const result = await blogsRepository.del(id);
+  const result = await BlogRepository.delete(id);
   if (result) res.sendStatus(204);
   else res.sendStatus(404);
 };

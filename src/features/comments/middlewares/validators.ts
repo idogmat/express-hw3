@@ -1,8 +1,8 @@
 import { body } from "express-validator";
 import { inputCheckErrorsMiddleware } from "../../../global-middlewares/inputCheckErrorsMiddleware";
-import { commentCollection } from "../../../app";
 import { Types } from "mongoose";
 import { NextFunction, Request, Response } from "express";
+import { commentCollection } from "../../../db/db";
 
 // --COMMENTS
 

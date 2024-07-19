@@ -2,8 +2,8 @@ import { body } from "express-validator";
 import { inputCheckErrorsMiddleware } from "../../../global-middlewares/inputCheckErrorsMiddleware";
 import { NextFunction, Request, Response } from "express";
 import { blogIdParamsValidator } from "../../blogs/middlewares/validators";
-import { blogCollection, postCollection } from "../../../app";
 import { Types } from "mongoose";
+import { blogCollection, postCollection } from "../../../db/db";
 
 export const titleValidator = body("title")
   .isString()

@@ -1,3 +1,5 @@
+import { WithoutId } from "mongodb";
+
 abstract class Repository<T, TId> {
   // Абстрактный метод без реализации.
   // abstract find(item: T): Promise<T[]>;
@@ -6,7 +8,7 @@ abstract class Repository<T, TId> {
   // abstract findById(id: TId): Promise<T | null>;
 
   // Абстрактный метод без реализации.
-  abstract create(item: T): Promise<T>;
+  abstract create(item: WithoutId<T>): Promise<T>;
 
   // Абстрактный метод без реализации.
   // abstract update(id: TId, item: T): Promise<T>;

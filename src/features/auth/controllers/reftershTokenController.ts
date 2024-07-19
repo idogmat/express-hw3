@@ -1,8 +1,8 @@
 import { Response, Request } from "express";
 import { JwtService } from "../../../services/jwt.service";
-import { deviceCollection, userCollection } from "../../../app";
 import { Types } from "mongoose";
-import { devicesRepository } from "../../devices/devicesRepository";
+import { DevicesRepository } from "../../devices/devicesRepository";
+import { deviceCollection } from "../../../db/db";
 
 export interface ILoginFields {
   loginOrEmail: string;
@@ -29,7 +29,7 @@ export const reftershTokenController = async (
       browser,
       session.deviceId.toString(),
     );
-    const result = await devicesRepository.update(
+    const result = await DevicesRepository.update(
       session._id.toString(),
       refreshToken,
     );

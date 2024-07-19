@@ -24,32 +24,8 @@ import mongoose from "mongoose";
 dotenv.config();
 const tokenDB = process.env.CONNECTION || "";
 
-export const client = new MongoClient(tokenDB);
-export const db = client.db("blogs");
-export const blogCollection: Collection<BlogTypeBD> = client
-  .db("blogs")
-  .collection<BlogTypeBD>("Blog");
-export const postCollection: Collection<PostTypeBD> = client
-  .db("posts")
-  .collection<PostTypeBD>("Post");
-export const userCollection: Collection<UserTypeDB> = client
-  .db("users")
-  .collection<UserTypeDB>("User");
-export const commentCollection: Collection<CommentTypeDB> = client
-  .db("comments")
-  .collection<CommentTypeDB>("Comment");
-export const logCollection: Collection<LogTypeDB> = client
-  .db("log")
-  .collection<LogTypeDB>("Log");
-export const deviceCollection: Collection<DeviceTypeDB> = client
-  .db("device")
-  .collection<DeviceTypeDB>("Device");
-
 export const connectDb = async () => {
   // Use connect method to connect to the server
-  await client.connect();
-  console.log("Connected successfully to server");
-
   try {
     await mongoose.connect(tokenDB);
     console.log("Connected successfully to mongoDB server");
@@ -57,9 +33,6 @@ export const connectDb = async () => {
     console.log("Can't connect to mongo server", error);
     await mongoose.disconnect();
   }
-
-  // the following code examples can be pasted here...
-
   return "done.";
 };
 

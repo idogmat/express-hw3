@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { BlogViewModel } from "../../../input-output-types/blogs-types";
-import { blogsRepository } from "../blogsRepository";
+import { BlogRepository } from "../blogRepository";
 import { isValidObjectId } from "../../../utils/query-helper";
 
 export const findBlogController = async (
@@ -12,7 +12,7 @@ export const findBlogController = async (
     res.sendStatus(404);
     return;
   }
-  const data = await blogsRepository.find(id);
+  const data = await BlogRepository.find(id);
   if (data) res.status(200).json(data);
   else res.sendStatus(404);
 };

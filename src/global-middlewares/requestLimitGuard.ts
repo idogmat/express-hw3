@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { logCollection } from "../app";
 import { Types } from "mongoose";
+import { logCollection } from "../db/db";
 
 export const requestLimitGuard = async (
   req: Request,

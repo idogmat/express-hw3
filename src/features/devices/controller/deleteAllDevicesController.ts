@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { JwtService } from "../../../services/jwt.service";
-import { devicesRepository } from "../devicesRepository";
 import { JwtPayload } from "jsonwebtoken";
+import { DevicesRepository } from "../devicesRepository";
 
 export const deleteAllDevicesController = async (
   req: Request,
@@ -11,7 +11,7 @@ export const deleteAllDevicesController = async (
   console.log(refreshToken);
   const decoded = await JwtService.verifyToken(refreshToken, "refresh");
   if (!decoded) return res.sendStatus(401);
-  const deleted = await devicesRepository.deleteAllSessions(
+  const deleted = await DevicesRepository.deleteAllSessions(
     (decoded as JwtPayload).deviceId,
   );
   return res.sendStatus(204);

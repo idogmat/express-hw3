@@ -3,17 +3,15 @@ import {
   PostViewModel,
 } from "../../input-output-types/posts-types";
 import { Types } from "mongoose";
-import { ObjectId } from "mongoose";
-import { blogCollection, postCollection } from "../../app";
-import { PostTypeBD } from "../../db/db";
+import { blogCollection, postCollection, PostTypeBD } from "../../db/db";
 import { IBlogWithPostsViewModelAfterQuery } from "../../input-output-types/query-types-output";
 import {
   INormolizedQuery,
   IQueryBlogWithPostsFilterTypeBD,
 } from "../../utils/query-helper";
 
-export const postsRepository = {
-  async create(post: PostInputModel) {
+export class PostRepository {
+  static async create(post: PostInputModel) {
     const blog = await blogCollection.findOne({
       _id: new Types.ObjectId(post.blogId),
     });
@@ -26,10 +24,12 @@ export const postsRepository = {
       createdAt: new Date(),
       blogName: blog.name,
     } as PostTypeBD;
-    const result = await postCollection.insertOne(newPost);
-    return result.insertedId;
-  },
-  async find(id: string) {
+    const model = await new postCollection(newPost);
+    const result = await model.save();
+    return result._id;
+  }
+
+  static async find(id: string) {
     const post = await postCollection.findOne<PostTypeBD>({
       _id: new Types.ObjectId(id),
     });
@@ -37,8 +37,9 @@ export const postsRepository = {
       return this.map(post);
     }
     return false;
-  },
-  async findAndMap(id: string) {
+  }
+
+  static async findAndMap(id: string) {
     const post = await postCollection.findOne<PostTypeBD>({
       _id: new Types.ObjectId(id),
     });
@@ -46,27 +47,28 @@ export const postsRepository = {
       return this.map(post);
     }
     return false;
-  },
-  async getAll(query: INormolizedQuery) {
-    const totalCount = await postCollection.find().toArray();
+  }
+
+  static async getAll(query: INormolizedQuery) {
+    const totalCount = await postCollection.find().countDocuments();
 
     const posts = await postCollection
       .find({})
       .sort({ [query.sortBy]: query.sortDirection })
       .skip((query.pageNumber - 1) * query.pageSize)
-      .limit(query.pageSize)
-      .toArray();
+      .limit(query.pageSize);
 
     const queryForMap: IQueryBlogWithPostsFilterTypeBD = {
-      pagesCount: Math.ceil(totalCount.length / query.pageSize),
+      pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,
       pageSize: query.pageSize,
-      totalCount: totalCount.length,
+      totalCount: totalCount,
       items: posts as PostTypeBD[],
     };
-    return postsRepository.mapAfterQuery(queryForMap);
-  },
-  async del(id: string) {
+    return this.mapAfterQuery(queryForMap);
+  }
+
+  static async delete(id: string) {
     const post = await postCollection.findOne({ _id: new Types.ObjectId(id) });
     if (!post?._id) return false;
     const result = await postCollection.deleteOne({
@@ -74,8 +76,9 @@ export const postsRepository = {
     });
     if (result.deletedCount) return true;
     return false;
-  },
-  async put(post: PostInputModel, id: string) {
+  }
+
+  static async put(post: PostInputModel, id: string) {
     try {
       const res = await postCollection.findOneAndUpdate(
         { _id: new Types.ObjectId(id) },
@@ -85,8 +88,9 @@ export const postsRepository = {
     } catch (error) {
       return false;
     }
-  },
-  map(post: PostTypeBD) {
+  }
+
+  static map(post: PostTypeBD) {
     const postForOutput: PostViewModel = {
       id: post._id.toString(),
       title: post.title,
@@ -97,12 +101,13 @@ export const postsRepository = {
       createdAt: post.createdAt,
     };
     return postForOutput;
-  },
-  mapAfterQuery(blogs: IQueryBlogWithPostsFilterTypeBD) {
+  }
+
+  static mapAfterQuery(blogs: IQueryBlogWithPostsFilterTypeBD) {
     const blogWithPostsForOutput: IBlogWithPostsViewModelAfterQuery = {
       ...blogs,
       items: blogs.items.map((b) => this.map(b)),
     };
     return blogWithPostsForOutput;
-  },
-};
+  }
+}

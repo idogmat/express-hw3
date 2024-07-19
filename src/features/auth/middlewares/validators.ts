@@ -1,7 +1,7 @@
 import { body, query } from "express-validator";
 import { inputCheckErrorsMiddleware } from "../../../global-middlewares/inputCheckErrorsMiddleware";
-import { userCollection } from "../../../app";
-import { authRepository } from "../authRepository";
+import { AuthRepository } from "../authRepository";
+import { userCollection } from "../../../db/db";
 
 export const codeParamsValidator = query("code")
   .isString()
@@ -22,7 +22,7 @@ export const loginValidator = body("login")
   .isLength({ min: 3, max: 10 })
   .withMessage("more then 30 or 0")
   .custom(async (login) => {
-    const user = await authRepository.findByLoginOrEmail(login);
+    const user = await AuthRepository.findByLoginOrEmail(login);
     if (!user) {
       return Promise.resolve();
     } else {
@@ -45,7 +45,7 @@ export const emailValidator = body("email")
   .custom(async (email) => {
     const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
     if (!emailRegex.test(email)) return Promise.reject();
-    const user = await authRepository.findByLoginOrEmail(email);
+    const user = await AuthRepository.findByLoginOrEmail(email);
     if (!user) {
       return Promise.resolve();
     } else {

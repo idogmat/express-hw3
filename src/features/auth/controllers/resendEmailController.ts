@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
-import { userCollection } from "../../../app";
 import { emailService } from "../../../services/email.service";
 import { AuthService } from "../../../services/auth.service";
+import { userCollection } from "../../../db/db";
 
 interface IEmail {
   email: string;

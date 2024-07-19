@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { devicesRepository } from "../devicesRepository";
+import { DevicesRepository } from "../devicesRepository";
 
 interface IDevice {
   id: string;
@@ -12,11 +12,11 @@ export const deleteDeviceController = async (
 ): Promise<Response | void> => {
   console.log(req.params.id);
   if (!Types.ObjectId.isValid(req.params.id)) return res.sendStatus(404);
-  const userSessions = await devicesRepository.findSession(req.params.id);
+  const userSessions = await DevicesRepository.findSession(req.params.id);
   console.log(userSessions, "userSessions");
   if (!userSessions) return res.sendStatus(404);
   if (userSessions.userId.toString() !== req.userId) return res.sendStatus(403);
-  const deleted = await devicesRepository.deleteSession(
+  const deleted = await DevicesRepository.deleteSession(
     userSessions._id.toString(),
   );
   console.log(deleted, "deleted");

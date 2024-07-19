@@ -1,5 +1,4 @@
 import mongoose, { Model } from "mongoose";
-import { client } from "../app";
 import { ObjectId } from "mongodb";
 
 export type PostTypeBD = {
@@ -23,7 +22,7 @@ export type BlogTypeBD = {
   isMembership: boolean;
 };
 
-export type BlogTypeBDWithoutId = Omit<BlogTypeBD, "_id">;
+export type BlogTypeBDWithoutId = Omit<BlogTypeBD, "_id" | "isMembership">;
 
 export type UserTypeDB = {
   _id: ObjectId;
