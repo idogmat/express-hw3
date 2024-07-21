@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { emailService } from "../../../services/email.service";
+import { EmailService } from "../../../services/email.service";
 import { AuthService } from "../../../services/auth.service";
 import { userCollection } from "../../../db/db";
 
@@ -22,7 +22,7 @@ export const resendEmailController = async (
     );
     const code = emailConfirmation.confirmationCode;
     // }
-    await emailService.sendMail(user.login, user.email, code);
+    await EmailService.sendMail(user.login, user.email, code);
     return res.sendStatus(204);
   }
   return res.sendStatus(400);

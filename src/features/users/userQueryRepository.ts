@@ -10,8 +10,8 @@ export class UserQueryRepository {
   static async getAll(query: INormolizedQuery) {
     const filter = {
       $or: [
-        { login: { $regex: new RegExp(`^${query.searchLoginTerm}`, "i") } },
-        { email: { $regex: new RegExp(`^${query.searchEmailTerm}`, "i") } },
+        { login: { $regex: new RegExp(`^${query.searchLoginTerm || ''}`, "i") } },
+        { email: { $regex: new RegExp(`^${query.searchEmailTerm || ''}`, "i") } },
       ],
     };
     const totalCount = await userCollection.find(filter).countDocuments();

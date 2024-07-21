@@ -1,4 +1,5 @@
 import { userCollection, UserTypeDB } from "../../db/db";
+import { IPasswordFields } from "../../services/auth.service";
 import { UserRepository } from "../users/userRepository";
 
 export class AuthRepository {
@@ -7,12 +8,33 @@ export class AuthRepository {
     if (result) {
       return result;
     } else {
-      false;
+      return false;
+    }
+  }
+
+  static async setNewPassword(id: string, {passwordHash, passwordSalt}: IPasswordFields): Promise<any> {
+    const result = await UserRepository.findById(id);
+    if (result) {
+      result.set({passwordHash})
+      result.set({passwordSalt})
+      result.set({recoveryCode: ''})
+      await result.save();
+      return result;
+    } else {
+      return false;
     }
   }
 
   static async find(id: string) {
     const result = await UserRepository.findById(id);
+    return result;
+  }
+
+  static async setRecoveryCode(id: string, recoveryCode: string) {
+    const result = await userCollection.findById(id);
+    if (!result) return false
+    result?.set({ recoveryCode })
+    await result.save()
     return result;
   }
 
@@ -29,5 +51,12 @@ export class AuthRepository {
     });
     // console.log(user)
     return user;
+  }
+
+  static async findByEmail(
+    email: string,
+  ): Promise<UserTypeDB | null> {
+    const model = await userCollection.findOne<UserTypeDB | null>({ email: email });
+    return model;
   }
 }

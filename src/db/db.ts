@@ -32,6 +32,7 @@ export type UserTypeDB = {
   passwordSalt: string;
   createdAt: string;
   emailConfirmation: EmailConfirmation;
+  recoveryCode?: string
 };
 
 export type EmailConfirmation = {
@@ -100,7 +101,7 @@ const CommentatorInfoSchema = new mongoose.Schema<
 >({
   userId: { type: String, required: true },
   userLogin: { type: String, required: true },
-});
+}, { _id: false });
 
 export const CommentSchema = new mongoose.Schema<
   CommentTypeDB,
@@ -120,7 +121,7 @@ const EmailConfirmationSchema = new mongoose.Schema<
   confirmationCode: { type: String, required: true },
   expirationDate: { type: Date, required: true },
   isConfirmed: { type: Boolean, required: true },
-});
+}, { _id: false });
 
 export const UserSchema = new mongoose.Schema<UserTypeDB, Model<UserTypeDB>>({
   login: { type: String, required: true },
@@ -129,6 +130,7 @@ export const UserSchema = new mongoose.Schema<UserTypeDB, Model<UserTypeDB>>({
   passwordSalt: { type: String, required: false },
   createdAt: { type: String, required: false },
   emailConfirmation: { type: EmailConfirmationSchema, required: false },
+  recoveryCode: {type: String, reqired: false}
 });
 
 // log
@@ -151,10 +153,6 @@ export const DeviceSchema = new mongoose.Schema<
   deviceId: { type: String, required: true },
   refreshToken: { type: String, required: true },
 });
-
-// const db = client.db('blogs')
-// export const blogCollection = client.db('blogs').collection('Blog')
-// export const postCollection = client.db('blogs').collection('Post')
 
 export const blogCollection = mongoose.model("Blog", BlogSchema);
 export const postCollection = mongoose.model("Post", PostSchema);

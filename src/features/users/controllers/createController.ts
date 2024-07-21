@@ -2,6 +2,7 @@ import { Response, Request } from "express";
 import { UserRepository } from "../userRepository";
 import { AuthService } from "../../../services/auth.service";
 import { UserQueryRepository } from "../userQueryRepository";
+import { EmailService } from "../../../services/email.service";
 export interface ICreateUserFields {
   login: string;
   email: string;
@@ -22,7 +23,7 @@ export const createController = async (
   });
   const code = user.emailConfirmation.confirmationCode;
   // try {
-  //   await emailService.sendMail(result.login, result.email, code)
+  //   await EmailService.sendMail(result.login, result.email, code)
   // } catch (error) {
   //   console.error('Send email error', error);
   // }

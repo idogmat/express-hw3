@@ -9,11 +9,11 @@ import {
 export class BlogQueryRepository {
   static async getAll(query: INormolizedQuery) {
     const totalCount = await blogCollection
-      .find({ name: { $regex: new RegExp(`^${query.searchNameTerm}`, "i") } })
+      .find({ name: { $regex: new RegExp(`^${query.searchNameTerm || ''}`, "i") } })
       .countDocuments();
 
     const blogs = await blogCollection
-      .find({ name: { $regex: new RegExp(`^${query.searchNameTerm}`, "i") } })
+      .find({ name: { $regex: new RegExp(`^${query.searchNameTerm || ''}`, "i") } })
       .sort({ [query.sortBy]: query.sortDirection })
       .skip((query.pageNumber - 1) * query.pageSize)
       .limit(query.pageSize);

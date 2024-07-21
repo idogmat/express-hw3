@@ -7,10 +7,18 @@ export interface IAuthFields {
   password: string;
 }
 
-const ACCESS_SECRET = process.env.ACCESS_SECRET_TOKEN || "";
-const REFRESH_SECRET = process.env.REFRESH_SECRET_TOKEN || "";
+
+
+const ACCESS_SECRET: string = process.env.ACCESS_SECRET_TOKEN || "";
+const REFRESH_SECRET: string = process.env.REFRESH_SECRET_TOKEN || "";
 const ACCESS_EXPIRATION = process.env.ACCESS_SECRET_TOKEN_EXPIRATION || "1h";
 const REFRESH_EXPIRATION = process.env.REFRESH_SECRET_TOKEN_EXPIRATION || "1h";
+
+const TokenTypes = {
+  'clown': 'clown',
+  'refresh': REFRESH_SECRET,
+  'accsess': ACCESS_SECRET,
+}
 
 export class JwtService {
   static async createAccessToken(id: string): Promise<string> {
@@ -30,6 +38,14 @@ export class JwtService {
     });
   }
 
+  static async createRecoveryCode(
+    id: string,
+  ): Promise<string> {
+    return jwt.sign({ userId: id }, 'clown', {
+      expiresIn: ACCESS_EXPIRATION,
+    });
+  }
+
   static async decodeToken(token: string) {
     try {
       return jwt.decode(token);
@@ -39,11 +55,13 @@ export class JwtService {
     }
   }
 
-  static async verifyToken(token: string, type: "refresh" | "accsess") {
+  static async verifyToken(token: string, type: keyof typeof TokenTypes) {
+    const tokenType = Object.entries(TokenTypes).find(t=> t.includes(type))
+    if(!tokenType?.[1]) return null;
     try {
       return await jwt.verify(
         token,
-        type !== "accsess" ? REFRESH_SECRET : ACCESS_SECRET,
+        tokenType?.[1],
       );
     } catch (error) {
       console.error(`Can't verify token`);

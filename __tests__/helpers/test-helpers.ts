@@ -59,4 +59,4 @@ export async function addPost(
     .expect(201);
 }
 
-export const authServiceSeed = authService;
+export const authServiceSeed = AuthService;

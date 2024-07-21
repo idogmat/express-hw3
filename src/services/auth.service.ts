@@ -4,6 +4,11 @@ import { dateSetter } from "../utils/date-methods";
 import { UserTypeDBWithoutId } from "../db/db";
 import { AuthRepository } from "../features/auth/authRepository";
 
+export interface IPasswordFields {
+  passwordHash: string;
+  passwordSalt: string;
+}
+
 export interface IAuthFields {
   login: string;
   email: string;
@@ -32,6 +37,15 @@ export class AuthService {
       emailConfirmation: this.createConfirmCodeObject(),
     };
     return newUser;
+  }
+
+  static async createNewPassword(password: string) {
+    const passwordSalt = await bcrypt.genSalt(10);
+    const passwordHash = await this._generateHash(password, passwordSalt);
+      return {
+      passwordHash,
+      passwordSalt,
+    }
   }
 
   static async checkCredential(
