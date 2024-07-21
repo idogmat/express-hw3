@@ -1,14 +1,17 @@
-import { Request, Response } from 'express'
-import { postsRepository } from '../postsRepository'
-import { isValidObjectId } from '../../../utils/query-helper'
+import { Request, Response } from "express";
+import { isValidObjectId } from "../../../utils/query-helper";
+import { PostRepository } from "../postRepository";
 
-export const delPostController = async (req: Request<{ id: string }>, res: Response) => {
-  const id = isValidObjectId(req.params.id)
+export const delPostController = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  const id = isValidObjectId(req.params.id);
   if (!id) {
-    res.sendStatus(404)
-    return
+    res.sendStatus(404);
+    return;
   }
-  const result = await postsRepository.del(id)
-  if (result) res.sendStatus(204)
-  else res.sendStatus(404)
-}
+  const result = await PostRepository.delete(id);
+  if (result) res.sendStatus(204);
+  else res.sendStatus(404);
+};

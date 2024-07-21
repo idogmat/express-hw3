@@ -1,18 +1,24 @@
-import { Response, Request } from 'express'
-import { PostInputModel, PostViewModel } from '../../../input-output-types/posts-types'
-import { postsRepository } from '../postsRepository'
-import { CommentInputModel, CommentViewModel } from '../../../input-output-types/comment-types'
-import { commentsRepository } from '../../comments/commentsRepository'
+import { Response, Request } from "express";
+import {
+  CommentInputModel,
+  CommentViewModel,
+} from "../../../input-output-types/comment-types";
+import { CommentRepository } from "../../comments/commentRepository";
 
-export const createCommentInPostController = async (req: Request<{id: string}, any, CommentInputModel>, res: Response<CommentViewModel | unknown>) => {
-  const newCommentId = await commentsRepository.create(req.body.content, req.params.id, req.userId)
+export const createCommentInPostController = async (
+  req: Request<{ id: string }, any, CommentInputModel>,
+  res: Response<CommentViewModel | unknown>,
+) => {
+  const newCommentId = await CommentRepository.create(
+    req.body.content,
+    req.params.id,
+    req.userId,
+  );
   if (!newCommentId) {
     res.sendStatus(400);
     return;
   }
-  const newComment = await commentsRepository.find(newCommentId)
+  const newComment = await CommentRepository.find(newCommentId.toString());
 
-  res
-    .status(201)
-    .json(newComment)
-}
+  res.status(201).json(newComment);
+};

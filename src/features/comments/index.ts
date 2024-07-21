@@ -1,12 +1,14 @@
-import { Router } from 'express'
-import { getCommentController } from './controllers/getCommentController'
-import { tokenAuthorizationMiddleware } from '../../global-middlewares/tokenAuthorizationMiddleware '
-import { deleteCommentController } from './controllers/deleteCommentController'
-import { putCommentController } from './controllers/putCommentController'
-import { commentValidators, findCommentValidator } from './middlewares/validators'
+import { Router } from "express";
+import { getCommentController } from "./controllers/getCommentController";
+import { tokenAuthorizationMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
+import { deleteCommentController } from "./controllers/deleteCommentController";
+import { putCommentController } from "./controllers/putCommentController";
+import {
+  commentValidators,
+  findCommentValidator,
+} from "./middlewares/validators";
 
-
-export const commentsRouter = Router()
+export const commentsRouter = Router();
 
 // postsRouter.post('/',
 //   adminMiddleware,
@@ -14,8 +16,18 @@ export const commentsRouter = Router()
 //   createPostController);
 
 // postsRouter.get('/', getPostsController)
-commentsRouter.get('/:id', getCommentController)
-commentsRouter.delete('/:id', tokenAuthorizationMiddleware, findCommentValidator, deleteCommentController)
-commentsRouter.put('/:id', tokenAuthorizationMiddleware, commentValidators, putCommentController)
+commentsRouter.get("/:id", getCommentController);
+commentsRouter.delete(
+  "/:id",
+  tokenAuthorizationMiddleware,
+  findCommentValidator,
+  deleteCommentController,
+);
+commentsRouter.put(
+  "/:id",
+  tokenAuthorizationMiddleware,
+  commentValidators,
+  putCommentController,
+);
 
 // не забудьте добавить роут в апп

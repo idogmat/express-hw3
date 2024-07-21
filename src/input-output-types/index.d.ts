@@ -1,10 +1,10 @@
-import { Express, Request } from 'express'
+import { Express, Request } from "express";
 
 declare global {
   namespace Express {
-    export interface Request{
-      userId: string
-      logId: string
+    export interface Request {
+      userId: string;
+      logId: string;
     }
   }
 }

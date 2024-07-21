@@ -1,19 +1,20 @@
-import { Request, Response } from 'express'
-import { normolizedQuery } from '../../../utils/query-helper'
-import { IBlogWithPostsViewModelAfterQuery } from '../../../input-output-types/query-types-output'
-import { CommentViewModel } from '../../../input-output-types/comment-types'
-import { ObjectId } from 'mongodb'
-import { commentsRepository } from '../commentsRepository'
+import { Request, Response } from "express";
+import { CommentViewModel } from "../../../input-output-types/comment-types";
+import { Types } from "mongoose";
+import { CommentRepository } from "../commentRepository";
 
-export const getCommentController = async (req: Request<{id: string}>, res: Response<CommentViewModel>) => {
-  if(!ObjectId.isValid(req.params.id)) {
-    res.sendStatus(404)
+export const getCommentController = async (
+  req: Request<{ id: string }>,
+  res: Response<CommentViewModel>,
+) => {
+  if (!Types.ObjectId.isValid(req.params.id)) {
+    res.sendStatus(404);
   } else {
-    const comment = await commentsRepository.find(req.params.id)
+    const comment = await CommentRepository.find(req.params.id);
     if (comment) {
-      res.status(200).json(comment)
+      res.status(200).json(comment);
     } else {
-      res.sendStatus(404)
+      res.sendStatus(404);
     }
   }
-}
+};
