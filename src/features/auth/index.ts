@@ -56,12 +56,16 @@ authRouter.post(
 
 authRouter.get("/me", tokenAuthorizationMiddleware, authMeController);
 
-authRouter.post("/password-recovery",
+authRouter.post(
+  "/password-recovery",
   requestLimitGuard,
-  ...recoveryEmailValidators, 
-  passwordRecoveryController);
+  ...recoveryEmailValidators,
+  passwordRecoveryController,
+);
 
-authRouter.post("/new-password",
+authRouter.post(
+  "/new-password",
   requestLimitGuard,
   ...setNewPasswordValidators,
-  setNewPasswordController);
+  setNewPasswordController,
+);

@@ -11,7 +11,7 @@ export enum StatusEnum {
 }
 
 export const tokenAuthorizationMiddleware = async (
-  req: Request<any, any, any, any>,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {

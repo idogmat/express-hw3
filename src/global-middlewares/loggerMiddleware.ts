@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { logCollection } from "../db/db";
+import { logCollection } from "../db";
 
 export const loggerMiddleware = async (
   req: Request,
@@ -7,7 +7,6 @@ export const loggerMiddleware = async (
   next: NextFunction,
 ): Promise<void | Response> => {
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const browser = req.get("user-agent");
   const request = await logCollection.findOne({
     IP: (ip || "").toString(),
     URL: req.baseUrl || req.originalUrl,

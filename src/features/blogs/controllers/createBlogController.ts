@@ -2,7 +2,7 @@ import { Response, Request } from "express";
 import {
   BlogInputModel,
   BlogViewModel,
-} from "../../../input-output-types/blogs-types";
+} from "../../../input-output-types/blog-types";
 import { BlogRepository } from "../blogRepository";
 
 export const createBlogController = async (

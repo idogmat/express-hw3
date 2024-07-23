@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { dateSetter } from "../utils/date-methods";
-import { UserTypeDBWithoutId } from "../db/db";
 import { AuthRepository } from "../features/auth/authRepository";
 
 export interface IPasswordFields {
@@ -21,11 +20,7 @@ interface ICheckCredential {
 }
 
 export class AuthService {
-  static async createUser({
-    login,
-    email,
-    password,
-  }: IAuthFields): Promise<UserTypeDBWithoutId> {
+  static async createUser({ login, email, password }: IAuthFields) {
     const passwordSalt = await bcrypt.genSalt(10);
     const passwordHash = await this._generateHash(password, passwordSalt);
     const newUser = {
@@ -42,10 +37,10 @@ export class AuthService {
   static async createNewPassword(password: string) {
     const passwordSalt = await bcrypt.genSalt(10);
     const passwordHash = await this._generateHash(password, passwordSalt);
-      return {
+    return {
       passwordHash,
       passwordSalt,
-    }
+    };
   }
 
   static async checkCredential(

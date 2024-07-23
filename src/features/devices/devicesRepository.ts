@@ -1,12 +1,9 @@
-import {
-  deviceCollection,
-  DeviceTypeDB,
-  DeviceTypeDBWithoutId,
-} from "../../db/db";
+import { WithoutId } from "mongodb";
+import { deviceCollection, DeviceTypeDB } from "../../db";
 import { Types } from "mongoose";
 
 export class DevicesRepository {
-  static async create(device: DeviceTypeDBWithoutId) {
+  static async create(device: WithoutId<DeviceTypeDB>) {
     const model = await new deviceCollection(device);
     const result = await model.save();
     return result._id;

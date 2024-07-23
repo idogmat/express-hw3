@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 import { Types } from "mongoose";
 import { UserRepository } from "../../users/userRepository";
-import { userCollection } from "../../../db/db";
+import { userCollection } from "../../../db";
 
 export const authMeController = async (
   req: Request<{}, {}>,

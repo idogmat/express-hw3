@@ -4,10 +4,9 @@ import {
   CommentTypeDB,
   userCollection,
   UserTypeDB,
-} from "../../db/db";
-import { CommentViewModel } from "../../input-output-types/comment-types";
+} from "../../db";
 import { INormolizedQuery } from "../../utils/query-helper";
-import { IReturnQueryList } from "../../input-output-types/query-types-output";
+import { CommentViewModel, IReturnQueryList } from "../../input-output-types";
 
 export class CommentRepository {
   static async create(content: string, postId: string, userId: string) {
@@ -15,7 +14,7 @@ export class CommentRepository {
       _id: new Types.ObjectId(userId),
     });
     if (!user?.login) return false;
-    const newComment: Omit<CommentTypeDB, "_id"> = {
+    const newComment = {
       content,
       postId,
       commentatorInfo: {
@@ -23,10 +22,14 @@ export class CommentRepository {
         userLogin: user.login,
       },
       createdAt: new Date(),
+      likesInfo: {
+        like: [],
+        dislike: [],
+      },
     };
     const model = await new commentCollection(newComment);
     const result = await model.save();
-    console.log(result)
+    console.log(result);
     return result._id;
   }
 
@@ -110,6 +113,11 @@ export class CommentRepository {
         userLogin: comment.commentatorInfo.userLogin,
       },
       createdAt: comment.createdAt,
+      likesInfo: {
+        like: comment.likesInfo.like.length,
+        dislike: comment.likesInfo.dislike.length,
+        myStatus: comment.likesInfo.dislike.length ? "None" : "Like",
+      },
     };
   }
 }

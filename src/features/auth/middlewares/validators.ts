@@ -1,8 +1,7 @@
 import { body, query } from "express-validator";
 import { inputCheckErrorsMiddleware } from "../../../global-middlewares/inputCheckErrorsMiddleware";
 import { AuthRepository } from "../authRepository";
-import { userCollection } from "../../../db/db";
-import { NextFunction, Request, Response } from "express";
+import { userCollection } from "../../../db";
 import { JwtService } from "../../../services/jwt.service";
 
 export const codeParamsValidator = query("code")
@@ -32,11 +31,13 @@ export const loginValidator = body("login")
     }
   });
 
-export const passwordValidator = (field: string = "password") => body(field).isString()
-  .withMessage("not string")
-  .trim()
-  .isLength({ min: 6, max: 20 })
-  .withMessage("more then 100 or 0");
+export const passwordValidator = (field: string = "password") =>
+  body(field)
+    .isString()
+    .withMessage("not string")
+    .trim()
+    .isLength({ min: 6, max: 20 })
+    .withMessage("more then 100 or 0");
 
 export const emailValidator = body("email")
   .isString()
@@ -54,7 +55,7 @@ export const emailValidator = body("email")
     }
   });
 
-  export const emailValidatorForRecovery = body("email")
+export const emailValidatorForRecovery = body("email")
   .isString()
   .withMessage("not string")
   .trim()
@@ -103,12 +104,12 @@ export const resendEmailValidator = body("email")
     }
   });
 
-  export const recoveryCodeValidator = body("recoveryCode")
+export const recoveryCodeValidator = body("recoveryCode")
   .isString()
   .withMessage("not string")
   .trim()
   .withMessage("not valid email")
-  .custom(async (value,{req}) => {
+  .custom(async (value, { req }) => {
     const info = await JwtService.verifyToken(value, "clown");
     if (info) {
       if (info instanceof Object) {
@@ -140,7 +141,7 @@ export const recoveryEmailValidators = [
 ];
 
 export const setNewPasswordValidators = [
-  passwordValidator('newPassword'),
+  passwordValidator("newPassword"),
   recoveryCodeValidator,
   inputCheckErrorsMiddleware,
 ];

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { BlogTypeBD, PostTypeBD } from "../db/db";
+import { BlogTypeBD, PostTypeBD } from "../db";
 import { Types, ObjectId } from "mongoose";
 
 export interface IQuery {

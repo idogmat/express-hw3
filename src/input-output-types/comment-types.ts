@@ -1,4 +1,4 @@
-import { CommentatorInfoType } from "../db/db";
+import { CommentatorInfoType } from "../db/comment";
 
 export type CommentInputModel = {
   content: string;
@@ -9,4 +9,9 @@ export type CommentViewModel = {
   content: string;
   commentatorInfo: CommentatorInfoType;
   createdAt: Date;
+  likesInfo: {
+    like: number;
+    dislike: number;
+    myStatus: string;
+  };
 };

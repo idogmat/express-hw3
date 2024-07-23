@@ -1,17 +1,21 @@
 import { INormolizedQuery } from "../../utils/query-helper";
-import { userCollection, UserTypeDB, UserTypeDBWithoutId } from "../../db/db";
-import { UserViewModel } from "../../input-output-types/user-types";
+import { userCollection, UserTypeDB } from "../../db";
 import {
+  UserViewModel,
   IReturnQueryList,
   IUserViewModelAfterQuery,
-} from "../../input-output-types/query-types-output";
+} from "../../input-output-types";
 
 export class UserQueryRepository {
   static async getAll(query: INormolizedQuery) {
     const filter = {
       $or: [
-        { login: { $regex: new RegExp(`^${query.searchLoginTerm || ''}`, "i") } },
-        { email: { $regex: new RegExp(`^${query.searchEmailTerm || ''}`, "i") } },
+        {
+          login: { $regex: new RegExp(`^${query.searchLoginTerm || ""}`, "i") },
+        },
+        {
+          email: { $regex: new RegExp(`^${query.searchEmailTerm || ""}`, "i") },
+        },
       ],
     };
     const totalCount = await userCollection.find(filter).countDocuments();

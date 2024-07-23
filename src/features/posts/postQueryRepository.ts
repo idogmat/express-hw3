@@ -23,10 +23,6 @@ export class PostRepository {
       blogId: post.blogId,
       createdAt: new Date(),
       blogName: blog.name,
-      likesInfo: {
-        like: [],
-        dislike: [],
-      },
     };
     const model = await new postCollection(newPost);
     const result = await model.save();

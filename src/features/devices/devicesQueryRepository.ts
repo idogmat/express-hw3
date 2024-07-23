@@ -1,6 +1,6 @@
-import { deviceCollection, DeviceTypeDB } from "../../db/db";
+import { deviceCollection, DeviceTypeDB } from "../../db";
 import { Types } from "mongoose";
-import { DeviceViewModel } from "../../input-output-types/device-types";
+import { DeviceViewModel } from "../../input-output-types";
 
 export class DevicesQueryRepository {
   static async get(userId: string): Promise<DeviceViewModel[]> {

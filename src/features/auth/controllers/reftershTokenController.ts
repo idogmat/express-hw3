@@ -2,7 +2,7 @@ import { Response, Request } from "express";
 import { JwtService } from "../../../services/jwt.service";
 import { Types } from "mongoose";
 import { DevicesRepository } from "../../devices/devicesRepository";
-import { deviceCollection } from "../../../db/db";
+import { deviceCollection } from "../../../db";
 
 export interface ILoginFields {
   loginOrEmail: string;

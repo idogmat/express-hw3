@@ -3,7 +3,7 @@ import { inputCheckErrorsMiddleware } from "../../../global-middlewares/inputChe
 import { NextFunction, Request, Response } from "express";
 import { blogIdParamsValidator } from "../../blogs/middlewares/validators";
 import { Types } from "mongoose";
-import { blogCollection, postCollection } from "../../../db/db";
+import { blogCollection, postCollection } from "../../../db";
 
 export const titleValidator = body("title")
   .isString()

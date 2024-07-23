@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { normolizedQuery } from "../../../utils/query-helper";
-import { IBlogWithPostsViewModelAfterQuery } from "../../../input-output-types/query-types-output";
+import { IBlogWithPostsViewModelAfterQuery } from "../../../input-output-types";
 import { PostRepository } from "../postRepository";
 
 export const getPostsController = async (

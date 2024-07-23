@@ -6,7 +6,7 @@ import {
   logCollection,
   postCollection,
   userCollection,
-} from "../../db/db";
+} from "../../db";
 export const testingRouter = Router();
 
 testingRouter.delete("/all-data", async (req, res) => {

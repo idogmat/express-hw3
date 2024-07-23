@@ -1,7 +1,8 @@
-import { userCollection, UserTypeDB, UserTypeDBWithoutId } from "../../db/db";
+import { WithoutId } from "mongodb";
+import { userCollection, UserTypeDB } from "../../db";
 
 export class UserRepository {
-  static async create(user: UserTypeDBWithoutId) {
+  static async create(user: WithoutId<UserTypeDB>) {
     const model = await new userCollection(user);
     const result = await model.save();
     console.log(result);

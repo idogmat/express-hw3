@@ -4,18 +4,9 @@ import { SETTINGS } from "./settings";
 import { blogsRouter } from "./features/blogs";
 import { testingRouter } from "./features/testing";
 import { postsRouter } from "./features/posts";
-import { Collection, MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import { authRouter } from "./features/auth";
 import { usersRouter } from "./features/users";
-import {
-  BlogTypeBD,
-  CommentTypeDB,
-  DeviceTypeDB,
-  LogTypeDB,
-  PostTypeBD,
-  UserTypeDB,
-} from "./db/db";
 import { commentsRouter } from "./features/comments";
 import cookieParser from "cookie-parser";
 import { loggerMiddleware } from "./global-middlewares/loggerMiddleware";

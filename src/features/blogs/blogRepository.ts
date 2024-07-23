@@ -1,25 +1,22 @@
-import {
-  BlogInputModel,
-  BlogViewModel,
-} from "../../input-output-types/blogs-types";
 import { INormolizedQuery } from "../../utils/query-helper";
-import { PostInputModel } from "../../input-output-types/posts-types";
 import { Types } from "mongoose";
 import {
   blogCollection,
   BlogTypeBD,
-  BlogTypeBDWithoutId,
   postCollection,
   PostTypeBD,
-} from "../../db/db";
+} from "../../db";
 import {
+  BlogInputModel,
+  BlogViewModel,
+  PostInputModel,
   IBlogViewModelAfterQuery,
   IReturnQueryList,
-} from "../../input-output-types/query-types-output";
+} from "../../input-output-types";
 import { PostRepository } from "../posts/postRepository";
 
 export class BlogRepository {
-  static async create(blog: BlogTypeBDWithoutId) {
+  static async create(blog: BlogInputModel) {
     const newBlog = {
       name: blog.name,
       description: blog.description,
@@ -90,13 +87,13 @@ export class BlogRepository {
       createdAt: new Date(),
       blogName: blog.name,
     } as PostTypeBD;
-    const result = await PostRepository.create(newPost);
-    if (!result) return false;
+    const id = await PostRepository.create(newPost);
+    if (!id) return false;
     const newPostForMap = await postCollection.findOne({
-      _id: result._id,
+      _id: id,
     });
     if (newPostForMap?._id) {
-      return PostRepository.map(newPostForMap as any);
+      return PostRepository.map(newPostForMap);
     } else {
       return false;
     }

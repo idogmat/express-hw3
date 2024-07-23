@@ -10,12 +10,6 @@
     "noImplicitReturns": true,
     "skipLibCheck": true
   },
-  "include": [
-    "src/**/*",
-    "src/utils/date-methods.ts",
-    "src/utils/query-helper.ts",
-    "src/utils/hash-helper.ts",
-    "src/utils/result-code.ts"
-  ],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.test.ts"]
 }

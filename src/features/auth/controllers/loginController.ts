@@ -3,7 +3,7 @@ import { AuthService } from "../../../services/auth.service";
 import { JwtService } from "../../../services/jwt.service";
 import mongoose from "mongoose";
 import { DevicesRepository } from "../../devices/devicesRepository";
-import { deviceCollection } from "../../../db/db";
+import { deviceCollection } from "../../../db";
 
 export interface ILoginFields {
   loginOrEmail: string;
@@ -39,7 +39,7 @@ export const loginController = async (
       browser,
       session.deviceId.toString(),
     );
-    await DevicesRepository.update(session._id.toHexString(), refreshToken);
+    await DevicesRepository.update(session._id.toString(), refreshToken);
     res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
   } else {
     const deviceId = new mongoose.Types.ObjectId().toString();

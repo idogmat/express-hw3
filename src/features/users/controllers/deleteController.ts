@@ -3,7 +3,7 @@ import { IQuery, isValidObjectId } from "../../../utils/query-helper";
 import { UserRepository } from "../userRepository";
 
 export const deleteController = async (
-  req: Request<{ id: string }, {}, {}, IQuery>,
+  req: Request<{ id: string }, unknown, unknown, IQuery>,
   res: Response<any>,
 ) => {
   const id = isValidObjectId(req.params.id);

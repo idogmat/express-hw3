@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { BlogInputModel } from "../../../input-output-types/blogs-types";
+import { BlogInputModel } from "../../../input-output-types/blog-types";
 import { BlogRepository } from "../blogRepository";
 import { isValidObjectId } from "../../../utils/query-helper";
 
