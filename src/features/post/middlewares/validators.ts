@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 import { inputCheckErrorsMiddleware } from "../../../global-middlewares/inputCheckErrorsMiddleware";
 import { NextFunction, Request, Response } from "express";
-import { blogIdParamsValidator } from "../../blogs/middlewares/validators";
+import { blogIdParamsValidator } from "../../blog/middlewares/validators";
 import { Types } from "mongoose";
 import { blogCollection, postCollection } from "../../../db";
 

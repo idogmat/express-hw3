@@ -2,7 +2,7 @@ import { deviceCollection, DeviceTypeDB } from "../../db";
 import { Types } from "mongoose";
 import { DeviceViewModel } from "../../input-output-types";
 
-export class DevicesQueryRepository {
+export class DeviceQueryRepository {
   static async get(userId: string): Promise<DeviceViewModel[]> {
     const devices = await deviceCollection.find<DeviceTypeDB>({ userId });
     return devices.map((d) => this.map(d));

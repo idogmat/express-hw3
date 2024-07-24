@@ -13,7 +13,7 @@ import {
   IBlogViewModelAfterQuery,
   IReturnQueryList,
 } from "../../input-output-types";
-import { PostRepository } from "../posts/postRepository";
+import { PostRepository } from "../post/postRepository";
 
 export class BlogRepository {
   static async create(blog: BlogInputModel) {
@@ -69,7 +69,7 @@ export class BlogRepository {
       page: query.pageNumber,
       pageSize: query.pageSize,
       totalCount: totalCount,
-      items: posts as PostTypeBD[],
+      items: posts,
     };
     return PostRepository.mapAfterQuery(queryForMap);
   }
@@ -83,7 +83,7 @@ export class BlogRepository {
       title: post.title,
       content: post.content,
       shortDescription: post.shortDescription,
-      blogId: blogId as any,
+      blogId: blogId,
       createdAt: new Date(),
       blogName: blog.name,
     } as PostTypeBD;

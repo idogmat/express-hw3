@@ -1,9 +1,5 @@
 import { Router } from "express";
-import { createPostController } from "./controllers/createPostController";
-import { getPostsController } from "./controllers/getPostsController";
-import { findPostController } from "./controllers/findPostController";
-import { delPostController } from "./controllers/delPostController";
-import { putPostController } from "./controllers/putPostController";
+import { PostController } from "./postController";
 import {
   commentContentValidator,
   findPostValidator,
@@ -11,8 +7,6 @@ import {
   putUpdateValidators,
 } from "./middlewares/validators";
 import { adminMiddleware } from "../../global-middlewares/admin-middleware";
-import { createCommentInPostController } from "./controllers/createCommentInPostController";
-import { getCommentsInPostController } from "./controllers/getCommentsInPostController";
 import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckErrorsMiddleware";
 import { tokenAuthorizationMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
 
@@ -22,27 +16,27 @@ postsRouter.post(
   "/",
   adminMiddleware,
   ...postCreateValidators,
-  createPostController,
+  PostController.createPost,
 );
 
-postsRouter.get("/", getPostsController);
-postsRouter.get("/:id", findPostValidator, findPostController);
+postsRouter.get("/", PostController.getPosts);
+postsRouter.get("/:id", findPostValidator, PostController.find);
 postsRouter.delete(
   "/:id",
   adminMiddleware,
   findPostValidator,
-  delPostController,
+  PostController.deletePost,
 );
 postsRouter.put(
   "/:id",
   adminMiddleware,
   ...putUpdateValidators,
-  putPostController,
+  PostController.updatePost,
 );
 postsRouter.get(
   "/:id/comments",
   findPostValidator,
-  getCommentsInPostController,
+  PostController.getCommentsInPost,
 );
 postsRouter.post(
   "/:id/comments",
@@ -50,5 +44,5 @@ postsRouter.post(
   commentContentValidator,
   inputCheckErrorsMiddleware,
   findPostValidator,
-  createCommentInPostController,
+  PostController.createCommentInPost,
 );

@@ -1,6 +1,6 @@
 import { userCollection, UserTypeDB } from "../../db";
 import { IPasswordFields } from "../../services/auth.service";
-import { UserRepository } from "../users/userRepository";
+import { UserRepository } from "../user/userRepository";
 
 export class AuthRepository {
   static async create(user: UserTypeDB): Promise<any> {
