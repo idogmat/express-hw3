@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { deviceCollection, userCollection } from "../../db";
 import mongoose, { Types } from "mongoose";
-import { UserRepository } from "../user/userRepository";
 import { AuthService } from "../../services/auth.service";
 import { JwtService } from "../../services/jwt.service";
 import { DeviceRepository } from "../device/deviceRepository";
-import { AuthRepository } from "./authRepository";
 import { EmailService } from "../../services/email.service";
 import { UserQueryRepository } from "../user/userQueryRepository";
+import { UserRepository } from "../user/userRepository";
+import { AuthRepository } from "./authRepository";
 
 interface ILoginFields {
   loginOrEmail: string;
@@ -26,18 +26,19 @@ interface INewPassword {
 }
 
 export class AuthController {
-  static async authMe(
+  constructor(protected authService: AuthService, protected authRepository: AuthRepository) {}
+  async authMe(
     req: Request<{}, {}>,
     res: Response<any>,
   ) {
     const user = await userCollection.findOne({
       _id: new Types.ObjectId(req.userId),
     });
-    if (user) return res.status(200).json(UserRepository.authMap(user));
+    if (user) return res.status(200).json(this.authRepository.authMap(user));
     else return res.sendStatus(401);
   };
 
-  static async confirmRegistration(
+  async confirmRegistration(
     req: Request<{}, {}, {code: string}>,
     res: Response<any>,
   ) {
@@ -62,7 +63,7 @@ export class AuthController {
     return res.sendStatus(400);
   };
 
-  static async login(
+  async login(
     req: Request<{}, {}, ILoginFields>,
     res: Response<any>,
   ): Promise<any> {
@@ -71,7 +72,7 @@ export class AuthController {
     const browser = req.get("user-agent");
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     const password = req.body.password;
-    const { result, id } = await AuthService.checkCredential(
+    const { result, id } = await this.authService.checkCredential(
       loginOrEmail,
       password,
     );
@@ -115,7 +116,7 @@ export class AuthController {
     else res.sendStatus(401);
   };
 
-  static async logout(
+  async logout(
     req: Request<{}, {}, ILoginFields>,
     res: Response<any>,
   ): Promise<any> {
@@ -134,19 +135,19 @@ export class AuthController {
     }
   };
 
-  static async passwordRecovery(
+  async passwordRecovery(
     req: Request<{}, { email: string }>,
     res: Response<any>,
   ) {
-    const user = await AuthRepository.findByEmail(req.body.email);
+    const user = await this.authRepository.findByEmail(req.body.email);
     if (!user) return res.sendStatus(204);
     const code = await JwtService.createRecoveryCode(user._id.toString());
-    await AuthRepository.setRecoveryCode(user._id.toString(), code);
+    await this.authRepository.setRecoveryCode(user._id.toString(), code);
     await EmailService.sendMailPasswordRecovery(user.login, user.email, code);
     return res.sendStatus(204);
   };
 
-  static async reftershToken(
+  async reftershToken(
     req: Request<{}, {}, {}>,
     res: Response<any>,
   ): Promise<any> {
@@ -158,7 +159,6 @@ export class AuthController {
       const session = await deviceCollection.findOne({
         refreshToken: oldRefreshToken,
       });
-      console.log(session);
       if (!session) return res.sendStatus(401);
       const accessToken = await JwtService.createAccessToken(id);
       const refreshToken = await JwtService.createRefreshToken(
@@ -177,16 +177,16 @@ export class AuthController {
     }
   };
 
-  static async registration(
+  async registration(
     req: Request<{}, {}, ICreateUserFields>,
     res: Response<any>,
   ): Promise<any> {
     const { login, email, password } = req.body;
-    const userFound = await UserRepository.findByLoginOrEmail(login, email);
+    const userFound = await this.authRepository.findByLoginAndEmail(login, email);
     if (userFound?._id) return res.sendStatus(400);
-    const user = await AuthService.createUser({ login, email, password });
+    const user = await this.authService.createUser({ login, email, password });
     // console.log(user)
-    const result = await UserRepository.create(user);
+    const result = await this.authRepository.create(user);
     const code = user.emailConfirmation.confirmationCode;
     console.log(result);
     try {
@@ -198,7 +198,7 @@ export class AuthController {
     else res.sendStatus(400);
   };
 
-  static async resendEmail(
+  async resendEmail(
     req: Request<{}, {}, { email: string }>,
     res: Response<any>,
   ) {
@@ -206,7 +206,7 @@ export class AuthController {
     if (user) {
       // let code = user.emailConfirmation.confirmationCode;
       // if (user.emailConfirmation.expirationDate < new Date()) {
-      const emailConfirmation = await AuthService.createConfirmCodeObject();
+      const emailConfirmation = await this.authService.createConfirmCodeObject();
       await userCollection.findOneAndUpdate(
         { _id: user._id },
         { $set: { emailConfirmation } },
@@ -219,16 +219,18 @@ export class AuthController {
     return res.sendStatus(400);
   };
 
-  static async setNewPassword(
+  async setNewPassword(
     req: Request<{}, INewPassword>,
     res: Response<any>,
   ) {
     if (req.userId) {
-      const password = await AuthService.createNewPassword(req.body.newPassword);
-      const result = await AuthRepository.setNewPassword(req.userId, password);
+      const password = await this.authService.createNewPassword(req.body.newPassword);
+      const result = await this.authRepository.setNewPassword(req.userId, password);
       return res.sendStatus(204);
     } else {
       return res.sendStatus(204);
     }
   };
 }
+
+// export const authController = new AuthController();

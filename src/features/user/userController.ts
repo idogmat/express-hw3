@@ -11,15 +11,16 @@ interface ICreateUserFields {
 }
 
 export class UserController {
-  static async create(
+  constructor(protected authService: AuthService, protected userRepository: UserRepository) {}
+  async create(
     req: Request<{}, {}, ICreateUserFields>,
     res: Response<any>,
   ): Promise<any> {
     const { login, email, password } = req.body;
-    const userFound = await UserRepository.findByLoginOrEmail(login, email);
+    const userFound = await this.userRepository.findByLoginAndEmail(login, email);
     if (userFound?._id) return res.sendStatus(404);
-    const user = await AuthService.createUser({ login, email, password });
-    const result = await UserRepository.create({
+    const user = await this.authService.createUser({ login, email, password });
+    const result = await this.userRepository.create({
       ...user,
       emailConfirmation: { ...user.emailConfirmation, isConfirmed: true },
     });
@@ -33,7 +34,7 @@ export class UserController {
     else res.sendStatus(400);
   };
 
-  static async get(
+  async get(
     req: Request<any, any, any, IQuery>,
     res: Response<any>,
   ) {
@@ -42,7 +43,7 @@ export class UserController {
     res.status(200).json(data);
   };
 
-  static async delete (
+  async delete (
     req: Request<{ id: string }, unknown, unknown, IQuery>,
     res: Response<any>,
   ) {
@@ -51,7 +52,7 @@ export class UserController {
       res.sendStatus(404);
       return;
     }
-    const data = await UserRepository.delete(id);
+    const data = await this.userRepository.delete(id);
     if (data) res.sendStatus(204);
     else res.sendStatus(404);
   };

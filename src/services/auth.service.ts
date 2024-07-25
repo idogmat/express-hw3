@@ -20,7 +20,8 @@ interface ICheckCredential {
 }
 
 export class AuthService {
-  static async createUser({ login, email, password }: IAuthFields) {
+  constructor(protected authRepository: AuthRepository) {}
+  async createUser({ login, email, password }: IAuthFields) {
     const passwordSalt = await bcrypt.genSalt(10);
     const passwordHash = await this._generateHash(password, passwordSalt);
     const newUser = {
@@ -34,7 +35,7 @@ export class AuthService {
     return newUser;
   }
 
-  static async createNewPassword(password: string) {
+  async createNewPassword(password: string) {
     const passwordSalt = await bcrypt.genSalt(10);
     const passwordHash = await this._generateHash(password, passwordSalt);
     return {
@@ -43,11 +44,11 @@ export class AuthService {
     };
   }
 
-  static async checkCredential(
+  async checkCredential(
     loginOrEmail: string,
     password: string,
   ): Promise<ICheckCredential> {
-    const user = await AuthRepository.findByLoginOrEmail(loginOrEmail);
+    const user = await this.authRepository.findByLoginOrEmail(loginOrEmail);
     if (!user?._id) return { result: false, id: "" };
     const passwordHash = await this._generateHash(password, user.passwordSalt);
     // or bcrypt.compare(password, user.passwordHash): return boolean
@@ -57,13 +58,13 @@ export class AuthService {
     };
   }
 
-  static async checkRefreshToken(refreshToken: string): Promise<string | null> {
-    const user = await AuthRepository.findRefreshTokenUserId(refreshToken);
+  async checkRefreshToken(refreshToken: string): Promise<string | null> {
+    const user = await this.authRepository.findRefreshTokenUserId(refreshToken);
     if (!user?._id) return null;
     return user?._id.toString();
   }
 
-  static createConfirmCodeObject() {
+  createConfirmCodeObject() {
     return {
       confirmationCode: randomUUID(),
       expirationDate: dateSetter(new Date(), {
@@ -74,7 +75,9 @@ export class AuthService {
     };
   }
 
-  static async _generateHash(password: string, salt: string): Promise<string> {
+  async _generateHash(password: string, salt: string): Promise<string> {
     return await bcrypt.hash(password, salt);
   }
 }
+
+// export const authService = new AuthService();

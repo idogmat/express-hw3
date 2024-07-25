@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { AuthController } from "./authController";
 import {
   codelValidator,
   recoveryEmailValidators,
@@ -11,24 +10,25 @@ import { tokenAuthorizationMiddleware } from "../../global-middlewares/tokenAuth
 import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckErrorsMiddleware";
 import { tokenRefreshMiddleware } from "../../global-middlewares/tokenRefreshMiddleware";
 import { requestLimitGuard } from "../../global-middlewares/requestLimitGuard";
+import { authController } from "../composition-root";
 
 export const authRouter = Router();
 
-authRouter.post("/login", requestLimitGuard, AuthController.login);
+authRouter.post("/login", requestLimitGuard, authController.login.bind(authController));
 
-authRouter.post("/logout", tokenRefreshMiddleware, AuthController.logout);
+authRouter.post("/logout", tokenRefreshMiddleware, authController.logout.bind(authController));
 
 authRouter.post(
   "/refresh-token",
   tokenRefreshMiddleware,
-  AuthController.reftershToken,
+  authController.reftershToken.bind(authController),
 );
 
 authRouter.post(
   "/registration",
   requestLimitGuard,
   ...userCreateValidators,
-  AuthController.registration,
+  authController.registration.bind(authController),
 );
 
 authRouter.post(
@@ -36,28 +36,28 @@ authRouter.post(
   requestLimitGuard,
   codelValidator,
   inputCheckErrorsMiddleware,
-  AuthController.confirmRegistration,
+  authController.confirmRegistration.bind(authController),
 );
 
 authRouter.post(
   "/registration-email-resending",
   requestLimitGuard,
   ...resendEmailValidators,
-  AuthController.resendEmail,
+  authController.resendEmail.bind(authController),
 );
 
-authRouter.get("/me", tokenAuthorizationMiddleware, AuthController.authMe);
+authRouter.get("/me", tokenAuthorizationMiddleware, authController.authMe.bind(authController));
 
 authRouter.post(
   "/password-recovery",
   requestLimitGuard,
   ...recoveryEmailValidators,
-  AuthController.passwordRecovery,
+  authController.passwordRecovery.bind(authController),
 );
 
 authRouter.post(
   "/new-password",
   requestLimitGuard,
   ...setNewPasswordValidators,
-  AuthController.setNewPassword,
+  authController.setNewPassword.bind(authController),
 );

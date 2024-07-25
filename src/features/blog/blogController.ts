@@ -4,8 +4,8 @@ import { BlogRepository } from "./blogRepository";
 import { IQuery, isValidObjectId, normolizedQuery } from "../../utils/query-helper";
 import { BlogQueryRepository } from "./blogQueryRepository";
 
-export class BlogController {
-  static async create(
+class BlogController {
+  async create(
     req: Request<{}, {}, BlogInputModel>,
     res: Response<BlogViewModel>,
   ) {
@@ -14,7 +14,7 @@ export class BlogController {
     newBlog ? res.status(201).json(newBlog) : res.sendStatus(400);
   };
 
-  static async delete(
+  async delete(
     req: Request<{ id: string }>,
     res: Response,
   ) {
@@ -28,7 +28,7 @@ export class BlogController {
     else res.sendStatus(404);
   };
 
-  static async find(
+  async find(
     req: Request<{ id: string }>,
     res: Response<BlogViewModel | {}>,
   ) {
@@ -42,7 +42,7 @@ export class BlogController {
     else res.sendStatus(404);
   };
 
-  static async get(
+  async get(
     req: Request<{}, {}, {}, IQuery>,
     res: Response<any>,
   ) {
@@ -51,7 +51,7 @@ export class BlogController {
     res.status(200).json(data);
   };
 
-  static async getPostsInBlog(
+  async getPostsInBlog(
     req: Request<{id: string}, {}, {}, IQuery>,
     res: Response<any>,
   ) {
@@ -65,7 +65,7 @@ export class BlogController {
     data ? res.status(200).json(data) : res.sendStatus(404);
   };
 
-  static async createPostInBlog(
+  async createPostInBlog(
     req: Request<{id: string}, {}, PostInputModel>,
     res: Response<PostViewModel>,
   ) {
@@ -78,7 +78,7 @@ export class BlogController {
     data ? res.status(201).json(data) : res.sendStatus(400);
   };
 
-  static async update(
+  async update(
     req: Request<{ id: string }, {}, BlogInputModel>,
     res: Response,
   ) {
@@ -93,3 +93,5 @@ export class BlogController {
     else res.sendStatus(404);
   };
 }
+
+export const blogController = new BlogController();

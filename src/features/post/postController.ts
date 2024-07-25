@@ -5,9 +5,8 @@ import { PostRepository } from "./postRepository";
 import { IQuery, isValidObjectId, normolizedQuery } from "../../utils/query-helper";
 import { Types } from "mongoose";
 
-
-export class PostController {
-  static async createCommentInPost(
+class PostController {
+  async createCommentInPost(
     req: Request<{ id: string }, any, CommentInputModel>,
     res: Response<CommentViewModel | unknown>,
   ) {
@@ -24,7 +23,7 @@ export class PostController {
     res.status(201).json(newComment);
   };
 
-  static async createPost(
+  async createPost(
     req: Request<any, any, PostInputModel>,
     res: Response<PostViewModel | unknown>,
   ) {
@@ -38,7 +37,7 @@ export class PostController {
     res.status(201).json(newPost);
   };
 
-  static async deletePost(
+  async deletePost(
     req: Request<{ id: string }>,
     res: Response,
   ) {
@@ -52,7 +51,7 @@ export class PostController {
     else res.sendStatus(404);
   };
 
-  static async find(
+  async find(
     req: Request<{ id: string }>,
     res: Response<PostViewModel | {}>,
   ) {
@@ -66,7 +65,7 @@ export class PostController {
     else res.sendStatus(404);
   };
 
-  static async getPosts(
+  async getPosts(
     req: Request,
     res: Response<IBlogWithPostsViewModelAfterQuery>,
   ) {
@@ -75,7 +74,7 @@ export class PostController {
     res.status(200).json(data);
   };
 
-  static async getCommentsInPost(
+  async getCommentsInPost(
     req: Request<{ id: string }, {}, {}, IQuery>,
     res: Response<IReturnQueryList<CommentViewModel>>,
   ) {
@@ -84,7 +83,7 @@ export class PostController {
     res.status(200).json(data);
   };
 
-  static async updatePost(
+  async updatePost(
     req: Request<{ id: string }, any, PostInputModel>,
     res: Response,
   ) {
@@ -98,3 +97,5 @@ export class PostController {
     else res.sendStatus(404);
   };
 }
+
+export const postController = new PostController();

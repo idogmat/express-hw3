@@ -6,7 +6,7 @@ import {
 import { adminMiddleware } from "../../global-middlewares/admin-middleware";
 import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckErrorsMiddleware";
 import { postCreateValidatorsWithBlogId } from "../post/middlewares/validators";
-import { BlogController } from "./blogController";
+import { blogController } from "./blogController";
 
 export const blogsRouter = Router();
 
@@ -14,33 +14,33 @@ blogsRouter.post(
   "/",
   adminMiddleware,
   ...blogCreateValidators,
-  BlogController.create,
+  blogController.create,
 );
-blogsRouter.get("/", BlogController.get);
-blogsRouter.get("/:id/posts", BlogController.getPostsInBlog);
+blogsRouter.get("/", blogController.get);
+blogsRouter.get("/:id/posts", blogController.getPostsInBlog);
 blogsRouter.post(
   "/:id/posts",
   adminMiddleware,
   ...postCreateValidatorsWithBlogId,
-  BlogController.createPostInBlog,
+  blogController.createPostInBlog,
 );
 blogsRouter.get(
   "/:id",
   blogIdParamsValidator,
   inputCheckErrorsMiddleware,
-  BlogController.find,
+  blogController.find,
 );
 blogsRouter.delete(
   "/:id",
   adminMiddleware,
   blogIdParamsValidator,
   inputCheckErrorsMiddleware,
-  BlogController.delete,
+  blogController.delete,
 );
 blogsRouter.put(
   "/:id",
   adminMiddleware,
   blogIdParamsValidator,
   ...blogCreateValidators,
-  BlogController.update,
+  blogController.update,
 );

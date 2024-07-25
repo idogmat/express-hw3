@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { UserController } from "./userController";
 import { userCreateValidators } from "./middlewares/validators";
 import { adminMiddleware } from "../../global-middlewares/admin-middleware";
+import { userController } from "../composition-root";
 
 export const usersRouter = Router();
 
-usersRouter.get("/", adminMiddleware, UserController.get);
+usersRouter.get("/", adminMiddleware, userController.get.bind(userController));
 usersRouter.post(
   "/",
   adminMiddleware,
   ...userCreateValidators,
-  UserController.create,
+  userController.create.bind(userController),
 );
-usersRouter.delete("/:id", adminMiddleware, UserController.delete);
+usersRouter.delete("/:id", adminMiddleware, userController.delete.bind(userController));

@@ -2,20 +2,20 @@ import { WithoutId } from "mongodb";
 import { userCollection, UserTypeDB } from "../../db";
 
 export class UserRepository {
-  static async create(user: WithoutId<UserTypeDB>) {
+  async create(user: WithoutId<UserTypeDB>) {
     const model = await new userCollection(user);
     const result = await model.save();
     console.log(result);
     return result;
   }
 
-  static async findById(id: string) {
+  async findById(id: string) {
     const model = await userCollection.findById(id);
     console.log(model);
     return model;
   }
 
-  static async findByLoginOrEmail(
+  async findByLoginAndEmail(
     login: string,
     email: string,
   ): Promise<UserTypeDB | null> {
@@ -25,18 +25,9 @@ export class UserRepository {
     return model;
   }
 
-  static async delete(id: string) {
+  async delete(id: string) {
     const result = await userCollection.deleteOne({ _id: id });
     console.log(result);
     return result.deletedCount;
-  }
-
-  static authMap(user: UserTypeDB) {
-    const userForOutput = {
-      userId: user._id.toString(),
-      login: user.login,
-      email: user.email,
-    };
-    return userForOutput;
   }
 }

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { PostController } from "./postController";
+import { postController } from "./postController";
 import {
   commentContentValidator,
   findPostValidator,
@@ -16,27 +16,27 @@ postsRouter.post(
   "/",
   adminMiddleware,
   ...postCreateValidators,
-  PostController.createPost,
+  postController.createPost,
 );
 
-postsRouter.get("/", PostController.getPosts);
-postsRouter.get("/:id", findPostValidator, PostController.find);
+postsRouter.get("/", postController.getPosts);
+postsRouter.get("/:id", findPostValidator, postController.find);
 postsRouter.delete(
   "/:id",
   adminMiddleware,
   findPostValidator,
-  PostController.deletePost,
+  postController.deletePost,
 );
 postsRouter.put(
   "/:id",
   adminMiddleware,
   ...putUpdateValidators,
-  PostController.updatePost,
+  postController.updatePost,
 );
 postsRouter.get(
   "/:id/comments",
   findPostValidator,
-  PostController.getCommentsInPost,
+  postController.getCommentsInPost,
 );
 postsRouter.post(
   "/:id/comments",
@@ -44,5 +44,5 @@ postsRouter.post(
   commentContentValidator,
   inputCheckErrorsMiddleware,
   findPostValidator,
-  PostController.createCommentInPost,
+  postController.createCommentInPost,
 );

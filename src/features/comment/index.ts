@@ -1,8 +1,6 @@
 import { Router } from "express";
-import { getCommentController } from "./controllers/getCommentController";
+import { commentController } from "./commentController";
 import { tokenAuthorizationMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
-import { deleteCommentController } from "./controllers/deleteCommentController";
-import { putCommentController } from "./controllers/putCommentController";
 import {
   commentValidators,
   findCommentValidator,
@@ -10,24 +8,16 @@ import {
 
 export const commentsRouter = Router();
 
-// postsRouter.post('/',
-//   adminMiddleware,
-//   ...postCreateValidators,
-//   createPostController);
-
-// postsRouter.get('/', getPostsController)
-commentsRouter.get("/:id", getCommentController);
+commentsRouter.get("/:id", commentController.get);
 commentsRouter.delete(
   "/:id",
   tokenAuthorizationMiddleware,
   findCommentValidator,
-  deleteCommentController,
+  commentController.delete,
 );
 commentsRouter.put(
   "/:id",
   tokenAuthorizationMiddleware,
   commentValidators,
-  putCommentController,
+  commentController.update,
 );
-
-// не забудьте добавить роут в апп

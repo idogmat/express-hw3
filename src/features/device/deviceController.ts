@@ -5,17 +5,16 @@ import { Types } from "mongoose";
 import { JwtService } from "../../services/jwt.service";
 import { JwtPayload } from "jsonwebtoken";
 
-export class DeviceController {
-  static async getDevice(req: Request, res: Response) {
+class DeviceController {
+  async getDevice(req: Request, res: Response) {
     const userSessions = await DeviceQueryRepository.get(req.userId);
     res.status(200).json(userSessions);
   };
   
-  static async deleteDevice(
+  async deleteDevice(
     req: Request<{ id: string }>,
     res: Response,
   ): Promise<Response | void> {
-    console.log(req.params.id);
     if (!Types.ObjectId.isValid(req.params.id)) return res.sendStatus(404);
     const userSessions = await DeviceRepository.findSession(req.params.id);
     console.log(userSessions, "userSessions");
@@ -28,12 +27,11 @@ export class DeviceController {
     res.sendStatus(204);
   };
 
-  static async deleteAllDevices(
+  async deleteAllDevices(
     req: Request,
     res: Response,
   ) {
     const refreshToken = req.cookies.refreshToken;
-    console.log(refreshToken);
     const decoded = await JwtService.verifyToken(refreshToken, "refresh");
     if (!decoded) return res.sendStatus(401);
     const deleted = await DeviceRepository.deleteAllSessions(
@@ -42,3 +40,5 @@ export class DeviceController {
     return res.sendStatus(204);
   };
 }
+
+export const deviceController = new DeviceController();

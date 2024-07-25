@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { DeviceController } from "./deviceController";
+import { deviceController } from "./deviceController";
 import { tokenRefreshMiddleware } from "../../global-middlewares/tokenRefreshMiddleware";
 
 export const devicesRouter = Router();
 
-devicesRouter.get("/", tokenRefreshMiddleware, DeviceController.getDevice);
-devicesRouter.delete("/:id", tokenRefreshMiddleware, DeviceController.deleteDevice);
-devicesRouter.delete("/", tokenRefreshMiddleware, DeviceController.deleteAllDevices);
+devicesRouter.get("/", tokenRefreshMiddleware, deviceController.getDevice);
+devicesRouter.delete("/:id", tokenRefreshMiddleware, deviceController.deleteDevice);
+devicesRouter.delete("/", tokenRefreshMiddleware, deviceController.deleteAllDevices);
 // devicesRouter.delete('/', tokenAuthorizationMiddleware, findCommentValidator, deleteCommentController)
 // devicesRouter.put('/:id', tokenAuthorizationMiddleware, commentValidators, putCommentController)
