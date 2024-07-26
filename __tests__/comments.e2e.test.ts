@@ -19,7 +19,6 @@ describe("/posts", () => {
   beforeAll(async () => {
     // очистка базы данных перед началом тестирования
     await connectDb();
-    
   });
 
   beforeEach(async () => {

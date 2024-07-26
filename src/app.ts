@@ -1,25 +1,16 @@
 import express from "express";
 import cors from "cors";
 import { SETTINGS } from "./settings";
-import { blogsRouter } from "./features/blogs";
+import { blogsRouter } from "./features/blog";
 import { testingRouter } from "./features/testing";
-import { postsRouter } from "./features/posts";
-import { Collection, MongoClient } from "mongodb";
+import { postsRouter } from "./features/post";
 import dotenv from "dotenv";
 import { authRouter } from "./features/auth";
-import { usersRouter } from "./features/users";
-import {
-  BlogTypeBD,
-  CommentTypeDB,
-  DeviceTypeDB,
-  LogTypeDB,
-  PostTypeBD,
-  UserTypeDB,
-} from "./db/db";
-import { commentsRouter } from "./features/comments";
+import { usersRouter } from "./features/user";
+import { commentsRouter } from "./features/comment";
 import cookieParser from "cookie-parser";
 import { loggerMiddleware } from "./global-middlewares/loggerMiddleware";
-import { devicesRouter } from "./features/devices";
+import { devicesRouter } from "./features/device";
 import mongoose from "mongoose";
 dotenv.config();
 const tokenDB = process.env.CONNECTION || "";

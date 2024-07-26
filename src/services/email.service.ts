@@ -30,7 +30,11 @@ export class EmailService {
     });
   }
 
-  static async sendMailPasswordRecovery(name: string, mail: string, code: string) {
+  static async sendMailPasswordRecovery(
+    name: string,
+    mail: string,
+    code: string,
+  ) {
     const transporter = await this.transporter();
     const url = process.env.RECOVERY_EMAIL + code;
     transporter.sendMail({
@@ -45,5 +49,4 @@ export class EmailService {
       `,
     });
   }
-
-};
+}

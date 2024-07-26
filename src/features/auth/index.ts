@@ -1,6 +1,4 @@
 import { Router } from "express";
-import { loginController } from "./controllers/loginController";
-import { confirmRegistrationController } from "./controllers/confirmRegistrationController";
 import {
   codelValidator,
   recoveryEmailValidators,
@@ -8,35 +6,29 @@ import {
   setNewPasswordValidators,
   userCreateValidators,
 } from "./middlewares/validators";
-import { registrationController } from "./controllers/registrationController";
-import { resendEmailController } from "./controllers/resendEmailController";
-import { authMeController } from "./controllers/authMeController";
 import { tokenAuthorizationMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
 import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckErrorsMiddleware";
-import { reftershTokenController } from "./controllers/reftershTokenController";
 import { tokenRefreshMiddleware } from "../../global-middlewares/tokenRefreshMiddleware";
-import { logoutController } from "./controllers/logoutController";
 import { requestLimitGuard } from "../../global-middlewares/requestLimitGuard";
-import { passwordRecoveryController } from "./controllers/passwordRecoveryController";
-import { setNewPasswordController } from "./controllers/setNewPasswordController";
+import { authController } from "../composition-root";
 
 export const authRouter = Router();
 
-authRouter.post("/login", requestLimitGuard, loginController);
+authRouter.post("/login", requestLimitGuard, authController.login.bind(authController));
 
-authRouter.post("/logout", tokenRefreshMiddleware, logoutController);
+authRouter.post("/logout", tokenRefreshMiddleware, authController.logout.bind(authController));
 
 authRouter.post(
   "/refresh-token",
   tokenRefreshMiddleware,
-  reftershTokenController,
+  authController.reftershToken.bind(authController),
 );
 
 authRouter.post(
   "/registration",
   requestLimitGuard,
   ...userCreateValidators,
-  registrationController,
+  authController.registration.bind(authController),
 );
 
 authRouter.post(
@@ -44,24 +36,28 @@ authRouter.post(
   requestLimitGuard,
   codelValidator,
   inputCheckErrorsMiddleware,
-  confirmRegistrationController,
+  authController.confirmRegistration.bind(authController),
 );
 
 authRouter.post(
   "/registration-email-resending",
   requestLimitGuard,
   ...resendEmailValidators,
-  resendEmailController,
+  authController.resendEmail.bind(authController),
 );
 
-authRouter.get("/me", tokenAuthorizationMiddleware, authMeController);
+authRouter.get("/me", tokenAuthorizationMiddleware, authController.authMe.bind(authController));
 
-authRouter.post("/password-recovery",
+authRouter.post(
+  "/password-recovery",
   requestLimitGuard,
-  ...recoveryEmailValidators, 
-  passwordRecoveryController);
+  ...recoveryEmailValidators,
+  authController.passwordRecovery.bind(authController),
+);
 
-authRouter.post("/new-password",
+authRouter.post(
+  "/new-password",
   requestLimitGuard,
   ...setNewPasswordValidators,
-  setNewPasswordController);
+  authController.setNewPassword.bind(authController),
+);

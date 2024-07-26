@@ -1,10 +1,12 @@
-import { userCollection, UserTypeDB } from "../../db/db";
+import { WithoutId } from "mongodb";
+import { userCollection, UserTypeDB } from "../../db";
 import { IPasswordFields } from "../../services/auth.service";
-import { UserRepository } from "../users/userRepository";
+import { UserRepository } from "../user/userRepository";
 
 export class AuthRepository {
-  static async create(user: UserTypeDB): Promise<any> {
-    const result = await UserRepository.create(user);
+  constructor(protected userRepository: UserRepository) {}
+  async create(user: WithoutId<UserTypeDB>): Promise<any> {
+    const result = await this.userRepository.create(user);
     if (result) {
       return result;
     } else {
@@ -12,12 +14,15 @@ export class AuthRepository {
     }
   }
 
-  static async setNewPassword(id: string, {passwordHash, passwordSalt}: IPasswordFields): Promise<any> {
-    const result = await UserRepository.findById(id);
+  async setNewPassword(
+    id: string,
+    { passwordHash, passwordSalt }: IPasswordFields,
+  ): Promise<any> {
+    const result = await this.userRepository.findById(id);
     if (result) {
-      result.set({passwordHash})
-      result.set({passwordSalt})
-      result.set({recoveryCode: ''})
+      result.set({ passwordHash });
+      result.set({ passwordSalt });
+      result.set({ recoveryCode: "" });
       await result.save();
       return result;
     } else {
@@ -25,25 +30,25 @@ export class AuthRepository {
     }
   }
 
-  static async find(id: string) {
-    const result = await UserRepository.findById(id);
+  async find(id: string) {
+    const result = await this.userRepository.findById(id);
     return result;
   }
 
-  static async setRecoveryCode(id: string, recoveryCode: string) {
+  async setRecoveryCode(id: string, recoveryCode: string) {
     const result = await userCollection.findById(id);
-    if (!result) return false
-    result?.set({ recoveryCode })
-    await result.save()
+    if (!result) return false;
+    result?.set({ recoveryCode });
+    await result.save();
     return result;
   }
 
-  static async findRefreshTokenUserId(refreshToken: string) {
+  async findRefreshTokenUserId(refreshToken: string) {
     const result = await userCollection.findOne({ refreshToken });
     return result;
   }
 
-  static async findByLoginOrEmail(
+  async findByLoginOrEmail(
     loginOrEmail: string,
   ): Promise<UserTypeDB | null> {
     const user = await userCollection.findOne({
@@ -53,10 +58,31 @@ export class AuthRepository {
     return user;
   }
 
-  static async findByEmail(
+  async findByLoginAndEmail(
+    login: string,
     email: string,
   ): Promise<UserTypeDB | null> {
-    const model = await userCollection.findOne<UserTypeDB | null>({ email: email });
+    const model = await userCollection.findOne<UserTypeDB | null>({
+      $or: [{ email: email }, { login: login }],
+    });
     return model;
   }
+
+  async findByEmail(email: string): Promise<UserTypeDB | null> {
+    const model = await userCollection.findOne<UserTypeDB | null>({
+      email: email,
+    });
+    return model;
+  }
+
+  authMap(user: UserTypeDB) {
+    const userForOutput = {
+      userId: user._id.toString(),
+      login: user.login,
+      email: user.email,
+    };
+    return userForOutput;
+  }
 }
+
+// export const authRepository = new AuthRepository();
