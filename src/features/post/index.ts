@@ -8,7 +8,7 @@ import {
 } from "./middlewares/validators";
 import { adminMiddleware } from "../../global-middlewares/admin-middleware";
 import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckErrorsMiddleware";
-import { tokenAuthorizationMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
+import { tokenAuthorizationMiddleware, tokenAuthorizationWithoutThrowErrorMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
 
 export const postsRouter = Router();
 
@@ -36,6 +36,7 @@ postsRouter.put(
 postsRouter.get(
   "/:id/comments",
   findPostValidator,
+  tokenAuthorizationWithoutThrowErrorMiddleware,
   postController.getCommentsInPost,
 );
 postsRouter.post(

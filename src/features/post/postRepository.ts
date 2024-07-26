@@ -24,8 +24,8 @@ export class PostRepository {
       createdAt: new Date(),
       blogName: blog.name,
       likesInfo: {
-        like: [],
-        dislike: [],
+        like: 0,
+        dislike: 0,
       },
     };
     const model = await new postCollection(newPost);
@@ -104,9 +104,9 @@ export class PostRepository {
       blogName: post.blogName,
       createdAt: post.createdAt,
       likesInfo: {
-        like: post.likesInfo.like.length,
-        dislike: post.likesInfo.dislike.length,
-        myStatus: post.likesInfo.dislike.length ? "None" : "Like",
+        like: post.likesInfo.like,
+        dislike: post.likesInfo.dislike,
+        myStatus: "None",
       },
     };
     return postForOutput;

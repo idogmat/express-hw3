@@ -43,3 +43,23 @@ export const tokenAuthorizationMiddleware = async (
   }
   next();
 };
+
+export const tokenAuthorizationWithoutThrowErrorMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const auth = req?.headers?.["authorization"] as string;
+  if (auth) {
+    const token = auth?.split(" ");
+    try {
+      const info = await JwtService.verifyToken(token[1], "accsess");
+      if (info instanceof Object) {
+        if (info?.exp && info?.exp * 1000 >= Date.now()) {
+          req.userId = info!.userId;
+        }
+      }
+    } catch (e) {}
+  }
+  next();
+};

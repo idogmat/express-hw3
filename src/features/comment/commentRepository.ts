@@ -7,6 +7,7 @@ import {
 } from "../../db";
 import { INormolizedQuery } from "../../utils/query-helper";
 import { CommentViewModel, IReturnQueryList } from "../../input-output-types";
+import { getCurrentStatus, getLikeCount } from "../../utils/like-transform";
 
 export class CommentRepository {
   static async create(content: string, postId: string, userId: string) {
@@ -23,8 +24,8 @@ export class CommentRepository {
       },
       createdAt: new Date(),
       likesInfo: {
-        like: [],
-        dislike: [],
+        like: 0,
+        dislike: 0,
       },
     };
     const model = await new commentCollection(newComment);
@@ -33,7 +34,7 @@ export class CommentRepository {
     return result._id;
   }
 
-  static async getAll(postId: string, query: INormolizedQuery) {
+  static async getAll(postId: string, query: INormolizedQuery, userId: string) {
     const totalCount = await commentCollection
       .find({ postId })
       .countDocuments();
@@ -49,7 +50,7 @@ export class CommentRepository {
       page: query.pageNumber,
       pageSize: query.pageSize,
       totalCount: totalCount,
-      items: comments.map((comment) => this.map(comment)),
+      items: comments.map((comment) => this.map(comment, userId)),
     };
     return queryForMap;
   }
@@ -98,13 +99,24 @@ export class CommentRepository {
       _id: new Types.ObjectId(id),
     });
     if (comment?._id) {
-      return this.map(comment);
+      return comment;
     } else {
       return false;
     }
   }
 
-  static map(comment: CommentTypeDB): CommentViewModel {
+  static async setLike(id: string, userId: string, type: string) {
+    const comment = await commentCollection.findById(id)
+    if (comment) {
+      comment.likesInfo.additionalLikes.set(userId, type);
+      await comment.save();
+      return true
+    } else {
+      return false
+    }
+  }
+
+  static map(comment: CommentTypeDB, userId?: string): CommentViewModel {
     return {
       id: comment._id.toString(),
       content: comment.content,
@@ -114,9 +126,9 @@ export class CommentRepository {
       },
       createdAt: comment.createdAt,
       likesInfo: {
-        like: comment.likesInfo.like.length,
-        dislike: comment.likesInfo.dislike.length,
-        myStatus: comment.likesInfo.dislike.length ? "None" : "Like",
+        likesCount: getLikeCount(comment.likesInfo.additionalLikes, 'Like'),
+        dislikesCount: getLikeCount(comment.likesInfo.additionalLikes, 'Dislike'),
+        myStatus: getCurrentStatus(comment.likesInfo.additionalLikes, userId || ''),
       },
     };
   }

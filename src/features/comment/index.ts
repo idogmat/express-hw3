@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { commentController } from "./commentController";
-import { tokenAuthorizationMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
+import { tokenAuthorizationMiddleware, tokenAuthorizationWithoutThrowErrorMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
 import {
   commentValidators,
   findCommentValidator,
+  statusValidators,
 } from "./middlewares/validators";
 
 export const commentsRouter = Router();
 
-commentsRouter.get("/:id", commentController.get);
+commentsRouter.get("/:id", tokenAuthorizationWithoutThrowErrorMiddleware, commentController.get);
 commentsRouter.delete(
   "/:id",
   tokenAuthorizationMiddleware,
@@ -18,6 +19,13 @@ commentsRouter.delete(
 commentsRouter.put(
   "/:id",
   tokenAuthorizationMiddleware,
-  commentValidators,
+  ...commentValidators,
   commentController.update,
+);
+
+commentsRouter.put(
+  "/:id/like-status",
+  tokenAuthorizationMiddleware,
+  ...statusValidators,
+  commentController.setLike,
 );

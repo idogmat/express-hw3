@@ -8,7 +8,7 @@ import { Types } from "mongoose";
 class PostController {
   async createCommentInPost(
     req: Request<{ id: string }, any, CommentInputModel>,
-    res: Response<CommentViewModel | unknown>,
+    res: Response<CommentViewModel | any>,
   ) {
     const newCommentId = await CommentRepository.create(
       req.body.content,
@@ -20,7 +20,8 @@ class PostController {
       return;
     }
     const newComment = await CommentRepository.find(newCommentId.toString());
-    res.status(201).json(newComment);
+    if (!newComment) return res.sendStatus(400);
+    return res.status(201).json(CommentRepository.map(newComment));
   };
 
   async createPost(
@@ -79,7 +80,8 @@ class PostController {
     res: Response<IReturnQueryList<CommentViewModel>>,
   ) {
     const query = normolizedQuery(req.query);
-    const data = await CommentRepository.getAll(req.params.id, query);
+    const data = await CommentRepository.getAll(req.params.id, query, req.userId);
+
     res.status(200).json(data);
   };
 

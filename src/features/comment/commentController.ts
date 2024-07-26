@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { CommentRepository } from "./commentRepository";
 import { CommentInputModel, CommentViewModel } from "../../input-output-types";
+import { CommentLikeStatus } from "../../input-output-types/comment-types";
 
 class CommentController {
   async delete(
@@ -31,7 +32,8 @@ class CommentController {
     } else {
       const comment = await CommentRepository.find(req.params.id);
       if (comment) {
-        res.status(200).json(comment);
+        const result = CommentRepository.map(comment, req.userId)
+        res.status(200).json(result);
       } else {
         res.sendStatus(404);
       }
@@ -59,6 +61,21 @@ class CommentController {
       }
     }
   };
+
+  async setLike(req: Request<{ id: string }, any, CommentLikeStatus>,
+    res: Response,
+  ) {
+    const id = req.userId
+    const comment = await CommentRepository.find(req.params.id);
+    if (comment) {
+      const field = req.body.likeStatus
+      const result = await CommentRepository.setLike(req.params.id, id, field)
+      return res.sendStatus(204)
+    } else {
+      return res.sendStatus(404)
+
+    }
+  }
 }
 
 export const commentController = new CommentController();

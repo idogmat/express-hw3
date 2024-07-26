@@ -90,7 +90,7 @@ export class PostRepository {
     }
   }
 
-  static map(post: PostTypeBD) {
+  static map(post: PostTypeBD, userId?: string) {
     const postForOutput: PostViewModel = {
       id: post._id.toString(),
       title: post.title,
@@ -100,9 +100,9 @@ export class PostRepository {
       blogName: post.blogName,
       createdAt: post.createdAt,
       likesInfo: {
-        like: post.likesInfo.like.length,
-        dislike: post.likesInfo.dislike.length,
-        myStatus: post.likesInfo.dislike.length ? "None" : "Like",
+        like: post.likesInfo.like,
+        dislike: post.likesInfo.dislike,
+        myStatus: "None",
       },
     };
     return postForOutput;
