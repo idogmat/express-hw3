@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import {
   PostInputModel,
   PostViewModel,
@@ -9,9 +10,12 @@ import {
   INormolizedQuery,
   IQueryBlogWithPostsFilterTypeBD,
 } from "../../utils/query-helper";
+import { injectable } from "inversify";
 
+@injectable()
 export class PostRepository {
-  static async create(post: PostInputModel) {
+  constructor() {}
+  async create(post: PostInputModel) {
     const blog = await blogCollection.findOne({
       _id: new Types.ObjectId(post.blogId),
     });
@@ -33,7 +37,7 @@ export class PostRepository {
     return result._id;
   }
 
-  static async find(id: string) {
+  async find(id: string) {
     const post = await postCollection.findOne<PostTypeBD>({
       _id: new Types.ObjectId(id),
     });
@@ -43,7 +47,7 @@ export class PostRepository {
     return false;
   }
 
-  static async findAndMap(id: string) {
+  async findAndMap(id: string) {
     const post = await postCollection.findOne<PostTypeBD>({
       _id: new Types.ObjectId(id),
     });
@@ -53,7 +57,7 @@ export class PostRepository {
     return false;
   }
 
-  static async getAll(query: INormolizedQuery) {
+  async getAll(query: INormolizedQuery) {
     const totalCount = await postCollection.find().countDocuments();
 
     const posts = await postCollection
@@ -72,7 +76,7 @@ export class PostRepository {
     return this.mapAfterQuery(queryForMap);
   }
 
-  static async delete(id: string) {
+  async delete(id: string) {
     const post = await postCollection.findOne({ _id: new Types.ObjectId(id) });
     if (!post?._id) return false;
     const result = await postCollection.deleteOne({
@@ -82,7 +86,7 @@ export class PostRepository {
     return false;
   }
 
-  static async put(post: PostInputModel, id: string) {
+  async put(post: PostInputModel, id: string) {
     try {
       const res = await postCollection.findOneAndUpdate(
         { _id: new Types.ObjectId(id) },
@@ -94,7 +98,7 @@ export class PostRepository {
     }
   }
 
-  static map(post: PostTypeBD) {
+  map(post: PostTypeBD) {
     const postForOutput: PostViewModel = {
       id: post._id.toString(),
       title: post.title,
@@ -112,7 +116,7 @@ export class PostRepository {
     return postForOutput;
   }
 
-  static mapAfterQuery(blogs: IQueryBlogWithPostsFilterTypeBD) {
+  mapAfterQuery(blogs: IQueryBlogWithPostsFilterTypeBD) {
     const blogWithPostsForOutput: IBlogWithPostsViewModelAfterQuery = {
       ...blogs,
       items: blogs.items.map((b) => this.map(b)),

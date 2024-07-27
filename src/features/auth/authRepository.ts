@@ -1,12 +1,14 @@
+import "reflect-metadata";
 import { WithoutId } from "mongodb";
 import { userCollection, UserTypeDB } from "../../db";
 import { IPasswordFields } from "../../services/auth.service";
-import { UserRepository } from "../user/userRepository";
+import { injectable } from "inversify";
 
+@injectable()
 export class AuthRepository {
-  constructor(protected userRepository: UserRepository) {}
   async create(user: WithoutId<UserTypeDB>): Promise<any> {
-    const result = await this.userRepository.create(user);
+    const model = await new userCollection(user);
+    const result = await model.save();
     if (result) {
       return result;
     } else {
@@ -18,7 +20,7 @@ export class AuthRepository {
     id: string,
     { passwordHash, passwordSalt }: IPasswordFields,
   ): Promise<any> {
-    const result = await this.userRepository.findById(id);
+    const result = await userCollection.findById(id);
     if (result) {
       result.set({ passwordHash });
       result.set({ passwordSalt });
@@ -31,7 +33,7 @@ export class AuthRepository {
   }
 
   async find(id: string) {
-    const result = await this.userRepository.findById(id);
+    const result = await userCollection.findById(id);
     return result;
   }
 
@@ -48,9 +50,7 @@ export class AuthRepository {
     return result;
   }
 
-  async findByLoginOrEmail(
-    loginOrEmail: string,
-  ): Promise<UserTypeDB | null> {
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserTypeDB | null> {
     const user = await userCollection.findOne({
       $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
     });

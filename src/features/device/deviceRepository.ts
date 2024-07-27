@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { WithoutId } from "mongodb";
 import { deviceCollection, DeviceTypeDB } from "../../db";
 import { Types } from "mongoose";

@@ -5,8 +5,8 @@ export type CommentInputModel = {
 };
 
 export type CommentLikeStatus = {
-  likeStatus: 'None' | 'Like' | 'Dislike';
-}
+  likeStatus: "None" | "Like" | "Dislike";
+};
 
 export type CommentViewModel = {
   id: string;

@@ -2,7 +2,10 @@ import { body, query } from "express-validator";
 import { inputCheckErrorsMiddleware } from "../../../global-middlewares/inputCheckErrorsMiddleware";
 import { userCollection } from "../../../db";
 import { JwtService } from "../../../services/jwt.service";
-import { authRepository } from "../../composition-root";
+import { container } from "../../composition-root";
+import { AuthRepository } from "../authRepository";
+
+const authRepository = container.resolve(AuthRepository);
 
 export const codeParamsValidator = query("code")
   .isString()

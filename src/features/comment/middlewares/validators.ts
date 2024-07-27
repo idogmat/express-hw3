@@ -13,16 +13,17 @@ export const contentValidator = body("content")
   .isLength({ min: 20, max: 300 })
   .withMessage("more then 300 or less then 20");
 
-  export const statusValidator = body("likeStatus")
+export const statusValidator = body("likeStatus")
   .isString()
   .withMessage("not string")
-  .trim().custom(status => {
-    if (['None', 'Like', 'Dislike'].includes(status)) {
+  .trim()
+  .custom((status) => {
+    if (["None", "Like", "Dislike"].includes(status)) {
       return Promise.resolve();
     } else {
       return Promise.reject();
     }
-  })
+  });
 
 export const findCommentValidator = async (
   req: Request<{ id: string }>,

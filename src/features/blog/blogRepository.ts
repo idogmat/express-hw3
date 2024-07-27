@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { INormolizedQuery } from "../../utils/query-helper";
 import { Types } from "mongoose";
 import {
@@ -14,9 +15,12 @@ import {
   IReturnQueryList,
 } from "../../input-output-types";
 import { PostRepository } from "../post/postRepository";
+import { injectable } from "inversify";
 
+@injectable()
 export class BlogRepository {
-  static async create(blog: BlogInputModel) {
+  constructor(protected postRepository: PostRepository) {}
+  async create(blog: BlogInputModel) {
     const newBlog = {
       name: blog.name,
       description: blog.description,
@@ -31,7 +35,7 @@ export class BlogRepository {
     return result._id;
   }
 
-  static async find(id: string) {
+  async find(id: string) {
     const blog = await blogCollection.findOne({ _id: new Types.ObjectId(id) });
     if (blog) {
       return this.map(blog);
@@ -39,7 +43,7 @@ export class BlogRepository {
     return false;
   }
 
-  static async findAndMap(id: string) {
+  async findAndMap(id: string) {
     const blog = await blogCollection.findOne({ _id: new Types.ObjectId(id) });
     if (blog?._id) {
       return this.map(blog);
@@ -47,7 +51,7 @@ export class BlogRepository {
     return false;
   }
 
-  static async getPostsInBlog(blogId: string, query: INormolizedQuery) {
+  async getPostsInBlog(blogId: string, query: INormolizedQuery) {
     const blog = await blogCollection.findOne({
       _id: new Types.ObjectId(blogId),
     });
@@ -71,10 +75,10 @@ export class BlogRepository {
       totalCount: totalCount,
       items: posts,
     };
-    return PostRepository.mapAfterQuery(queryForMap);
+    return this.postRepository.mapAfterQuery(queryForMap);
   }
 
-  static async postPostsInBlog(blogId: string, post: PostInputModel) {
+  async postPostsInBlog(blogId: string, post: PostInputModel) {
     const blog = await blogCollection.findOne({
       _id: new Types.ObjectId(blogId),
     });
@@ -87,19 +91,19 @@ export class BlogRepository {
       createdAt: new Date(),
       blogName: blog.name,
     } as PostTypeBD;
-    const id = await PostRepository.create(newPost);
+    const id = await this.postRepository.create(newPost);
     if (!id) return false;
     const newPostForMap = await postCollection.findOne({
       _id: id,
     });
     if (newPostForMap?._id) {
-      return PostRepository.map(newPostForMap);
+      return this.postRepository.map(newPostForMap);
     } else {
       return false;
     }
   }
 
-  static async delete(id: string) {
+  async delete(id: string) {
     const blog = await blogCollection.findOne({ _id: new Types.ObjectId(id) });
     if (!blog?.name) return false;
     const deletedBlog = await blogCollection.deleteOne({
@@ -111,7 +115,7 @@ export class BlogRepository {
     return true;
   }
 
-  static async put(blog: BlogInputModel, id: string) {
+  async put(blog: BlogInputModel, id: string) {
     try {
       const result = await blogCollection.findOneAndUpdate(
         { _id: new Types.ObjectId(id) },
@@ -124,7 +128,7 @@ export class BlogRepository {
     }
   }
 
-  static map(blog: BlogTypeBD) {
+  map(blog: BlogTypeBD) {
     const blogForOutput: BlogViewModel = {
       id: blog._id.toString(),
       description: blog.description,
@@ -136,7 +140,7 @@ export class BlogRepository {
     return blogForOutput;
   }
 
-  static mapAfterQuery(blogs: IReturnQueryList<BlogTypeBD>) {
+  mapAfterQuery(blogs: IReturnQueryList<BlogTypeBD>) {
     const blogForOutput: IBlogViewModelAfterQuery = {
       ...blogs,
       items: blogs.items.map((b: BlogTypeBD) => this.map(b)),

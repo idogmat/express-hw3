@@ -6,41 +6,47 @@ import {
 import { adminMiddleware } from "../../global-middlewares/admin-middleware";
 import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckErrorsMiddleware";
 import { postCreateValidatorsWithBlogId } from "../post/middlewares/validators";
-import { blogController } from "./blogController";
+import { BlogController } from "./blogController";
+import { container } from "../composition-root";
 
 export const blogsRouter = Router();
+
+const blogController = container.resolve(BlogController);
 
 blogsRouter.post(
   "/",
   adminMiddleware,
   ...blogCreateValidators,
-  blogController.create,
+  blogController.create.bind(blogController),
 );
-blogsRouter.get("/", blogController.get);
-blogsRouter.get("/:id/posts", blogController.getPostsInBlog);
+blogsRouter.get("/", blogController.get.bind(blogController));
+blogsRouter.get(
+  "/:id/posts",
+  blogController.getPostsInBlog.bind(blogController),
+);
 blogsRouter.post(
   "/:id/posts",
   adminMiddleware,
   ...postCreateValidatorsWithBlogId,
-  blogController.createPostInBlog,
+  blogController.createPostInBlog.bind(blogController),
 );
 blogsRouter.get(
   "/:id",
   blogIdParamsValidator,
   inputCheckErrorsMiddleware,
-  blogController.find,
+  blogController.find.bind(blogController),
 );
 blogsRouter.delete(
   "/:id",
   adminMiddleware,
   blogIdParamsValidator,
   inputCheckErrorsMiddleware,
-  blogController.delete,
+  blogController.delete.bind(blogController),
 );
 blogsRouter.put(
   "/:id",
   adminMiddleware,
   blogIdParamsValidator,
   ...blogCreateValidators,
-  blogController.update,
+  blogController.update.bind(blogController),
 );

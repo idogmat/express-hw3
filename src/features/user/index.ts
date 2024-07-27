@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { userCreateValidators } from "./middlewares/validators";
 import { adminMiddleware } from "../../global-middlewares/admin-middleware";
-import { userController } from "../composition-root";
+import { container } from "../composition-root";
+import { UserController } from "./userController";
 
 export const usersRouter = Router();
+
+const userController = container.resolve(UserController);
 
 usersRouter.get("/", adminMiddleware, userController.get.bind(userController));
 usersRouter.post(
@@ -12,4 +15,8 @@ usersRouter.post(
   ...userCreateValidators,
   userController.create.bind(userController),
 );
-usersRouter.delete("/:id", adminMiddleware, userController.delete.bind(userController));
+usersRouter.delete(
+  "/:id",
+  adminMiddleware,
+  userController.delete.bind(userController),
+);

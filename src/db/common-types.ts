@@ -3,7 +3,7 @@ import mongoose, { Model } from "mongoose";
 export interface LikesInfo {
   like: number;
   dislike: number;
-  additionalLikes: Map<string,string>
+  additionalLikes: Map<string, string>;
 }
 
 export const LikesInfoSchema = new mongoose.Schema<LikesInfo, Model<LikesInfo>>(

@@ -1,6 +1,8 @@
 import { WithoutId } from "mongodb";
 import { userCollection, UserTypeDB } from "../../db";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserRepository {
   async create(user: WithoutId<UserTypeDB>) {
     const model = await new userCollection(user);
