@@ -7,5 +7,6 @@ export const getLikeCount = (map: Map<string, string>, type: string) => {
 };
 
 export const getCurrentStatus = (map: Map<string, string>, userId: string) => {
+  console.log(map.get(userId))
   return map.get(userId) || "None";
 };

@@ -4,7 +4,7 @@ export type CommentInputModel = {
   content: string;
 };
 
-export type CommentLikeStatus = {
+export type LikeStatus = {
   likeStatus: "None" | "Like" | "Dislike";
 };
 

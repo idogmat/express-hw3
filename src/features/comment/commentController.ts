@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { CommentRepository } from "./commentRepository";
 import { CommentInputModel, CommentViewModel } from "../../input-output-types";
-import { CommentLikeStatus } from "../../input-output-types/comment-types";
+import { LikeStatus } from "../../input-output-types/comment-types";
 import { injectable } from "inversify";
 
 @injectable()
@@ -64,7 +64,7 @@ export class CommentController {
   }
 
   async setLike(
-    req: Request<{ id: string }, any, CommentLikeStatus>,
+    req: Request<{ id: string }, any, LikeStatus>,
     res: Response,
   ) {
     const id = req?.userId;

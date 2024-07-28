@@ -50,6 +50,7 @@ export const tokenAuthorizationWithoutThrowErrorMiddleware = async (
   next: NextFunction,
 ) => {
   const auth = req?.headers?.["authorization"] as string;
+  console.log(auth)
   if (auth) {
     const token = auth?.split(" ");
     try {

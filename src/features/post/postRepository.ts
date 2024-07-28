@@ -11,10 +11,14 @@ import {
   IQueryBlogWithPostsFilterTypeBD,
 } from "../../utils/query-helper";
 import { injectable } from "inversify";
+import { PostQueryRepository } from "./postQueryRepository";
+import { AuthRepository } from "../auth/authRepository";
 
 @injectable()
 export class PostRepository {
-  constructor() {}
+  constructor(protected postQueryRepository: PostQueryRepository,
+    protected authRepository: AuthRepository
+  ) {}
   async create(post: PostInputModel) {
     const blog = await blogCollection.findOne({
       _id: new Types.ObjectId(post.blogId),
@@ -37,12 +41,12 @@ export class PostRepository {
     return result._id;
   }
 
-  async find(id: string) {
+  async find(id: string, userId?: string) {
     const post = await postCollection.findOne<PostTypeBD>({
       _id: new Types.ObjectId(id),
     });
     if (post?._id) {
-      return this.map(post);
+      return this.postQueryRepository.map(post, userId);
     }
     return false;
   }
@@ -52,28 +56,9 @@ export class PostRepository {
       _id: new Types.ObjectId(id),
     });
     if (post?._id) {
-      return this.map(post);
+      return this.postQueryRepository.map(post);
     }
     return false;
-  }
-
-  async getAll(query: INormolizedQuery) {
-    const totalCount = await postCollection.find().countDocuments();
-
-    const posts = await postCollection
-      .find({})
-      .sort({ [query.sortBy]: query.sortDirection })
-      .skip((query.pageNumber - 1) * query.pageSize)
-      .limit(query.pageSize);
-
-    const queryForMap: IQueryBlogWithPostsFilterTypeBD = {
-      pagesCount: Math.ceil(totalCount / query.pageSize),
-      page: query.pageNumber,
-      pageSize: query.pageSize,
-      totalCount: totalCount,
-      items: posts as PostTypeBD[],
-    };
-    return this.mapAfterQuery(queryForMap);
   }
 
   async delete(id: string) {
@@ -97,30 +82,33 @@ export class PostRepository {
       return false;
     }
   }
-
-  map(post: PostTypeBD) {
-    const postForOutput: PostViewModel = {
-      id: post._id.toString(),
-      title: post.title,
-      shortDescription: post.shortDescription,
-      content: post.content,
-      blogId: post.blogId.toString(),
-      blogName: post.blogName,
-      createdAt: post.createdAt,
-      likesInfo: {
-        like: post.likesInfo.like,
-        dislike: post.likesInfo.dislike,
-        myStatus: "None",
-      },
-    };
-    return postForOutput;
-  }
-
-  mapAfterQuery(blogs: IQueryBlogWithPostsFilterTypeBD) {
-    const blogWithPostsForOutput: IBlogWithPostsViewModelAfterQuery = {
-      ...blogs,
-      items: blogs.items.map((b) => this.map(b)),
-    };
-    return blogWithPostsForOutput;
+  
+  async setLike(id: string, userId: string, type: string) {
+    const post = await postCollection.findById(id);
+    if (post) {
+      post.likesInfo.additionalLikes.set(userId, type);
+      let index = -1;
+      if (type === 'Like') {
+        const user = await this.authRepository.find(userId);
+        post.likesInfo.newestLikes.forEach((el, i)=> {
+          if (el.userId === userId) {
+            index = i; 
+          }
+        })
+        if (index === -1) post.likesInfo.newestLikes.unshift({userId, login: user?.login || '', addedAt: new Date().toISOString()})
+      } else {
+        post.likesInfo.newestLikes.forEach((el, i)=> {
+          if (el.userId === userId) {
+            index = i; 
+          }
+        })
+        if (index !== -1) post.likesInfo.newestLikes.splice(index, 1)
+      }
+      console.log(post.likesInfo.newestLikes)
+      await post.save();
+      return true;
+    } else {
+      return false;
+    }
   }
 }

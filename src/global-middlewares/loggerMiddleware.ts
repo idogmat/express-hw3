@@ -24,7 +24,7 @@ export const loggerMiddleware = async (
     await logCollection.findOneAndUpdate(
       { _id: request._id },
       {
-        $set: { count: 1, date: new Date(new Date()) },
+        $set: { count: 1, date: new Date() },
       },
     );
     logId = request._id.toString();
@@ -32,7 +32,7 @@ export const loggerMiddleware = async (
     const model = await new logCollection({
       IP: (ip || "").toString(),
       URL: req.baseUrl || req.originalUrl,
-      date: new Date(new Date()),
+      date: new Date(),
       count: 1,
     });
     const result = await model.save();

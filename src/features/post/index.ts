@@ -13,6 +13,7 @@ import {
   tokenAuthorizationWithoutThrowErrorMiddleware,
 } from "../../global-middlewares/tokenAuthorizationMiddleware ";
 import { container } from "../composition-root";
+import { statusValidators } from "../comment/middlewares/validators";
 
 export const postsRouter = Router();
 
@@ -25,10 +26,11 @@ postsRouter.post(
   postController.createPost.bind(postController),
 );
 
-postsRouter.get("/", postController.getPosts.bind(postController));
+postsRouter.get("/", tokenAuthorizationWithoutThrowErrorMiddleware, postController.getPosts.bind(postController));
 postsRouter.get(
   "/:id",
   findPostValidator,
+  tokenAuthorizationWithoutThrowErrorMiddleware,
   postController.find.bind(postController),
 );
 postsRouter.delete(
@@ -56,4 +58,11 @@ postsRouter.post(
   inputCheckErrorsMiddleware,
   findPostValidator,
   postController.createCommentInPost.bind(postController),
+);
+
+postsRouter.put(
+  "/:id/like-status",
+  tokenAuthorizationMiddleware,
+  ...statusValidators,
+  postController.setLike.bind(postController),
 );

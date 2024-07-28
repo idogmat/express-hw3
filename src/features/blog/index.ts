@@ -8,6 +8,7 @@ import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckE
 import { postCreateValidatorsWithBlogId } from "../post/middlewares/validators";
 import { BlogController } from "./blogController";
 import { container } from "../composition-root";
+import { tokenAuthorizationWithoutThrowErrorMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
 
 export const blogsRouter = Router();
 
@@ -22,6 +23,7 @@ blogsRouter.post(
 blogsRouter.get("/", blogController.get.bind(blogController));
 blogsRouter.get(
   "/:id/posts",
+  tokenAuthorizationWithoutThrowErrorMiddleware,
   blogController.getPostsInBlog.bind(blogController),
 );
 blogsRouter.post(

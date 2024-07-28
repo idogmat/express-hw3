@@ -1,3 +1,5 @@
+import { NewestLikes } from "../db/common-types";
+
 export type PostInputModel = {
   title: string; // max 30
   shortDescription: string; // max 100
@@ -15,9 +17,10 @@ export type PostViewModel = {
   blogId: string; // valid
   blogName: string;
   createdAt: Date;
-  likesInfo: {
-    like: number;
-    dislike: number;
+  extendedLikesInfo: {
+    likesCount: number;
+    dislikesCount: number;
     myStatus: string;
+    newestLikes?: NewestLikes[]
   };
 };

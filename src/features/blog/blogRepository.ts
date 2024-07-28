@@ -16,10 +16,13 @@ import {
 } from "../../input-output-types";
 import { PostRepository } from "../post/postRepository";
 import { injectable } from "inversify";
+import { PostQueryRepository } from "../post/postQueryRepository";
 
 @injectable()
 export class BlogRepository {
-  constructor(protected postRepository: PostRepository) {}
+  constructor(protected postRepository: PostRepository,
+    protected postQueryRepository: PostQueryRepository
+  ) {}
   async create(blog: BlogInputModel) {
     const newBlog = {
       name: blog.name,
@@ -51,7 +54,7 @@ export class BlogRepository {
     return false;
   }
 
-  async getPostsInBlog(blogId: string, query: INormolizedQuery) {
+  async getPostsInBlog(blogId: string, query: INormolizedQuery, userId?: string) {
     const blog = await blogCollection.findOne({
       _id: new Types.ObjectId(blogId),
     });
@@ -75,7 +78,7 @@ export class BlogRepository {
       totalCount: totalCount,
       items: posts,
     };
-    return this.postRepository.mapAfterQuery(queryForMap);
+    return this.postQueryRepository.mapAfterQuery(queryForMap, userId);
   }
 
   async postPostsInBlog(blogId: string, post: PostInputModel) {
@@ -97,7 +100,7 @@ export class BlogRepository {
       _id: id,
     });
     if (newPostForMap?._id) {
-      return this.postRepository.map(newPostForMap);
+      return this.postQueryRepository.map(newPostForMap);
     } else {
       return false;
     }

@@ -17,12 +17,15 @@ import {
 } from "../../utils/query-helper";
 import { Types } from "mongoose";
 import { injectable } from "inversify";
+import { PostQueryRepository } from "./postQueryRepository";
+import { LikeStatus } from "../../input-output-types/comment-types";
 
 @injectable()
 export class PostController {
   constructor(
     protected commentRepository: CommentRepository,
     protected postRepository: PostRepository,
+    protected postQueryRepository: PostQueryRepository,
   ) {}
   async createCommentInPost(
     req: Request<{ id: string }, any, CommentInputModel>,
@@ -75,7 +78,7 @@ export class PostController {
       res.sendStatus(404);
       return;
     }
-    const data = await this.postRepository.find(id);
+    const data = await this.postRepository.find(id, req?.userId);
     if (data) res.status(200).json(data);
     else res.sendStatus(404);
   }
@@ -84,8 +87,9 @@ export class PostController {
     req: Request,
     res: Response<IBlogWithPostsViewModelAfterQuery>,
   ) {
+    console.log(req.userId)
     const query = normolizedQuery(req.query);
-    const data = await this.postRepository.getAll(query);
+    const data = await this.postQueryRepository.getAll(query, req?.userId);
     res.status(200).json(data);
   }
 
@@ -115,5 +119,26 @@ export class PostController {
     const result = await this.postRepository.put({ ...req.body }, id);
     if (result) res.sendStatus(204);
     else res.sendStatus(404);
+  }
+
+  async setLike(
+    req: Request<{ id: string }, any, LikeStatus>,
+    res: Response,
+  ) {
+    const id = req?.userId;
+    const post = await this.postRepository.find(req.params.id);
+    console.log(post);
+    if (post) {
+      const field = req.body.likeStatus;
+      const result = await this.postRepository.setLike(
+        req.params.id,
+        id,
+        field,
+      );
+      console.log(result)
+      return res.sendStatus(204);
+    } else {
+      return res.sendStatus(404);
+    }
   }
 }

@@ -33,6 +33,7 @@ export class AuthController {
     protected authService: AuthService,
     protected authRepository: AuthRepository,
     protected userQueryRepository: UserQueryRepository,
+    protected deviceRepository: DeviceRepository
   ) {}
   async authMe(req: Request<{}, {}>, res: Response<any>) {
     const user = await userCollection.findOne({
@@ -97,7 +98,7 @@ export class AuthController {
         browser,
         session.deviceId.toString(),
       );
-      await DeviceRepository.update(session._id.toString(), refreshToken);
+      await this.deviceRepository.update(session._id.toString(), refreshToken);
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
@@ -117,7 +118,7 @@ export class AuthController {
         lastActiveDate: new Date().toISOString(),
         refreshToken,
       };
-      await DeviceRepository.create(device);
+      await this.deviceRepository.create(device);
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
@@ -177,7 +178,7 @@ export class AuthController {
         browser,
         session.deviceId.toString(),
       );
-      const result = await DeviceRepository.update(
+      const result = await this.deviceRepository.update(
         session._id.toString(),
         refreshToken,
       );
@@ -207,7 +208,7 @@ export class AuthController {
     const code = user.emailConfirmation.confirmationCode;
     console.log(result);
     try {
-      EmailService.sendMail(result.login, result.email, code);
+      // EmailService.sendMail(result.login, result.email, code);
     } catch (error) {
       console.error("Send email error", error);
     }

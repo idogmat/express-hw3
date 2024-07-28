@@ -1,6 +1,6 @@
 {
-  "name": "beck-lesson-02",
-  "version": "1.0.0",
+  "name": "back-lesson-02",
+  "version": "2.1.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {

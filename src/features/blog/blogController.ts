@@ -68,7 +68,7 @@ export class BlogController {
       return;
     }
     const query = normolizedQuery(req.query);
-    const data = await this.blogRepository.getPostsInBlog(id, query);
+    const data = await this.blogRepository.getPostsInBlog(id, query, req?.userId);
     data ? res.status(200).json(data) : res.sendStatus(404);
   }
 

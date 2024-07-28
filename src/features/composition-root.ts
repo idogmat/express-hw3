@@ -14,6 +14,9 @@ import { BlogQueryRepository } from "./blog/blogQueryRepository";
 import { BlogController } from "./blog/blogController";
 import { PostController } from "./post/postController";
 import { CommentController } from "./comment/commentController";
+import { DeviceController } from "./device/deviceController";
+import { DeviceRepository } from "./device/deviceRepository";
+import { DeviceQueryRepository } from "./device/deviceQueryRepository";
 
 export const container = new Container();
 
@@ -36,4 +39,7 @@ container
 container
   .bind<PostQueryRepository>(PostQueryRepository)
   .to(PostQueryRepository);
-// container.bind<BlogQueryRepository>(BlogQueryRepository).to(BlogQueryRepository);
+container.bind<AuthController>(AuthController).to(AuthController);
+container.bind<DeviceController>(DeviceController).to(DeviceController);
+container.bind<DeviceRepository>(DeviceRepository).to(DeviceRepository);
+container.bind<DeviceQueryRepository>(DeviceQueryRepository).to(DeviceQueryRepository);

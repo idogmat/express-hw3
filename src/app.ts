@@ -31,9 +31,9 @@ export const app = express();
 app.use(express.json()); // создание свойств-объектов body и query во всех реквестах
 app.use(cors({ origin: true, credentials: true })); //
 app.use(cookieParser());
-app.use(loggerMiddleware);
+// app.use(loggerMiddleware);
 app.get("/", (req, res) => {
-  res.status(200).json({ version: "2.0" });
+  res.status(200).json({ version: "2.1" });
 });
 
 app.use(SETTINGS.PATH.BLOGS, blogsRouter);

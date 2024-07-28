@@ -19,7 +19,7 @@ const authController = container.resolve(AuthController);
 
 authRouter.post(
   "/login",
-  requestLimitGuard,
+  // requestLimitGuard,
   authController.login.bind(authController),
 );
 
@@ -37,14 +37,14 @@ authRouter.post(
 
 authRouter.post(
   "/registration",
-  requestLimitGuard,
+  // requestLimitGuard,
   ...userCreateValidators,
   authController.registration.bind(authController),
 );
 
 authRouter.post(
   "/registration-confirmation",
-  requestLimitGuard,
+  // requestLimitGuard,
   codelValidator,
   inputCheckErrorsMiddleware,
   authController.confirmRegistration.bind(authController),
@@ -52,7 +52,7 @@ authRouter.post(
 
 authRouter.post(
   "/registration-email-resending",
-  requestLimitGuard,
+  // requestLimitGuard,
   ...resendEmailValidators,
   authController.resendEmail.bind(authController),
 );
@@ -65,14 +65,14 @@ authRouter.get(
 
 authRouter.post(
   "/password-recovery",
-  requestLimitGuard,
+  // requestLimitGuard,
   ...recoveryEmailValidators,
   authController.passwordRecovery.bind(authController),
 );
 
 authRouter.post(
   "/new-password",
-  requestLimitGuard,
+  // requestLimitGuard,
   ...setNewPasswordValidators,
   authController.setNewPassword.bind(authController),
 );
