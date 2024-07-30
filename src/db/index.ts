@@ -13,8 +13,7 @@ const commentCollection = mongoose.model("Comment", CommentSchema);
 const userCollection = mongoose.model("User", UserSchema);
 const logCollection = mongoose.model("Log", LogSchema);
 const deviceCollection = mongoose.model("Device", DeviceSchema);
-const fileCollection = mongoose.model('File', FileSchema);
-
+const fileCollection = mongoose.model("File", FileSchema);
 
 export {
   BlogTypeBD,
@@ -29,5 +28,5 @@ export {
   deviceCollection,
   LogTypeDB,
   logCollection,
-  fileCollection
+  fileCollection,
 };

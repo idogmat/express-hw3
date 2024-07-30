@@ -5,7 +5,7 @@ import { injectable } from "inversify";
 
 @injectable()
 export class AuthRepository {
-  async create(user: Omit<UserTypeDB, '_id'>): Promise<any> {
+  async create(user: Omit<UserTypeDB, "_id">): Promise<any> {
     const model = await new userCollection(user);
     const result = await model.save();
     if (result) {

@@ -45,13 +45,14 @@ export class PostQueryRepository {
       createdAt: post.createdAt,
       extendedLikesInfo: {
         likesCount: getLikeCount(post.likesInfo.additionalLikes, "Like"),
-        dislikesCount: getLikeCount(
-          post.likesInfo.additionalLikes,
-          "Dislike"),
+        dislikesCount: getLikeCount(post.likesInfo.additionalLikes, "Dislike"),
         myStatus: getCurrentStatus(
           post.likesInfo.additionalLikes,
-          userId || ""),
-      newestLikes: post.likesInfo?.newestLikes?.length ? post.likesInfo.newestLikes.filter((e,i) => i < 3) : []
+          userId || "",
+        ),
+        newestLikes: post.likesInfo?.newestLikes?.length
+          ? post.likesInfo.newestLikes.filter((e, i) => i < 3)
+          : [],
       },
     };
     return postForOutput;

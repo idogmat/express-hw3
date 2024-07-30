@@ -8,8 +8,9 @@ import { injectable } from "inversify";
 
 @injectable()
 export class DeviceController {
-  constructor(protected deviceRepository: DeviceRepository,
-    protected deviceQueryRepository: DeviceQueryRepository
+  constructor(
+    protected deviceRepository: DeviceRepository,
+    protected deviceQueryRepository: DeviceQueryRepository,
   ) {}
   async getDevice(req: Request, res: Response) {
     const userSessions = await this.deviceQueryRepository.get(req.userId);

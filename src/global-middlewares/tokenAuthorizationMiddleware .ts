@@ -16,6 +16,7 @@ export const tokenAuthorizationMiddleware = async (
   next: NextFunction,
 ) => {
   const auth = req?.headers?.["authorization"] as string;
+  console.log(auth);
   if (!auth) {
     res.status(401).json({});
     return;
@@ -50,7 +51,7 @@ export const tokenAuthorizationWithoutThrowErrorMiddleware = async (
   next: NextFunction,
 ) => {
   const auth = req?.headers?.["authorization"] as string;
-  console.log(auth)
+  console.log(auth);
   if (auth) {
     const token = auth?.split(" ");
     try {

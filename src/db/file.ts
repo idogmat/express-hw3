@@ -1,5 +1,4 @@
-import mongoose, { Model, ObjectId } from 'mongoose';
-
+import mongoose, { Model, ObjectId } from "mongoose";
 
 export type FileTypeDB = {
   _id: ObjectId;
@@ -10,9 +9,10 @@ export type FileTypeDB = {
   size: number;
   uploadDate: Date;
 };
-export const FileSchema = new mongoose.Schema<FileTypeDB,Model<FileTypeDB>>({
+export const FileSchema = new mongoose.Schema<FileTypeDB, Model<FileTypeDB>>({
   userId: {
     type: String,
+    required: true,
   },
   originalname: {
     type: String,

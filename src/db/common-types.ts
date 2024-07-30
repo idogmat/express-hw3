@@ -3,7 +3,7 @@ import mongoose, { Model } from "mongoose";
 export interface NewestLikes {
   userId: string;
   login: string;
-  addedAt: string
+  addedAt: string;
 }
 
 export interface LikesInfo {
@@ -13,14 +13,17 @@ export interface LikesInfo {
   newestLikes: NewestLikes[];
 }
 
-export const NewestLikesSchema = new mongoose.Schema<NewestLikes, Model<NewestLikes>>({
-  userId: { type: String, required: false },
-  login: { type: String, required: false },
-  addedAt: { type: String, required: false },
-},
-{ _id: false },
-)
-
+export const NewestLikesSchema = new mongoose.Schema<
+  NewestLikes,
+  Model<NewestLikes>
+>(
+  {
+    userId: { type: String, required: false },
+    login: { type: String, required: false },
+    addedAt: { type: String, required: false },
+  },
+  { _id: false },
+);
 
 export const LikesInfoSchema = new mongoose.Schema<LikesInfo, Model<LikesInfo>>(
   {

@@ -3,10 +3,9 @@ import { deviceCollection, DeviceTypeDB } from "../../db";
 import { Types } from "mongoose";
 import { injectable } from "inversify";
 
-
 @injectable()
 export class DeviceRepository {
-  async create(device: Omit<DeviceTypeDB, '_id'>) {
+  async create(device: Omit<DeviceTypeDB, "_id">) {
     const model = await new deviceCollection(device);
     const result = await model.save();
     return result._id;

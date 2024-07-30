@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 
 @injectable()
 export class UserRepository {
-  async create(user: Omit<UserTypeDB, '_id'>) {
+  async create(user: Omit<UserTypeDB, "_id">) {
     const model = await new userCollection(user);
     const result = await model.save();
     console.log(result);

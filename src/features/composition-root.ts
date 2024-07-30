@@ -42,4 +42,6 @@ container
 container.bind<AuthController>(AuthController).to(AuthController);
 container.bind<DeviceController>(DeviceController).to(DeviceController);
 container.bind<DeviceRepository>(DeviceRepository).to(DeviceRepository);
-container.bind<DeviceQueryRepository>(DeviceQueryRepository).to(DeviceQueryRepository);
+container
+  .bind<DeviceQueryRepository>(DeviceQueryRepository)
+  .to(DeviceQueryRepository);

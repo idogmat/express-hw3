@@ -16,8 +16,9 @@ import { AuthRepository } from "../auth/authRepository";
 
 @injectable()
 export class PostRepository {
-  constructor(protected postQueryRepository: PostQueryRepository,
-    protected authRepository: AuthRepository
+  constructor(
+    protected postQueryRepository: PostQueryRepository,
+    protected authRepository: AuthRepository,
   ) {}
   async create(post: PostInputModel) {
     const blog = await blogCollection.findOne({
@@ -82,29 +83,34 @@ export class PostRepository {
       return false;
     }
   }
-  
+
   async setLike(id: string, userId: string, type: string) {
     const post = await postCollection.findById(id);
     if (post) {
       post.likesInfo.additionalLikes.set(userId, type);
       let index = -1;
-      if (type === 'Like') {
+      if (type === "Like") {
         const user = await this.authRepository.find(userId);
-        post.likesInfo.newestLikes.forEach((el, i)=> {
+        post.likesInfo.newestLikes.forEach((el, i) => {
           if (el.userId === userId) {
-            index = i; 
+            index = i;
           }
-        })
-        if (index === -1) post.likesInfo.newestLikes.unshift({userId, login: user?.login || '', addedAt: new Date().toISOString()})
+        });
+        if (index === -1)
+          post.likesInfo.newestLikes.unshift({
+            userId,
+            login: user?.login || "",
+            addedAt: new Date().toISOString(),
+          });
       } else {
-        post.likesInfo.newestLikes.forEach((el, i)=> {
+        post.likesInfo.newestLikes.forEach((el, i) => {
           if (el.userId === userId) {
-            index = i; 
+            index = i;
           }
-        })
-        if (index !== -1) post.likesInfo.newestLikes.splice(index, 1)
+        });
+        if (index !== -1) post.likesInfo.newestLikes.splice(index, 1);
       }
-      console.log(post.likesInfo.newestLikes)
+      console.log(post.likesInfo.newestLikes);
       await post.save();
       return true;
     } else {

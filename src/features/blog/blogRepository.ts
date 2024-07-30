@@ -20,8 +20,9 @@ import { PostQueryRepository } from "../post/postQueryRepository";
 
 @injectable()
 export class BlogRepository {
-  constructor(protected postRepository: PostRepository,
-    protected postQueryRepository: PostQueryRepository
+  constructor(
+    protected postRepository: PostRepository,
+    protected postQueryRepository: PostQueryRepository,
   ) {}
   async create(blog: BlogInputModel) {
     const newBlog = {
@@ -54,7 +55,11 @@ export class BlogRepository {
     return false;
   }
 
-  async getPostsInBlog(blogId: string, query: INormolizedQuery, userId?: string) {
+  async getPostsInBlog(
+    blogId: string,
+    query: INormolizedQuery,
+    userId?: string,
+  ) {
     const blog = await blogCollection.findOne({
       _id: new Types.ObjectId(blogId),
     });

@@ -26,7 +26,11 @@ postsRouter.post(
   postController.createPost.bind(postController),
 );
 
-postsRouter.get("/", tokenAuthorizationWithoutThrowErrorMiddleware, postController.getPosts.bind(postController));
+postsRouter.get(
+  "/",
+  tokenAuthorizationWithoutThrowErrorMiddleware,
+  postController.getPosts.bind(postController),
+);
 postsRouter.get(
   "/:id",
   findPostValidator,

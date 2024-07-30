@@ -33,7 +33,7 @@ export class AuthController {
     protected authService: AuthService,
     protected authRepository: AuthRepository,
     protected userQueryRepository: UserQueryRepository,
-    protected deviceRepository: DeviceRepository
+    protected deviceRepository: DeviceRepository,
   ) {}
   async authMe(req: Request<{}, {}>, res: Response<any>) {
     const user = await userCollection.findOne({

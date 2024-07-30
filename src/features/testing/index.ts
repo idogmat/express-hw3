@@ -3,6 +3,7 @@ import {
   blogCollection,
   commentCollection,
   deviceCollection,
+  fileCollection,
   logCollection,
   postCollection,
   userCollection,
@@ -16,5 +17,6 @@ testingRouter.delete("/all-data", async (req, res) => {
   await userCollection.deleteMany({});
   await logCollection.deleteMany({});
   await deviceCollection.deleteMany({});
+  await fileCollection.deleteMany({});
   res.status(204).json({});
 });

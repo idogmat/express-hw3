@@ -63,10 +63,7 @@ export class CommentController {
     }
   }
 
-  async setLike(
-    req: Request<{ id: string }, any, LikeStatus>,
-    res: Response,
-  ) {
+  async setLike(req: Request<{ id: string }, any, LikeStatus>, res: Response) {
     const id = req?.userId;
     const comment = await this.commentRepository.find(req.params.id);
     console.log(comment);

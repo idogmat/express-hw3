@@ -87,7 +87,7 @@ export class PostController {
     req: Request,
     res: Response<IBlogWithPostsViewModelAfterQuery>,
   ) {
-    console.log(req.userId)
+    console.log(req.userId);
     const query = normolizedQuery(req.query);
     const data = await this.postQueryRepository.getAll(query, req?.userId);
     res.status(200).json(data);
@@ -121,10 +121,7 @@ export class PostController {
     else res.sendStatus(404);
   }
 
-  async setLike(
-    req: Request<{ id: string }, any, LikeStatus>,
-    res: Response,
-  ) {
+  async setLike(req: Request<{ id: string }, any, LikeStatus>, res: Response) {
     const id = req?.userId;
     const post = await this.postRepository.find(req.params.id);
     console.log(post);
@@ -135,7 +132,7 @@ export class PostController {
         id,
         field,
       );
-      console.log(result)
+      console.log(result);
       return res.sendStatus(204);
     } else {
       return res.sendStatus(404);

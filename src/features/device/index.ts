@@ -7,8 +7,11 @@ export const devicesRouter = Router();
 
 const deviceController = container.resolve(DeviceController);
 
-
-devicesRouter.get("/", tokenRefreshMiddleware, deviceController.getDevice.bind(deviceController));
+devicesRouter.get(
+  "/",
+  tokenRefreshMiddleware,
+  deviceController.getDevice.bind(deviceController),
+);
 devicesRouter.delete(
   "/:id",
   tokenRefreshMiddleware,

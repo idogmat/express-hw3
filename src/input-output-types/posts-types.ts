@@ -21,6 +21,6 @@ export type PostViewModel = {
     likesCount: number;
     dislikesCount: number;
     myStatus: string;
-    newestLikes?: NewestLikes[]
+    newestLikes?: NewestLikes[];
   };
 };
