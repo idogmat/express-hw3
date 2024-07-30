@@ -1,12 +1,11 @@
 import "reflect-metadata";
-import { WithoutId } from "mongodb";
 import { userCollection, UserTypeDB } from "../../db";
 import { IPasswordFields } from "../../services/auth.service";
 import { injectable } from "inversify";
 
 @injectable()
 export class AuthRepository {
-  async create(user: WithoutId<UserTypeDB>): Promise<any> {
+  async create(user: Omit<UserTypeDB, '_id'>): Promise<any> {
     const model = await new userCollection(user);
     const result = await model.save();
     if (result) {

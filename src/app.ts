@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser";
 import { loggerMiddleware } from "./global-middlewares/loggerMiddleware";
 import { devicesRouter } from "./features/device";
 import mongoose from "mongoose";
+import { fileRouter } from "./features/file";
 dotenv.config();
 const tokenDB = process.env.CONNECTION || "";
 
@@ -43,3 +44,4 @@ app.use(SETTINGS.PATH.AUTH, authRouter);
 app.use(SETTINGS.PATH.USERS, usersRouter);
 app.use(SETTINGS.PATH.DEVICES, devicesRouter);
 app.use(SETTINGS.PATH.TESTING, testingRouter);
+app.use(SETTINGS.PATH.FILE, fileRouter);

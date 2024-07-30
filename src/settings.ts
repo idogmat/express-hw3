@@ -11,6 +11,7 @@ export const SETTINGS = {
     USERS: "/users",
     COMMENTS: "/comments",
     DEVICES: "/security/devices",
+    FILE: "/file",
   },
   ADMIN: process.env.ADMIN || "admin:qwerty",
 };
