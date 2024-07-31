@@ -16,4 +16,12 @@ fileRouter.post(
   fileController.load,
 );
 
+fileRouter.post(
+  "/gfs",
+  tokenAuthorizationMiddleware,
+  upload.single('file'),
+  fileController.loadGfs,
+);
+
 fileRouter.get("/", tokenAuthorizationMiddleware, fileController.get);
+fileRouter.get("/gfs", tokenAuthorizationMiddleware, fileController.getGfs);

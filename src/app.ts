@@ -16,6 +16,13 @@ import { fileRouter } from "./features/file";
 dotenv.config();
 const tokenDB = process.env.CONNECTION || "";
 
+export let gfs: mongoose.mongo.GridFSBucket | null = null;
+mongoose.connection.on('connected', () => {
+  gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: 'uploads',
+  });
+});
+
 export const connectDb = async () => {
   // Use connect method to connect to the server
   try {

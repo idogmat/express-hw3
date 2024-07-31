@@ -12,8 +12,6 @@
     "check-format": "prettier --check ."
   },
   "dependencies": {
-    "@types/express-session": "^1.18.0",
-    "@types/multer": "^1.4.11",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -23,12 +21,15 @@
     "express-validator": "^7.1.0",
     "inversify": "^6.0.2",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.8.0",
     "mongoose": "^8.4.3",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.14",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
+    "@types/express-session": "^1.18.0",
+    "@types/multer": "^1.4.11",
     "@eslint/js": "^9.7.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.7",
