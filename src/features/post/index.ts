@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { postController } from "./postController";
+import { PostController } from "./postController";
 import {
   commentContentValidator,
   findPostValidator,
@@ -8,36 +8,52 @@ import {
 } from "./middlewares/validators";
 import { adminMiddleware } from "../../global-middlewares/admin-middleware";
 import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckErrorsMiddleware";
-import { tokenAuthorizationMiddleware, tokenAuthorizationWithoutThrowErrorMiddleware } from "../../global-middlewares/tokenAuthorizationMiddleware ";
+import {
+  tokenAuthorizationMiddleware,
+  tokenAuthorizationWithoutThrowErrorMiddleware,
+} from "../../global-middlewares/tokenAuthorizationMiddleware ";
+import { container } from "../composition-root";
+import { statusValidators } from "../comment/middlewares/validators";
 
 export const postsRouter = Router();
+
+const postController = container.resolve(PostController);
 
 postsRouter.post(
   "/",
   adminMiddleware,
   ...postCreateValidators,
-  postController.createPost,
+  postController.createPost.bind(postController),
 );
 
-postsRouter.get("/", postController.getPosts);
-postsRouter.get("/:id", findPostValidator, postController.find);
+postsRouter.get(
+  "/",
+  tokenAuthorizationWithoutThrowErrorMiddleware,
+  postController.getPosts.bind(postController),
+);
+postsRouter.get(
+  "/:id",
+  findPostValidator,
+  tokenAuthorizationWithoutThrowErrorMiddleware,
+  postController.find.bind(postController),
+);
 postsRouter.delete(
   "/:id",
   adminMiddleware,
   findPostValidator,
-  postController.deletePost,
+  postController.deletePost.bind(postController),
 );
 postsRouter.put(
   "/:id",
   adminMiddleware,
   ...putUpdateValidators,
-  postController.updatePost,
+  postController.updatePost.bind(postController),
 );
 postsRouter.get(
   "/:id/comments",
   findPostValidator,
   tokenAuthorizationWithoutThrowErrorMiddleware,
-  postController.getCommentsInPost,
+  postController.getCommentsInPost.bind(postController),
 );
 postsRouter.post(
   "/:id/comments",
@@ -45,5 +61,12 @@ postsRouter.post(
   commentContentValidator,
   inputCheckErrorsMiddleware,
   findPostValidator,
-  postController.createCommentInPost,
+  postController.createCommentInPost.bind(postController),
+);
+
+postsRouter.put(
+  "/:id/like-status",
+  tokenAuthorizationMiddleware,
+  ...statusValidators,
+  postController.setLike.bind(postController),
 );

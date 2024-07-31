@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from "mongoose";
 import mongoose, { Model } from "mongoose";
 
 export type UserTypeDB = {

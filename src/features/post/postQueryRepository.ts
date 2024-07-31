@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import {
   PostInputModel,
   PostViewModel,
@@ -9,47 +10,12 @@ import {
   INormolizedQuery,
   IQueryBlogWithPostsFilterTypeBD,
 } from "../../utils/query-helper";
+import { injectable } from "inversify";
+import { getCurrentStatus, getLikeCount } from "../../utils/like-transform";
 
-export class PostRepository {
-  static async create(post: PostInputModel) {
-    const blog = await blogCollection.findOne({
-      _id: new Types.ObjectId(post.blogId),
-    });
-    if (!blog?.name) return false;
-    const newPost = {
-      title: post.title,
-      content: post.content,
-      shortDescription: post.shortDescription,
-      blogId: post.blogId,
-      createdAt: new Date(),
-      blogName: blog.name,
-    };
-    const model = await new postCollection(newPost);
-    const result = await model.save();
-    return result._id;
-  }
-
-  static async find(id: string) {
-    const post = await postCollection.findOne<PostTypeBD>({
-      _id: new Types.ObjectId(id),
-    });
-    if (post?._id) {
-      return this.map(post);
-    }
-    return false;
-  }
-
-  static async findAndMap(id: string) {
-    const post = await postCollection.findOne<PostTypeBD>({
-      _id: new Types.ObjectId(id),
-    });
-    if (post?._id) {
-      return this.map(post);
-    }
-    return false;
-  }
-
-  static async getAll(query: INormolizedQuery) {
+@injectable()
+export class PostQueryRepository {
+  async getAll(query: INormolizedQuery, userId?: string) {
     const totalCount = await postCollection.find().countDocuments();
 
     const posts = await postCollection
@@ -63,34 +29,12 @@ export class PostRepository {
       page: query.pageNumber,
       pageSize: query.pageSize,
       totalCount: totalCount,
-      items: posts as PostTypeBD[],
+      items: posts,
     };
-    return this.mapAfterQuery(queryForMap);
+    return this.mapAfterQuery(queryForMap, userId);
   }
 
-  static async delete(id: string) {
-    const post = await postCollection.findOne({ _id: new Types.ObjectId(id) });
-    if (!post?._id) return false;
-    const result = await postCollection.deleteOne({
-      _id: new Types.ObjectId(id),
-    });
-    if (result.deletedCount) return true;
-    return false;
-  }
-
-  static async put(post: PostInputModel, id: string) {
-    try {
-      const res = await postCollection.findOneAndUpdate(
-        { _id: new Types.ObjectId(id) },
-        { $set: post },
-      );
-      return !!res?._id;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  static map(post: PostTypeBD, userId?: string) {
+  map(post: PostTypeBD, userId?: string) {
     const postForOutput: PostViewModel = {
       id: post._id.toString(),
       title: post.title,
@@ -99,19 +43,25 @@ export class PostRepository {
       blogId: post.blogId.toString(),
       blogName: post.blogName,
       createdAt: post.createdAt,
-      likesInfo: {
-        like: post.likesInfo.like,
-        dislike: post.likesInfo.dislike,
-        myStatus: "None",
+      extendedLikesInfo: {
+        likesCount: getLikeCount(post.likesInfo.additionalLikes, "Like"),
+        dislikesCount: getLikeCount(post.likesInfo.additionalLikes, "Dislike"),
+        myStatus: getCurrentStatus(
+          post.likesInfo.additionalLikes,
+          userId || "",
+        ),
+        newestLikes: post.likesInfo?.newestLikes?.length
+          ? post.likesInfo.newestLikes.filter((e, i) => i < 3)
+          : [],
       },
     };
     return postForOutput;
   }
 
-  static mapAfterQuery(blogs: IQueryBlogWithPostsFilterTypeBD) {
+  mapAfterQuery(blogs: IQueryBlogWithPostsFilterTypeBD, userId?: string) {
     const blogWithPostsForOutput: IBlogWithPostsViewModelAfterQuery = {
       ...blogs,
-      items: blogs.items.map((b) => this.map(b)),
+      items: blogs.items.map((b) => this.map(b, userId)),
     };
     return blogWithPostsForOutput;
   }

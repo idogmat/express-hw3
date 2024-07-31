@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Request, Response } from "express";
 import { deviceCollection, userCollection } from "../../db";
 import mongoose, { Types } from "mongoose";
@@ -8,6 +9,7 @@ import { EmailService } from "../../services/email.service";
 import { UserQueryRepository } from "../user/userQueryRepository";
 import { UserRepository } from "../user/userRepository";
 import { AuthRepository } from "./authRepository";
+import { injectable } from "inversify";
 
 interface ILoginFields {
   loginOrEmail: string;
@@ -25,21 +27,24 @@ interface INewPassword {
   recoveryCode: string;
 }
 
+@injectable()
 export class AuthController {
-  constructor(protected authService: AuthService, protected authRepository: AuthRepository) {}
-  async authMe(
-    req: Request<{}, {}>,
-    res: Response<any>,
-  ) {
+  constructor(
+    protected authService: AuthService,
+    protected authRepository: AuthRepository,
+    protected userQueryRepository: UserQueryRepository,
+    protected deviceRepository: DeviceRepository,
+  ) {}
+  async authMe(req: Request<{}, {}>, res: Response<any>) {
     const user = await userCollection.findOne({
       _id: new Types.ObjectId(req.userId),
     });
     if (user) return res.status(200).json(this.authRepository.authMap(user));
     else return res.sendStatus(401);
-  };
+  }
 
   async confirmRegistration(
-    req: Request<{}, {}, {code: string}>,
+    req: Request<{}, {}, { code: string }>,
     res: Response<any>,
   ) {
     const user = await userCollection.findOne({
@@ -61,13 +66,14 @@ export class AuthController {
       }
     }
     return res.sendStatus(400);
-  };
+  }
 
   async login(
     req: Request<{}, {}, ILoginFields>,
     res: Response<any>,
   ): Promise<any> {
-    if (!req.body.password || !req.body.loginOrEmail) return res.sendStatus(400);
+    if (!req.body.password || !req.body.loginOrEmail)
+      return res.sendStatus(400);
     const loginOrEmail = req.body.loginOrEmail;
     const browser = req.get("user-agent");
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
@@ -92,8 +98,11 @@ export class AuthController {
         browser,
         session.deviceId.toString(),
       );
-      await DeviceRepository.update(session._id.toString(), refreshToken);
-      res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
+      await this.deviceRepository.update(session._id.toString(), refreshToken);
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+      });
     } else {
       const deviceId = new mongoose.Types.ObjectId().toString();
       const refreshToken = await JwtService.createRefreshToken(
@@ -109,12 +118,15 @@ export class AuthController {
         lastActiveDate: new Date().toISOString(),
         refreshToken,
       };
-      await DeviceRepository.create(device);
-      res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
+      await this.deviceRepository.create(device);
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+      });
     }
     if (result) res.status(200).json({ accessToken });
     else res.sendStatus(401);
-  };
+  }
 
   async logout(
     req: Request<{}, {}, ILoginFields>,
@@ -133,7 +145,7 @@ export class AuthController {
     } else {
       res.sendStatus(401);
     }
-  };
+  }
 
   async passwordRecovery(
     req: Request<{}, { email: string }>,
@@ -145,7 +157,7 @@ export class AuthController {
     await this.authRepository.setRecoveryCode(user._id.toString(), code);
     await EmailService.sendMailPasswordRecovery(user.login, user.email, code);
     return res.sendStatus(204);
-  };
+  }
 
   async reftershToken(
     req: Request<{}, {}, {}>,
@@ -166,23 +178,29 @@ export class AuthController {
         browser,
         session.deviceId.toString(),
       );
-      const result = await DeviceRepository.update(
+      const result = await this.deviceRepository.update(
         session._id.toString(),
         refreshToken,
       );
-      res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+      });
       res.status(200).json({ accessToken });
     } else {
       res.sendStatus(401);
     }
-  };
+  }
 
   async registration(
     req: Request<{}, {}, ICreateUserFields>,
     res: Response<any>,
   ): Promise<any> {
     const { login, email, password } = req.body;
-    const userFound = await this.authRepository.findByLoginAndEmail(login, email);
+    const userFound = await this.authRepository.findByLoginAndEmail(
+      login,
+      email,
+    );
     if (userFound?._id) return res.sendStatus(400);
     const user = await this.authService.createUser({ login, email, password });
     // console.log(user)
@@ -190,13 +208,13 @@ export class AuthController {
     const code = user.emailConfirmation.confirmationCode;
     console.log(result);
     try {
-      EmailService.sendMail(result.login, result.email, code);
+      // EmailService.sendMail(result.login, result.email, code);
     } catch (error) {
       console.error("Send email error", error);
     }
-    if (result) res.status(204).json(UserQueryRepository.map(result));
+    if (result) res.status(204).json(this.userQueryRepository.map(result));
     else res.sendStatus(400);
-  };
+  }
 
   async resendEmail(
     req: Request<{}, {}, { email: string }>,
@@ -206,7 +224,8 @@ export class AuthController {
     if (user) {
       // let code = user.emailConfirmation.confirmationCode;
       // if (user.emailConfirmation.expirationDate < new Date()) {
-      const emailConfirmation = await this.authService.createConfirmCodeObject();
+      const emailConfirmation =
+        await this.authService.createConfirmCodeObject();
       await userCollection.findOneAndUpdate(
         { _id: user._id },
         { $set: { emailConfirmation } },
@@ -217,20 +236,22 @@ export class AuthController {
       return res.sendStatus(204);
     }
     return res.sendStatus(400);
-  };
+  }
 
-  async setNewPassword(
-    req: Request<{}, INewPassword>,
-    res: Response<any>,
-  ) {
+  async setNewPassword(req: Request<{}, INewPassword>, res: Response<any>) {
     if (req.userId) {
-      const password = await this.authService.createNewPassword(req.body.newPassword);
-      const result = await this.authRepository.setNewPassword(req.userId, password);
+      const password = await this.authService.createNewPassword(
+        req.body.newPassword,
+      );
+      const result = await this.authRepository.setNewPassword(
+        req.userId,
+        password,
+      );
       return res.sendStatus(204);
     } else {
       return res.sendStatus(204);
     }
-  };
+  }
 }
 
 // export const authController = new AuthController();

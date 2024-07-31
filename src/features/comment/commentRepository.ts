@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Types, ObjectId } from "mongoose";
 import {
   commentCollection,
@@ -8,9 +9,12 @@ import {
 import { INormolizedQuery } from "../../utils/query-helper";
 import { CommentViewModel, IReturnQueryList } from "../../input-output-types";
 import { getCurrentStatus, getLikeCount } from "../../utils/like-transform";
+import { injectable } from "inversify";
 
+@injectable()
 export class CommentRepository {
-  static async create(content: string, postId: string, userId: string) {
+  constructor() {}
+  async create(content: string, postId: string, userId: string) {
     const user = await userCollection.findOne<UserTypeDB>({
       _id: new Types.ObjectId(userId),
     });
@@ -34,7 +38,7 @@ export class CommentRepository {
     return result._id;
   }
 
-  static async getAll(postId: string, query: INormolizedQuery, userId: string) {
+  async getAll(postId: string, query: INormolizedQuery, userId: string) {
     const totalCount = await commentCollection
       .find({ postId })
       .countDocuments();
@@ -55,7 +59,7 @@ export class CommentRepository {
     return queryForMap;
   }
 
-  static async delete(id: string, userId: string | ObjectId) {
+  async delete(id: string, userId: string | ObjectId) {
     const permition = await commentCollection.findOne<CommentTypeDB>({
       _id: new Types.ObjectId(id),
     });
@@ -74,7 +78,7 @@ export class CommentRepository {
     return false;
   }
 
-  static async put(id: string, userId: string, content: string) {
+  async put(id: string, userId: string, content: string) {
     const permition = await commentCollection.findOne<CommentTypeDB>({
       _id: new Types.ObjectId(id),
     });
@@ -94,7 +98,7 @@ export class CommentRepository {
     }
   }
 
-  static async find(id: string) {
+  async find(id: string) {
     const comment = await commentCollection.findOne<CommentTypeDB>({
       _id: new Types.ObjectId(id),
     });
@@ -105,18 +109,18 @@ export class CommentRepository {
     }
   }
 
-  static async setLike(id: string, userId: string, type: string) {
-    const comment = await commentCollection.findById(id)
+  async setLike(id: string, userId: string, type: string) {
+    const comment = await commentCollection.findById(id);
     if (comment) {
       comment.likesInfo.additionalLikes.set(userId, type);
       await comment.save();
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
   }
 
-  static map(comment: CommentTypeDB, userId?: string): CommentViewModel {
+  map(comment: CommentTypeDB, userId?: string): CommentViewModel {
     return {
       id: comment._id.toString(),
       content: comment.content,
@@ -126,9 +130,15 @@ export class CommentRepository {
       },
       createdAt: comment.createdAt,
       likesInfo: {
-        likesCount: getLikeCount(comment.likesInfo.additionalLikes, 'Like'),
-        dislikesCount: getLikeCount(comment.likesInfo.additionalLikes, 'Dislike'),
-        myStatus: getCurrentStatus(comment.likesInfo.additionalLikes, userId || ''),
+        likesCount: getLikeCount(comment.likesInfo.additionalLikes, "Like"),
+        dislikesCount: getLikeCount(
+          comment.likesInfo.additionalLikes,
+          "Dislike",
+        ),
+        myStatus: getCurrentStatus(
+          comment.likesInfo.additionalLikes,
+          userId || "",
+        ),
       },
     };
   }

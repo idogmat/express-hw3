@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { dateSetter } from "../utils/date-methods";
 import { AuthRepository } from "../features/auth/authRepository";
+import { injectable } from "inversify";
 
 export interface IPasswordFields {
   passwordHash: string;
@@ -19,6 +20,7 @@ interface ICheckCredential {
   id: string;
 }
 
+@injectable()
 export class AuthService {
   constructor(protected authRepository: AuthRepository) {}
   async createUser({ login, email, password }: IAuthFields) {

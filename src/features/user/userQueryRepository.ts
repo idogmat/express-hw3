@@ -5,9 +5,11 @@ import {
   IReturnQueryList,
   IUserViewModelAfterQuery,
 } from "../../input-output-types";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserQueryRepository {
-  static async getAll(query: INormolizedQuery) {
+  async getAll(query: INormolizedQuery) {
     const filter = {
       $or: [
         {
@@ -34,7 +36,7 @@ export class UserQueryRepository {
     return this.mapAfterQuery(queryForMap);
   }
 
-  static map(user: UserTypeDB) {
+  map(user: UserTypeDB) {
     const userForOutput: UserViewModel = {
       id: user._id.toString(),
       login: user.login,
@@ -44,7 +46,7 @@ export class UserQueryRepository {
     return userForOutput;
   }
 
-  static authMap(user: UserTypeDB) {
+  authMap(user: UserTypeDB) {
     const userForOutput = {
       userId: user._id.toString(),
       login: user.login,
@@ -53,7 +55,7 @@ export class UserQueryRepository {
     return userForOutput;
   }
 
-  static mapAfterQuery(users: IReturnQueryList<UserTypeDB>) {
+  mapAfterQuery(users: IReturnQueryList<UserTypeDB>) {
     const userForOutput: IUserViewModelAfterQuery = {
       ...users,
       items: users.items.map((b: UserTypeDB) => this.map(b)),

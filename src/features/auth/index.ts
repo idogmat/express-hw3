@@ -10,13 +10,24 @@ import { tokenAuthorizationMiddleware } from "../../global-middlewares/tokenAuth
 import { inputCheckErrorsMiddleware } from "../../global-middlewares/inputCheckErrorsMiddleware";
 import { tokenRefreshMiddleware } from "../../global-middlewares/tokenRefreshMiddleware";
 import { requestLimitGuard } from "../../global-middlewares/requestLimitGuard";
-import { authController } from "../composition-root";
+import { container } from "../composition-root";
+import { AuthController } from "./authController";
 
 export const authRouter = Router();
 
-authRouter.post("/login", requestLimitGuard, authController.login.bind(authController));
+const authController = container.resolve(AuthController);
 
-authRouter.post("/logout", tokenRefreshMiddleware, authController.logout.bind(authController));
+authRouter.post(
+  "/login",
+  // requestLimitGuard,
+  authController.login.bind(authController),
+);
+
+authRouter.post(
+  "/logout",
+  tokenRefreshMiddleware,
+  authController.logout.bind(authController),
+);
 
 authRouter.post(
   "/refresh-token",
@@ -26,14 +37,14 @@ authRouter.post(
 
 authRouter.post(
   "/registration",
-  requestLimitGuard,
+  // requestLimitGuard,
   ...userCreateValidators,
   authController.registration.bind(authController),
 );
 
 authRouter.post(
   "/registration-confirmation",
-  requestLimitGuard,
+  // requestLimitGuard,
   codelValidator,
   inputCheckErrorsMiddleware,
   authController.confirmRegistration.bind(authController),
@@ -41,23 +52,27 @@ authRouter.post(
 
 authRouter.post(
   "/registration-email-resending",
-  requestLimitGuard,
+  // requestLimitGuard,
   ...resendEmailValidators,
   authController.resendEmail.bind(authController),
 );
 
-authRouter.get("/me", tokenAuthorizationMiddleware, authController.authMe.bind(authController));
+authRouter.get(
+  "/me",
+  tokenAuthorizationMiddleware,
+  authController.authMe.bind(authController),
+);
 
 authRouter.post(
   "/password-recovery",
-  requestLimitGuard,
+  // requestLimitGuard,
   ...recoveryEmailValidators,
   authController.passwordRecovery.bind(authController),
 );
 
 authRouter.post(
   "/new-password",
-  requestLimitGuard,
+  // requestLimitGuard,
   ...setNewPasswordValidators,
   authController.setNewPassword.bind(authController),
 );

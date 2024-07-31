@@ -5,6 +5,8 @@ declare global {
     export interface Request {
       userId: string;
       logId: string;
+      files: any[];
+      file: any;
     }
   }
 }

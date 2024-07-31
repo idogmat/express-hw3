@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { BlogViewModel } from "../../input-output-types";
 import { INormolizedQuery } from "../../utils/query-helper";
 import { blogCollection, BlogTypeBD } from "../../db";
@@ -5,9 +6,11 @@ import {
   IBlogViewModelAfterQuery,
   IReturnQueryList,
 } from "../../input-output-types";
+import { injectable } from "inversify";
 
+@injectable()
 export class BlogQueryRepository {
-  static async getAll(query: INormolizedQuery) {
+  async getAll(query: INormolizedQuery) {
     const totalCount = await blogCollection
       .find({
         name: { $regex: new RegExp(`^${query.searchNameTerm || ""}`, "i") },
@@ -31,7 +34,7 @@ export class BlogQueryRepository {
     return this.mapAfterQuery(queryForMap);
   }
 
-  static map(blog: BlogTypeBD) {
+  map(blog: BlogTypeBD) {
     const blogForOutput: BlogViewModel = {
       id: blog._id.toString(),
       description: blog.description,
@@ -43,7 +46,7 @@ export class BlogQueryRepository {
     return blogForOutput;
   }
 
-  static mapAfterQuery(blogs: IReturnQueryList<BlogTypeBD>) {
+  mapAfterQuery(blogs: IReturnQueryList<BlogTypeBD>) {
     const blogForOutput: IBlogViewModelAfterQuery = {
       ...blogs,
       items: blogs.items.map((b: BlogTypeBD) => this.map(b)),
