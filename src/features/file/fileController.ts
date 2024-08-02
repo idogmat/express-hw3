@@ -4,7 +4,7 @@ import { fileCollection } from "../../db";
 import { gfs } from "../../app";
 
 export class FileController {
-  async load(req: Request, res: Response<any>): Promise<any> {
+  async load(req: Request, res: Response): Promise<Buffer | void> {
     const files = req.files;
     if (Array.isArray(files) && files?.[0]) {
       const result = await fileCollection.findOne({ userId: req.userId });
@@ -22,20 +22,20 @@ export class FileController {
     }
   }
 
-  async get(req: Request, res: Response<any>): Promise<any> {
+  async get(req: Request, res: Response): Promise<Buffer | void> {
     const result = await fileCollection.findOne({ userId: req.userId });
     if (result && result.buffer) {
       res.set({
         "Content-Type": result.mimetype, // Указываем тип содержимого
         "Content-Disposition": `attachment; filename="${result.originalname}"`, // Указываем, что это файл для скачивания
       });
-      res.send(result.buffer as any);
+      res.send(result.buffer);
     } else {
       res.sendStatus(200);
     }
   }
 
-  async loadGfs(req: Request, res: Response<any>): Promise<any> {
+  async loadGfs(req: Request, res: Response): Promise<Buffer | void> {
     const result = req.file;
     console.log(result);
     if (result && gfs) {
@@ -46,7 +46,7 @@ export class FileController {
         }
       });
       try {
-        const end = await uploadStream.end(result?.buffer);
+        await uploadStream.end(result?.buffer);
       } catch (error) {
          res.sendStatus(403);
       }
@@ -56,7 +56,7 @@ export class FileController {
     }
   }
 
-  async getGfs(req: Request, res: Response<any>): Promise<any> {
+  async getGfs(req: Request, res: Response): Promise<Buffer | void> {
     let file = null;
     const cursor = await gfs?.find({})
     for await (const doc of cursor!) {
@@ -66,10 +66,10 @@ export class FileController {
    }
     if (file && file._id) {
       const ready = await gfs?.openDownloadStream(file._id)
-      ready!.on('error', (err: any) => {
+      ready!.on('error', (err: Error) => {
         return res.status(404).json({ message: 'Файл не найден', error: err });
       });
-      return ready!.pipe(res); // Передаем данные файла в ответ
+      ready!.pipe(res); // Передаем данные файла в ответ
     } else {
       res.sendStatus(200);
     }
